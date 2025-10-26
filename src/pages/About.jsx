@@ -94,6 +94,24 @@ function About() {
             <h5>Active Community</h5>
             <p>Engaged players and regular clan activities</p>
           </div>
+
+          <div className="perk-item">
+            <div className="perk-icon">🤖</div>
+            <h5>Discord Bot</h5>
+            <p>Track attacks, donations, and clan stats with our Discord bot</p>
+          </div>
+
+          <div className="perk-item">
+            <div className="perk-icon">📲</div>
+            <h5>WhatsApp Bot</h5>
+            <p>Get updates and manage clan activities through WhatsApp</p>
+          </div>
+
+          <div className="perk-item">
+            <div className="perk-icon">⏰</div>
+            <h5>War Reminders</h5>
+            <p>Automated reminders to never miss your attacks</p>
+          </div>
         </div>
       </div>
 

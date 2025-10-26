@@ -112,17 +112,6 @@ function CWL() {
           </div>
         )}
       </div>
-
-      {!loading && clansData.length > 0 && (
-        <div className="clans-footer">
-          <p className="info-text">
-            📊 Clan list synced from Google Sheets • 🏆 Data fetched live from Clash of Clans API
-          </p>
-          <p className="info-text">
-            Showing {clansData.length} CWL clan{clansData.length !== 1 ? 's' : ''} from the Trinity family
-          </p>
-        </div>
-      )}
     </section>
   )
 }

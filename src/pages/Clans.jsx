@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import SectionTitle from '../components/SectionTitle'
 import ClanCard from '../components/ClanCard'
-import { TRINITY_CLAN_TAGS } from '../config/clans'
 import { fetchMultipleClans, checkServerHealth } from '../services/api'
+import { fetchTrinityClansFromSheet } from '../services/googleSheets'
 
 function Clans() {
   const [clansData, setClansData] = useState([])
@@ -16,6 +16,13 @@ function Clans() {
         setLoading(true)
         setError(null)
 
+        // First, fetch clan tags from Google Sheets
+        const tagsFromSheet = await fetchTrinityClansFromSheet()
+
+        if (tagsFromSheet.length === 0) {
+          throw new Error('No Trinity clans found in Google Sheets')
+        }
+
         // Check if backend server is running
         const isOnline = await checkServerHealth()
         setServerOnline(isOnline)
@@ -25,7 +32,7 @@ function Clans() {
         }
 
         // Fetch all clan data using the backend API
-        const fetchedClans = await fetchMultipleClans(TRINITY_CLAN_TAGS)
+        const fetchedClans = await fetchMultipleClans(tagsFromSheet)
         
         if (fetchedClans.length === 0) {
           throw new Error('No clan data could be fetched')
@@ -95,17 +102,6 @@ function Clans() {
           </div>
         )}
       </div>
-
-      {!loading && clansData.length > 0 && (
-        <div className="clans-footer">
-          <p className="info-text">
-            💡 All clan data is fetched live from Clash of Clans API
-          </p>
-          <p className="info-text">
-            Showing {clansData.length} clan{clansData.length !== 1 ? 's' : ''} from the Trinity family
-          </p>
-        </div>
-      )}
     </section>
   )
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { fetchClan, fetchClanWarLog, fetchClanWar, fetchClanCapitalRaids } from '../services/api'
-import { CWL_CLAN_TAGS } from '../config/clans'
+import { useCWL } from '../contexts/CWLContext'
 import ClanHeader from '../components/clan-details/ClanHeader'
 import ClanDescription from '../components/clan-details/ClanDescription'
 import TownHallComposition from '../components/clan-details/TownHallComposition'
@@ -13,6 +13,7 @@ import CapitalRaids from '../components/clan-details/CapitalRaids'
 function ClanDetails() {
   const { clanTag } = useParams()
   const navigate = useNavigate()
+  const { isCWLClan: checkIsCWLClan } = useCWL()
   const [clan, setClan] = useState(null)
   const [warLog, setWarLog] = useState([])
   const [currentWar, setCurrentWar] = useState(null)
@@ -24,7 +25,7 @@ function ClanDetails() {
   const [showCapitalRaids, setShowCapitalRaids] = useState(false)
   
   // Check if this is a CWL clan
-  const isCWLClan = clan && CWL_CLAN_TAGS.includes(clan.tag)
+  const isCWLClan = clan && checkIsCWLClan(clan.tag)
 
   useEffect(() => {
     const loadClanDetails = async () => {

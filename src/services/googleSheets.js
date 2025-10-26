@@ -1,6 +1,7 @@
 // Service to fetch clan data from Google Sheets
 
-const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTv9TiS1-uWKWghHNDyv1WNpZCPUew08SyzE4AwV5zksRHYdHOz_fcWi0FSKdHeL-Z0IpKNa-nMxEiY/pub?gid=1640581717&single=true&output=csv'
+const CWL_CLANS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTv9TiS1-uWKWghHNDyv1WNpZCPUew08SyzE4AwV5zksRHYdHOz_fcWi0FSKdHeL-Z0IpKNa-nMxEiY/pub?gid=1640581717&single=true&output=csv'
+const TRINITY_CLANS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTv9TiS1-uWKWghHNDyv1WNpZCPUew08SyzE4AwV5zksRHYdHOz_fcWi0FSKdHeL-Z0IpKNa-nMxEiY/pub?gid=419279330&single=true&output=csv'
 
 /**
  * Parse CSV text to array of objects
@@ -68,13 +69,70 @@ function parseCSVLine(line) {
 }
 
 /**
+ * Fetch Trinity clans from Google Sheets
+ * Returns array of clan tags that are "Active"
+ */
+export async function fetchTrinityClansFromSheet() {
+  try {
+    // Add timestamp to prevent caching
+    const url = `${TRINITY_CLANS_CSV_URL}&_=${Date.now()}`
+    const response = await fetch(url)
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch Google Sheets data')
+    }
+
+    const csvText = await response.text()
+    const data = parseCSV(csvText)
+
+    console.log('Total rows in Trinity sheet:', data.length)
+    console.log('Sample row structure:', data[0])
+
+    // Filter valid clans:
+    // - Column B "Clan Tag" should exist and not be empty
+    // - Status column should be exactly "Active"
+    const validClans = data.filter(row => {
+      const clanTag = row['Clan Tag']
+      const status = row['Status'] || row['status']
+      
+      // Check if clan tag is valid
+      if (!clanTag || clanTag.trim() === '' || clanTag.includes('//')) return false
+      
+      // Check if status is exactly "Active" (case-insensitive, exact match)
+      if (!status || status.toString().trim().toLowerCase() !== 'active') return false
+      
+      return true
+    })
+
+    console.log('Filtered active clans:', validClans.length)
+
+    // Extract clan tags
+    const clanTags = validClans.map(row => {
+      let tag = row['Clan Tag'].trim()
+      // Ensure tag starts with #
+      if (!tag.startsWith('#')) {
+        tag = '#' + tag
+      }
+      return tag
+    })
+
+    console.log('Fetched Trinity clans from Google Sheets:', clanTags)
+    return clanTags
+
+  } catch (error) {
+    console.error('Error fetching Trinity clans from Google Sheets:', error)
+    throw error
+  }
+}
+
+/**
  * Fetch CWL clans from Google Sheets
  * Returns array of clan tags that are "In Use"
  */
 export async function fetchCWLClansFromSheet() {
   try {
     // Add timestamp to prevent caching
-    const url = `${GOOGLE_SHEETS_CSV_URL}&_=${Date.now()}`
+    const url = `${CWL_CLANS_CSV_URL}&_=${Date.now()}`
     const response = await fetch(url)
 
     if (!response.ok) {
@@ -125,7 +183,7 @@ export async function fetchCWLClansFromSheet() {
  */
 export async function fetchCWLClansDetailsFromSheet() {
   try {
-    const url = `${GOOGLE_SHEETS_CSV_URL}&_=${Date.now()}`
+    const url = `${CWL_CLANS_CSV_URL}&_=${Date.now()}`
     const response = await fetch(url)
 
     if (!response.ok) {

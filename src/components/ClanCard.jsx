@@ -1,6 +1,15 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function ClanCard({ clan, isLoading, error }) {
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    if (clan && clan.tag) {
+      // Navigate to clan details page with the clan tag (remove # for URL)
+      navigate(`/clans/${clan.tag.replace('#', '')}`)
+    }
+  }
   if (isLoading) {
     return (
       <div className="clan-card clan-card-loading">
@@ -24,7 +33,7 @@ function ClanCard({ clan, isLoading, error }) {
   }
 
   return (
-    <div className="clan-card clan-card-detailed">
+    <div className="clan-card clan-card-detailed" onClick={handleClick}>
       <img 
         src={clan.badgeUrls?.medium || clan.badgeUrls?.small || clan.badgeUrls?.large} 
         alt={`${clan.name} badge`} 
@@ -34,46 +43,27 @@ function ClanCard({ clan, isLoading, error }) {
       <h4 className="clan-name">{clan.name}</h4>
       <p className="clan-tag">{clan.tag}</p>
       
-      <div className="clan-stats">
-        <div className="stat">
-          <span className="stat-label">Level</span>
-          <span className="stat-value">{clan.clanLevel ?? 'N/A'}</span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Members</span>
-          <span className="stat-value">{clan.members ?? 0}/50</span>
+      <div className="clan-info-row">
+        {clan.warLeague && (
+          <div className="clan-league-mini">
+            <img 
+              src="/cwl.webp" 
+              alt="CWL badge" 
+              className="league-icon-img"
+            />
+            <span className="league-name">{clan.warLeague}</span>
+          </div>
+        )}
+        
+        <div className="clan-capital">
+          <img 
+            src="/Capital.webp" 
+            alt="Capital badge" 
+            className="capital-icon-img"
+          />
+          <span className="capital-level">Capital Level {clan.clanCapitalLevel ?? 0}</span>
         </div>
       </div>
-
-      {clan.leader && (
-        <div className="clan-leader">
-          <span className="leader-icon">👑</span>
-          <span className="leader-name">{clan.leader.name}</span>
-        </div>
-      )}
-
-      {clan.warLeague && (
-        <div className="clan-league">
-          <span className="league-badge">🏆</span>
-          <span>{clan.warLeague}</span>
-        </div>
-      )}
-
-      {clan.location && (
-        <div className="clan-location">
-          <span>📍 {clan.location}</span>
-        </div>
-      )}
-
-      <div className="clan-type">
-        <span className={`type-badge type-${clan.type}`}>
-          {clan.type === 'open' ? '🔓 Open' : clan.type === 'inviteOnly' ? '🔒 Invite Only' : '⛔ Closed'}
-        </span>
-      </div>
-
-      {clan.description && (
-        <p className="clan-description">{clan.description}</p>
-      )}
     </div>
   )
 }

@@ -106,7 +106,7 @@ npm run dev
 
 The backend should run on `http://localhost:3001`
 
-For detailed backend setup, see `SETUP.md`
+For detailed backend setup, see `QUICKSTART.md` or the `Trinity-Backend/README.md`
 
 ## 📜 Available Scripts
 
@@ -202,8 +202,7 @@ The backend is configured to accept requests from the frontend. If you get CORS 
 
 ## 📖 Documentation
 
-- `QUICKSTART.md` - Quick start guide
-- `SETUP.md` - Complete setup with backend
+- `QUICKSTART.md` - Quick start guide (1-minute setup)
 - `Trinity-Backend/README.md` - Backend API documentation
 
 ## 📄 License

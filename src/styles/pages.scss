@@ -112,6 +112,7 @@
   border-radius: $radius-lg;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
+  cursor: pointer;
 
   &:hover {
     transform: translateY(-5px);
@@ -147,144 +148,68 @@
     font-weight: 600;
   }
 
-  .clan-stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-md;
+  .clan-info-row {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
     width: 100%;
-    margin: $spacing-sm 0;
-
-    .stat {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: $spacing-sm;
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.08) 100%);
-      border-radius: $radius-md;
-      border: 1px solid rgba(102, 126, 234, 0.15);
-      transition: all 0.2s ease;
-
-      &:hover {
-        transform: translateY(-2px);
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.12) 100%);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-      }
-
-      &-label {
-        font-size: 0.7rem;
-        color: $text-secondary;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 600;
-        margin-bottom: 4px;
-      }
-
-      &-value {
-        font-size: 1.5rem;
-        font-weight: 800;
-        background: $primary-gradient;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-    }
+    margin-top: $spacing-sm;
   }
 
-  .clan-leader {
+  .clan-capital {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: $spacing-xs;
     padding: $spacing-sm $spacing-md;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.15) 100%);
     border: 1px solid rgba(255, 215, 0, 0.3);
     border-radius: 20px;
-    box-shadow: 0 2px 8px rgba(255, 165, 0, 0.12);
+    box-shadow: 0 2px 8px rgba(255, 165, 0, 0.15);
 
-    .leader-icon {
-      font-size: 1.1rem;
+    .capital-icon {
+      font-size: 1.3rem;
     }
 
-    .leader-name {
+    .capital-icon-img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+
+    .capital-level {
       font-size: 0.95rem;
       font-weight: 700;
       color: #d97706;
     }
   }
 
-  .clan-league {
+  .clan-league-mini {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: $spacing-xs;
-    padding: $spacing-xs $spacing-md;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.15) 100%);
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    padding: $spacing-sm $spacing-md;
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.15) 0%, rgba(126, 34, 206, 0.15) 100%);
+    border: 1px solid rgba(147, 51, 234, 0.3);
     border-radius: 20px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: #d97706;
-    box-shadow: 0 2px 8px rgba(255, 165, 0, 0.15);
+    box-shadow: 0 2px 8px rgba(147, 51, 234, 0.15);
 
-    .league-badge {
-      font-size: 1.3rem;
+    .league-icon {
+      font-size: 1.2rem;
     }
-  }
 
-  .clan-location {
-    font-size: 0.9rem;
-    color: $text-secondary;
-    padding: 6px 12px;
-    background: rgba(100, 116, 139, 0.08);
-    border-radius: 12px;
-    font-weight: 500;
-  }
+    .league-icon-img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
 
-  .clan-type {
-    width: 100%;
-    text-align: center;
-    
-    .type-badge {
-      display: inline-block;
-      padding: $spacing-xs $spacing-md;
-      border-radius: 20px;
-      font-size: 0.85rem;
+    .league-name {
+      font-size: 0.9rem;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      border: 1px solid;
-
-      &.type-open {
-        background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
-        color: #059669;
-        border-color: rgba(34, 197, 94, 0.3);
-      }
-
-      &.type-inviteOnly {
-        background: linear-gradient(135deg, rgba(234, 179, 8, 0.15) 0%, rgba(202, 138, 4, 0.15) 100%);
-        color: #ca8a04;
-        border-color: rgba(234, 179, 8, 0.3);
-      }
-
-      &.type-closed {
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.15) 100%);
-        color: #dc2626;
-        border-color: rgba(239, 68, 68, 0.3);
-      }
+      color: #9333ea;
     }
-  }
-
-  .clan-description {
-    font-size: 0.95rem;
-    color: $text-secondary;
-    text-align: center;
-    line-height: 1.7;
-    margin: $spacing-sm 0 0;
-    padding: $spacing-md;
-    background: rgba(102, 126, 234, 0.05);
-    border-radius: $radius-sm;
-    border-left: 3px solid rgba(102, 126, 234, 0.3);
-    width: 100%;
   }
 }
 
@@ -370,6 +295,338 @@
   padding: $spacing-xl;
   color: $text-secondary;
   font-size: 1.125rem;
+}
+
+// Clan Details Page
+.clan-details-page {
+  padding: $spacing-lg 0;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-md;
+    background: transparent;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    border-radius: $radius-md;
+    color: $primary-color;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: $spacing-lg;
+
+    &:hover {
+      background: $primary-color;
+      color: white;
+      transform: translateX(-5px);
+    }
+  }
+
+  .clan-details-header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
+    margin-bottom: $spacing-xl;
+    padding: $spacing-lg;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+    border: 2px solid rgba(102, 126, 234, 0.15);
+    border-radius: $radius-lg;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+
+    .clan-badge-large {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+    }
+
+    .clan-header-info {
+      flex: 1;
+
+      .section-title {
+        margin: 0;
+        text-align: left;
+        font-size: 2.5rem;
+      }
+
+      .clan-tag-large {
+        font-size: 1.2rem;
+        color: $text-secondary;
+        font-weight: 600;
+        margin-top: $spacing-xs;
+      }
+
+      .header-stats {
+        display: flex;
+        gap: $spacing-lg;
+        margin-top: $spacing-md;
+        font-size: 1.1rem;
+        font-weight: 600;
+        flex-wrap: wrap;
+        align-items: center;
+
+        span {
+          padding: $spacing-xs $spacing-md;
+          background: rgba(102, 126, 234, 0.1);
+          border-radius: $radius-sm;
+        }
+
+        .war-log-toggle {
+          padding: $spacing-xs $spacing-md;
+          background: $primary-gradient;
+          color: white;
+          border: none;
+          border-radius: $radius-sm;
+          font-weight: 700;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+          }
+
+          &:active {
+            transform: translateY(0);
+          }
+        }
+      }
+    }
+  }
+
+  .clan-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+
+  .detail-section {
+    padding: $spacing-lg;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+    border: 2px solid rgba(102, 126, 234, 0.15);
+    border-radius: $radius-lg;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: $spacing-md;
+      background: $primary-gradient;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .clan-description-full {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: $text-secondary;
+    }
+  }
+
+  // Town Hall Composition
+  .th-composition {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    .th-bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-xs;
+
+      .th-label {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 600;
+
+        .th-level {
+          font-size: 1.1rem;
+          color: $primary-color;
+        }
+
+        .th-count {
+          font-size: 0.9rem;
+          color: $text-secondary;
+        }
+      }
+
+      .th-bar {
+        height: 35px;
+        background: rgba(102, 126, 234, 0.1);
+        border-radius: $radius-sm;
+        overflow: hidden;
+        position: relative;
+
+        .th-bar-fill {
+          height: 100%;
+          background: $primary-gradient;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          padding-right: $spacing-sm;
+          transition: width 0.3s ease;
+          min-width: 60px;
+
+          .th-percentage {
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+  }
+
+  // Members List
+  .members-list {
+    overflow-x: auto;
+
+    .members-table {
+      min-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      .members-header,
+      .member-row {
+        display: grid;
+        grid-template-columns: 50px 1fr 120px 80px 120px 140px;
+        gap: $spacing-sm;
+        padding: $spacing-sm $spacing-md;
+        align-items: center;
+      }
+
+      .members-header {
+        background: rgba(102, 126, 234, 0.15);
+        border-radius: $radius-sm;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        color: $primary-color;
+      }
+
+      .member-row {
+        background: rgba(102, 126, 234, 0.05);
+        border-radius: $radius-sm;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: rgba(102, 126, 234, 0.12);
+          transform: translateX(5px);
+        }
+
+        .member-rank {
+          font-weight: 700;
+          color: $primary-color;
+        }
+
+        .member-name {
+          font-weight: 600;
+        }
+
+        .member-role {
+          font-size: 0.9rem;
+          color: $text-secondary;
+        }
+
+        .member-th {
+          font-weight: 700;
+        }
+
+        .member-trophies,
+        .member-donations {
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+
+  // War Log
+  .war-log {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: $spacing-md;
+
+    .war-log-item {
+      display: flex;
+      gap: $spacing-sm;
+      padding: $spacing-md;
+      border-radius: $radius-md;
+      border: 2px solid;
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      &.war-result-win {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.3);
+      }
+
+      &.war-result-lose {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.3);
+      }
+
+      &.war-result-tie {
+        background: rgba(234, 179, 8, 0.1);
+        border-color: rgba(234, 179, 8, 0.3);
+      }
+
+      .war-result-badge {
+        font-size: 2rem;
+      }
+
+      .war-info {
+        flex: 1;
+
+        .war-opponent {
+          font-weight: 700;
+          font-size: 1.1rem;
+          margin-bottom: $spacing-xs;
+        }
+
+        .war-details {
+          display: flex;
+          gap: $spacing-md;
+          font-size: 0.9rem;
+          color: $text-secondary;
+          flex-wrap: wrap;
+        }
+      }
+    }
+  }
+
+  .war-log-private {
+    text-align: center;
+    padding: $spacing-xl;
+    color: $text-secondary;
+    font-size: 1.1rem;
+  }
+
+  .loading-container,
+  .error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xl;
+    text-align: center;
+    min-height: 400px;
+
+    .spinner {
+      margin-bottom: $spacing-md;
+    }
+
+    h2 {
+      margin-bottom: $spacing-md;
+    }
+  }
 }
 
 // CWL Page
@@ -529,32 +786,91 @@
       color: $text-dark-secondary;
     }
 
-    .clan-stats .stat {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.12) 100%);
-      border-color: rgba(102, 126, 234, 0.25);
+    .clan-capital {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.2) 100%);
+      border-color: rgba(255, 215, 0, 0.4);
 
-      &:hover {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.22) 0%, rgba(118, 75, 162, 0.18) 100%);
-      }
-    }
-
-    .clan-leader {
-      background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.15) 100%);
-      border-color: rgba(255, 215, 0, 0.35);
-
-      .leader-name {
+      .capital-level {
         color: #fbbf24;
       }
     }
 
-    .clan-location {
-      background: rgba(100, 116, 139, 0.15);
+    .clan-league-mini {
+      background: linear-gradient(135deg, rgba(147, 51, 234, 0.25) 0%, rgba(126, 34, 206, 0.25) 100%);
+      border-color: rgba(147, 51, 234, 0.4);
+
+      .league-name {
+        color: #c084fc;
+      }
+    }
+  }
+
+  .clan-details-page {
+    .back-button {
+      border-color: rgba(102, 126, 234, 0.3);
+      color: #8b9eff;
+
+      &:hover {
+        background: $primary-color;
+        color: white;
+      }
+    }
+
+    .clan-details-header,
+    .detail-section {
+      background: linear-gradient(145deg, rgba(31, 41, 55, 0.95) 0%, rgba(17, 24, 39, 0.95) 100%);
+      border-color: rgba(102, 126, 234, 0.25);
+    }
+
+    .clan-tag-large,
+    .clan-description-full {
       color: $text-dark-secondary;
     }
 
-    .clan-description {
+    .header-stats span {
+      background: rgba(102, 126, 234, 0.2);
+    }
+
+    .th-bar {
+      background: rgba(102, 126, 234, 0.15);
+    }
+
+    .th-count,
+    .member-role,
+    .war-details {
+      color: $text-dark-secondary;
+    }
+
+    .members-header {
+      background: rgba(102, 126, 234, 0.2);
+    }
+
+    .member-row {
       background: rgba(102, 126, 234, 0.08);
-      border-left-color: rgba(102, 126, 234, 0.4);
+
+      &:hover {
+        background: rgba(102, 126, 234, 0.15);
+      }
+    }
+
+    .war-log-item {
+      &.war-result-win {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: rgba(34, 197, 94, 0.4);
+      }
+
+      &.war-result-lose {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.4);
+      }
+
+      &.war-result-tie {
+        background: rgba(234, 179, 8, 0.15);
+        border-color: rgba(234, 179, 8, 0.4);
+      }
+    }
+
+    .war-log-private {
       color: $text-dark-secondary;
     }
   }

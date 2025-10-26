@@ -103,6 +103,25 @@ export const fetchClanCWL = async (clanTag) => {
 }
 
 /**
+ * Get war log for a clan
+ */
+export const fetchClanWarLog = async (clanTag) => {
+  try {
+    const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
+    const response = await fetch(`${API_BASE_URL}/clans/${encodedTag}/warlog`)
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch war log: ${response.statusText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching war log:', error)
+    throw error
+  }
+}
+
+/**
  * Check if backend server is running
  */
 export const checkServerHealth = async () => {

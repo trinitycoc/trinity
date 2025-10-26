@@ -1,11 +1,8 @@
-# Quick Start - Trinity Backend Setup
+# Quick Start - Trinity Setup
 
-## ✅ What's Done
-- ✅ Backend server created in `../Trinity-Backend/` directory (separate from frontend)
-- ✅ Frontend API client created
-- ✅ Dependencies installed
+Get your Trinity website running in 5 minutes!
 
-## 🔧 What You Need To Do
+## 🔧 Setup Steps
 
 ### Step 1: Get Clash of Clans API Credentials
 
@@ -56,10 +53,17 @@ Your app will now fetch live clan data from the Clash of Clans API.
 - Make sure your IP is whitelisted in the CoC developer portal
 - If your IP changes, create a new API key with the new IP
 
-## 📁 Files You May Want to Edit
+## 📝 Next Steps
 
-- `Trinity/src/config/clans.js` - Add your clan tags here
-- `Trinity-Backend/.env` - Your API credentials (never commit this!)
+### Add Your Clan Tags
+Edit `src/config/clans.js`:
+```javascript
+export const TRINITY_CLAN_TAGS = [
+  '#J9UGCPR2',
+  '#RY8GYCLY',
+  // Add your clan tags...
+]
+```
 
 ## 🐛 Troubleshooting
 
@@ -71,4 +75,8 @@ Your app will now fetch live clan data from the Clash of Clans API.
 
 **IP Address error**
 → Create new API key with your current IP at developer.clashofclans.com
+
+---
+
+📖 For detailed documentation, see [README.md](README.md)
 

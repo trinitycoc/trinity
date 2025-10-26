@@ -6,7 +6,7 @@ function Header() {
     <header className="header">
       <nav className="nav">
         <Link to="/" className="logo">
-          <img src="/Trinity_Logo.png" alt="Trinity Logo" className="logo-image" />
+          <img src={`${import.meta.env.BASE_URL}Trinity_Logo.png`} alt="Trinity Logo" className="logo-image" />
           <h1 className="logo-text">Trinity</h1>
         </Link>
         <ul className="nav-links">

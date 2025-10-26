@@ -15,7 +15,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('/trinity-bg.jpeg');
+    background-image: var(--bg-image-url);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

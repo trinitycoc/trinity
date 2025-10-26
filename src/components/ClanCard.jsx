@@ -47,7 +47,7 @@ function ClanCard({ clan, isLoading, error }) {
         {clan.warLeague && (
           <div className="clan-league-mini">
             <img 
-              src="/cwl.webp" 
+              src={`${import.meta.env.BASE_URL}cwl.webp`}
               alt="CWL badge" 
               className="league-icon-img"
             />
@@ -57,7 +57,7 @@ function ClanCard({ clan, isLoading, error }) {
         
         <div className="clan-capital">
           <img 
-            src="/Capital.webp" 
+            src={`${import.meta.env.BASE_URL}Capital.webp`}
             alt="Capital badge" 
             className="capital-icon-img"
           />

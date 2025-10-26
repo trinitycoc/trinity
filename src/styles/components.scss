@@ -69,11 +69,12 @@
     text-align: center;
     cursor: pointer;
     border: 2px solid rgba(102, 126, 234, 0.15);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
 
     &:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
-      border-color: rgba(102, 126, 234, 0.4);
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(102, 126, 234, 0.2);
+      border-color: rgba(102, 126, 234, 0.35);
       background: rgba(102, 126, 234, 0.08);
 
       .card-icon {
@@ -90,6 +91,7 @@
     .card-title {
       font-size: 1.25rem;
       margin-bottom: 0;
+      font-weight: 700;
     }
   }
 

@@ -25,15 +25,11 @@ function ClanCard({ clan, isLoading, error }) {
 
   return (
     <div className="clan-card clan-card-detailed">
-      {clan.badgeUrls?.medium ? (
-        <img 
-          src={clan.badgeUrls.medium} 
-          alt={`${clan.name} badge`} 
-          className="clan-badge"
-        />
-      ) : (
-        <div className="clan-badge-placeholder">🏰</div>
-      )}
+      <img 
+        src={clan.badgeUrls?.medium || clan.badgeUrls?.small || clan.badgeUrls?.large} 
+        alt={`${clan.name} badge`} 
+        className="clan-badge"
+      />
       
       <h4 className="clan-name">{clan.name}</h4>
       <p className="clan-tag">{clan.tag}</p>
@@ -41,17 +37,20 @@ function ClanCard({ clan, isLoading, error }) {
       <div className="clan-stats">
         <div className="stat">
           <span className="stat-label">Level</span>
-          <span className="stat-value">{clan.clanLevel}</span>
+          <span className="stat-value">{clan.clanLevel ?? 'N/A'}</span>
         </div>
         <div className="stat">
           <span className="stat-label">Members</span>
-          <span className="stat-value">{clan.members}/50</span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">War Wins</span>
-          <span className="stat-value">{clan.warWins}</span>
+          <span className="stat-value">{clan.members ?? 0}/50</span>
         </div>
       </div>
+
+      {clan.leader && (
+        <div className="clan-leader">
+          <span className="leader-icon">👑</span>
+          <span className="leader-name">{clan.leader.name}</span>
+        </div>
+      )}
 
       {clan.warLeague && (
         <div className="clan-league">

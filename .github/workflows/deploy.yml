@@ -43,7 +43,6 @@ jobs:
         working-directory: ./Trinity_Frontend
         env:
           NODE_ENV: production
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

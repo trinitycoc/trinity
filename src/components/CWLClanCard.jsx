@@ -82,15 +82,45 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null }) {
   }
 
   return (
-    <div className="clan-card clan-card-detailed cwl-clan-card" onClick={handleClick}>
-      <img 
-        src={clan.badgeUrls?.medium || clan.badgeUrls?.small || clan.badgeUrls?.large} 
-        alt={`${clan.name} badge`} 
-        className="clan-badge"
-      />
-      
-      <h4 className="clan-name">{clan.name}</h4>
-      <p className="clan-tag">{clan.tag}</p>
+    <div className={`clan-card clan-card-detailed cwl-clan-card clan-status-${clan.type || 'unknown'}`} onClick={handleClick}>
+      {/* Header Row with Badge and Name */}
+      <div className="clan-header-row">
+        <img 
+          src={clan.badgeUrls?.medium || clan.badgeUrls?.small || clan.badgeUrls?.large} 
+          alt={`${clan.name} badge`} 
+          className="clan-badge"
+        />
+        
+        <div className="clan-name-section">
+          <div className="clan-name-status-row">
+            <h4 className="clan-name">{clan.name}</h4>
+            {/* Clan Status - inline with name */}
+            {clan.type && (
+              <div className="clan-status-inline">
+                {clan.type === 'open' && (
+                  <>
+                    <span className="status-icon">🟢</span>
+                    <span className="status-label">Open</span>
+                  </>
+                )}
+                {clan.type === 'inviteOnly' && (
+                  <>
+                    <span className="status-icon">🔵</span>
+                    <span className="status-label">Invite Only</span>
+                  </>
+                )}
+                {clan.type === 'closed' && (
+                  <>
+                    <span className="status-icon">🔴</span>
+                    <span className="status-label">Closed</span>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+          <p className="clan-tag">{clan.tag}</p>
+        </div>
+      </div>
       
       {/* Show Google Sheets data for CWL clans */}
       {sheetData && (

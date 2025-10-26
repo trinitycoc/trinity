@@ -4,67 +4,147 @@
 // Farming Base Layouts Page
 .farming-page {
   @include page-wrapper;
+  max-width: 900px;
+  margin: 0 auto;
+
+  .page-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
 }
 
-.layouts-grid {
-  @include content-grid(300px);
+// Rules List
+.rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
 }
 
-.layout-card {
-  @include card-base;
-  text-align: center;
+// Rule Sections
+.rule-section {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+  border: 2px solid rgba(102, 126, 234, 0.15);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
 
-  h4 {
-    font-size: 1.25rem;
-    margin: $spacing-sm 0;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+    border-color: rgba(102, 126, 234, 0.25);
   }
 
-  p {
+  .section-title {
+    font-size: 1.75rem;
+    margin-bottom: $spacing-sm;
+    color: $primary-color;
+    font-weight: 700;
+  }
+
+  .section-intro {
+    font-size: 1rem;
     color: $text-secondary;
+    margin-bottom: $spacing-xs;
+    font-weight: 600;
   }
-}
 
-.layout-placeholder {
-  width: 100%;
-  height: 200px;
-  background: rgba(102, 126, 234, 0.1);
-  border-radius: $radius-sm;
-  @include flex-center;
-  font-size: 2rem;
-  margin-bottom: $spacing-sm;
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    li {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: $text-primary;
+      padding-left: $spacing-md;
+      position: relative;
+
+      &::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        color: $primary-color;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      strong {
+        color: $primary-color;
+        font-weight: 700;
+      }
+    }
+  }
 }
 
 // Responsive
 @include mobile {
-  .layouts-grid {
-    grid-template-columns: 1fr;
-    gap: $spacing-md;
+  .farming-page {
+    .page-content {
+      gap: 1.5rem;
+    }
   }
 
-  .layout-card {
-    h4 {
-      font-size: 1.125rem;
+  .rules-list {
+    gap: 2rem;
+  }
+
+  .rule-section {
+    padding: $spacing-md;
+
+    .section-title {
+      font-size: 1.5rem;
     }
 
-    p {
+    .section-intro {
       font-size: 0.95rem;
     }
-  }
 
-  .layout-placeholder {
-    height: 150px;
-    font-size: 1.5rem;
+    ul li {
+      font-size: 0.95rem;
+      padding-left: $spacing-sm;
+
+      &::before {
+        font-size: 1rem;
+      }
+    }
   }
 }
 
 // Dark Mode
 @media (prefers-color-scheme: dark) {
-  .layout-card {
-    @include card-dark-mode;
-  }
+  .rule-section {
+    background: linear-gradient(145deg, rgba(31, 41, 55, 0.95) 0%, rgba(17, 24, 39, 0.95) 100%);
+    border-color: rgba(102, 126, 234, 0.25);
 
-  .layout-placeholder {
-    background: rgba(102, 126, 234, 0.15);
+    &:hover {
+      border-color: rgba(102, 126, 234, 0.35);
+    }
+
+    .section-title {
+      color: lighten($primary-color, 15%);
+    }
+
+    .section-intro {
+      color: $text-dark-secondary;
+    }
+
+    ul li {
+      color: $text-dark-primary;
+
+      &::before {
+        color: lighten($primary-color, 15%);
+      }
+
+      strong {
+        color: lighten($primary-color, 15%);
+      }
+    }
   }
 }
 

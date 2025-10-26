@@ -11,11 +11,30 @@
   padding-top: $spacing-xl;
   padding-bottom: $spacing-xl;
   min-height: 500px;
+  position: relative;
+
+  &-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    pointer-events: none;
+    
+    img {
+      width: 600px;
+      height: auto;
+      opacity: 0.08;
+      filter: grayscale(20%);
+    }
+  }
 
   &-content {
     display: flex;
     flex-direction: column;
     gap: $spacing-md;
+    position: relative;
+    z-index: 1;
   }
 
   &-title {
@@ -39,6 +58,8 @@
 
   &-image {
     @include flex-center;
+    position: relative;
+    z-index: 1;
   }
 }
 
@@ -83,6 +104,10 @@
   .hero {
     grid-template-columns: 1fr;
     gap: $spacing-lg;
+
+    &-watermark img {
+      width: 350px;
+    }
 
     &-title {
       font-size: 2.5rem;

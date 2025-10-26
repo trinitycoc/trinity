@@ -4,39 +4,122 @@
 // CWL Page
 .cwl-page {
   @include page-wrapper;
-}
 
-.cwl-info {
-  @include content-grid(300px);
-}
+  .page-description {
+    text-align: center;
+    font-size: 1.125rem;
+    color: $text-secondary;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    line-height: 1.8;
+  }
 
-.info-card {
-  @include card-base;
-  @include card-content;
+  .clans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 0 auto 3rem;
+    max-width: 1400px;
+  }
+
+  .clans-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid rgba(102, 126, 234, 0.15);
+    
+    .info-text {
+      color: $text-secondary;
+      margin: 0.5rem 0;
+      font-size: 0.95rem;
+    }
+  }
+
+  .error-banner {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    border-radius: $radius-md;
+    padding: $spacing-lg;
+    margin-bottom: 2rem;
+    text-align: center;
+
+    p {
+      color: #dc2626;
+      margin: 0.5rem 0;
+      font-weight: 600;
+    }
+
+    .error-hint {
+      font-size: 0.9rem;
+      color: $text-secondary;
+      font-weight: 400;
+      margin-top: 1rem;
+    }
+
+    .error-code {
+      background: rgba(0, 0, 0, 0.05);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #dc2626;
+    }
+  }
+
+  .no-data-message {
+    text-align: center;
+    padding: 3rem;
+    color: $text-secondary;
+    font-size: 1.125rem;
+  }
 }
 
 // Responsive
 @include mobile {
-  .cwl-info {
-    grid-template-columns: 1fr;
-    gap: $spacing-md;
-  }
-
-  .info-card {
-    h4 {
-      font-size: 1.25rem;
+  .cwl-page {
+    .page-description {
+      font-size: 1rem;
+      margin-bottom: 2rem;
     }
 
-    p {
-      font-size: 0.95rem;
+    .clans-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
     }
   }
 }
 
 // Dark Mode
 @media (prefers-color-scheme: dark) {
-  .info-card {
-    @include card-dark-mode;
+  .cwl-page {
+    .page-description {
+      color: $text-dark-secondary;
+    }
+
+    .clans-footer .info-text {
+      color: $text-dark-secondary;
+    }
+
+    .error-banner {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.15) 100%);
+      
+      p {
+        color: #f87171;
+      }
+
+      .error-hint {
+        color: $text-dark-secondary;
+      }
+
+      .error-code {
+        background: rgba(255, 255, 255, 0.05);
+        color: #f87171;
+      }
+    }
+
+    .no-data-message {
+      color: $text-dark-secondary;
+    }
   }
 }
 

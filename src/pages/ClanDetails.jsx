@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { fetchClan, fetchClanWarLog, fetchClanWar, fetchClanCapitalRaids } from '../services/api'
+import { CWL_CLAN_TAGS } from '../config/clans'
 import ClanHeader from '../components/clan-details/ClanHeader'
 import ClanDescription from '../components/clan-details/ClanDescription'
 import TownHallComposition from '../components/clan-details/TownHallComposition'
@@ -21,6 +22,9 @@ function ClanDetails() {
   const [showWarLog, setShowWarLog] = useState(false)
   const [showCurrentWar, setShowCurrentWar] = useState(false)
   const [showCapitalRaids, setShowCapitalRaids] = useState(false)
+  
+  // Check if this is a CWL clan
+  const isCWLClan = clan && CWL_CLAN_TAGS.includes(clan.tag)
 
   useEffect(() => {
     const loadClanDetails = async () => {
@@ -77,8 +81,8 @@ function ClanDetails() {
         <div className="error-container">
           <h2>❌ Error Loading Clan</h2>
           <p>{error}</p>
-          <button className="btn btn-primary" onClick={() => navigate('/clans')}>
-            Back to Clans
+          <button className="btn btn-primary" onClick={() => navigate(-1)}>
+            ← Back
           </button>
         </div>
       </section>
@@ -91,8 +95,8 @@ function ClanDetails() {
         <div className="error-container">
           <h2>⚠️ No Clan Data</h2>
           <p>Clan data could not be loaded</p>
-          <button className="btn btn-primary" onClick={() => navigate('/clans')}>
-            Back to Clans
+          <button className="btn btn-primary" onClick={() => navigate(-1)}>
+            ← Back
           </button>
         </div>
       </section>
@@ -101,8 +105,8 @@ function ClanDetails() {
 
   return (
     <section className="clan-details-page">
-      <button className="back-button" onClick={() => navigate('/clans')}>
-        ← Back to Clans
+      <button className="back-button" onClick={() => navigate(-1)}>
+        ← Back
       </button>
 
       <div className="clan-details-header">
@@ -121,6 +125,7 @@ function ClanDetails() {
           setShowCurrentWar={setShowCurrentWar}
           setShowWarLog={setShowWarLog}
           setShowCapitalRaids={setShowCapitalRaids}
+          isCWLClan={isCWLClan}
         />
       </div>
 

@@ -1,47 +1,46 @@
 import React from 'react'
 import SectionTitle from '../components/SectionTitle'
-import Card from '../components/Card'
 
 function About() {
-  const features = [
-    {
-      icon: '⚡',
-      title: 'Lightning Fast',
-      description: 'Built with Vite for blazing fast development and optimized builds'
-    },
-    {
-      icon: '🎨',
-      title: 'Modern Design',
-      description: 'Clean and responsive UI that works on all devices'
-    },
-    {
-      icon: '🚀',
-      title: 'Easy Deploy',
-      description: 'One command deployment to GitHub Pages'
-    }
-  ]
-
   return (
     <section className="about">
       <SectionTitle>About Trinity</SectionTitle>
-      <div className="about-content">
-        <p className="about-description">
-          Trinity is a family of Clash of Clans clans dedicated to providing the best gaming experience 
-          for players of all levels. We focus on teamwork, strategy, and having fun together.
-        </p>
-      </div>
       
-      <SectionTitle>Features</SectionTitle>
-      <div className="feature-grid">
-        {features.map((feature, index) => (
-          <Card
-            key={index}
-            icon={feature.icon}
-            title={feature.title}
-            description={feature.description}
-            variant="feature"
-          />
-        ))}
+      <div className="about-hero">
+        <div className="about-intro">
+          <h3>Trinity Family of Clans</h3>
+          <p>Led by Hell Raiser, Trinity is a thriving community of 8 Clash of Clans clans united by passion, strategy, and excellence.</p>
+        </div>
+      </div>
+
+      <div className="about-features">
+        <div className="about-card">
+          <div className="card-icon">👥</div>
+          <h4>8 Clans Strong</h4>
+          <p>A diverse family of clans welcoming players of all skill levels and Town Hall tiers.</p>
+        </div>
+
+        <div className="about-card">
+          <div className="card-icon">🌍</div>
+          <h4>GFL Member</h4>
+          <p>Proud member of the Global Farming League (GFL), competing at the highest level.</p>
+        </div>
+
+        <div className="about-card">
+          <div className="card-icon">⚔️</div>
+          <h4>50 vs 50 Wars</h4>
+          <p>Regular large-scale wars bringing our entire community together for epic battles.</p>
+        </div>
+
+        <div className="about-card">
+          <div className="card-icon">🏆</div>
+          <h4>CWL Organization</h4>
+          <p>Organized CWL in satellite clans, offering high leagues for competitive players.</p>
+        </div>
+      </div>
+
+      <div className="about-cta">
+        <p>Explore our clans in the <strong>Clans</strong> section and find CWL opportunities in the <strong>CWL</strong> section.</p>
       </div>
     </section>
   )

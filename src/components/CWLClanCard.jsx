@@ -1,0 +1,143 @@
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import cwlImage from '/cwl.webp'
+
+function CWLClanCard({ clan, isLoading, error, sheetData = null }) {
+  const navigate = useNavigate()
+
+  // Calculate matching TH count based on sheet requirements
+  const calculateTHCount = () => {
+    if (!sheetData?.townHall || !clan?.memberList) return null
+
+    const thRequirement = sheetData.townHall.toLowerCase()
+    
+    // Parse TH levels from the requirement string
+    const thNumbers = []
+    const matches = thRequirement.match(/th\s*(\d+)/gi)
+    
+    if (matches) {
+      matches.forEach(match => {
+        const num = parseInt(match.replace(/th\s*/i, ''))
+        if (!isNaN(num)) thNumbers.push(num)
+      })
+    }
+
+    if (thNumbers.length === 0) return null
+
+    // Determine if it's "and below" requirement
+    const isAndBelow = thRequirement.includes('and below') || thRequirement.includes('below')
+    
+    // Get min and max TH from requirements
+    const minTH = Math.min(...thNumbers)
+    const maxTH = Math.max(...thNumbers)
+
+    // Count members matching the criteria
+    let count = 0
+    if (isAndBelow) {
+      // Count members with TH <= maxTH
+      count = clan.memberList.filter(member => member.townHallLevel <= maxTH).length
+      return `${count}`
+    } else if (thNumbers.length === 1) {
+      // Single TH requirement
+      count = clan.memberList.filter(member => member.townHallLevel === thNumbers[0]).length
+      return `${count}`
+    } else {
+      // Multiple TH requirements (e.g., Th17, Th16, Th15)
+      count = clan.memberList.filter(member => 
+        member.townHallLevel >= minTH && member.townHallLevel <= maxTH
+      ).length
+      return `${count}`
+    }
+  }
+
+  const thCount = calculateTHCount()
+
+  const handleClick = () => {
+    if (clan && clan.tag) {
+      // Navigate to clan details page with the clan tag (remove # for URL)
+      navigate(`/clans/${clan.tag.replace('#', '')}`)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="clan-card clan-card-loading">
+        <div className="clan-loading">
+          <div className="spinner"></div>
+          <p>Loading CWL clan data...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !clan) {
+    return (
+      <div className="clan-card clan-card-error">
+        <div className="clan-icon">❌</div>
+        <h4>{clan?.tag || 'Unknown'}</h4>
+        <p className="error-message">Failed to load clan data</p>
+        <p className="error-hint">Check clan tag or API connection</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="clan-card clan-card-detailed cwl-clan-card" onClick={handleClick}>
+      <img 
+        src={clan.badgeUrls?.medium || clan.badgeUrls?.small || clan.badgeUrls?.large} 
+        alt={`${clan.name} badge`} 
+        className="clan-badge"
+      />
+      
+      <h4 className="clan-name">{clan.name}</h4>
+      <p className="clan-tag">{clan.tag}</p>
+      
+      {/* Show Google Sheets data for CWL clans */}
+      {sheetData && (
+        <div className="clan-sheet-info">
+          {sheetData.format && (
+            <div className="sheet-info-item">
+              <span className="info-label">Format:</span>
+              <span className="info-value">{sheetData.format}</span>
+            </div>
+          )}
+          {sheetData.members && (
+            <div className="sheet-info-item">
+              <span className="info-label">Allowed Members:</span>
+              <span className="info-value">{sheetData.members}</span>
+            </div>
+          )}
+          {sheetData.townHall && (
+            <div className="sheet-info-item">
+              <span className="info-label">TH Allowed:</span>
+              <span className="info-value">{sheetData.townHall}</span>
+            </div>
+          )}
+          {thCount && (
+            <div className="sheet-info-item">
+              <span className="info-label">Eligible Members:</span>
+              <span className="info-value">{thCount}</span>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* CWL League Badge */}
+      <div className="clan-info-row">
+        {clan.warLeague && (
+          <div className="clan-league-mini">
+            <img 
+              src={cwlImage}
+              alt="CWL badge" 
+              className="league-icon-img"
+            />
+            <span className="league-name">{clan.warLeague.name}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default CWLClanCard
+

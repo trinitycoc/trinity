@@ -77,10 +77,8 @@ function Clans() {
 
       <div className="clans-grid">
         {loading ? (
-          // Show loading skeletons
-          TRINITY_CLAN_TAGS.filter(tag => tag !== '#YOUR_CLAN_TAG').map((tag, index) => (
-            <ClanCard key={index} isLoading={true} />
-          ))
+          // Show single loading skeleton
+          <ClanCard isLoading={true} />
         ) : clansData.length > 0 ? (
           // Show clan cards with fetched data
           clansData.map((clan) => (

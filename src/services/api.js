@@ -1,0 +1,122 @@
+// API client for making requests to the backend server
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+
+/**
+ * Fetch a single clan by tag
+ */
+export const fetchClan = async (clanTag) => {
+  try {
+    // Remove # from tag for URL encoding
+    const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
+    const response = await fetch(`${API_BASE_URL}/clans/${encodedTag}`)
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch clan: ${response.statusText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching clan:', error)
+    throw error
+  }
+}
+
+/**
+ * Fetch multiple clans by tags
+ */
+export const fetchMultipleClans = async (clanTags) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/clans/multiple`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ clanTags }),
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch clans: ${response.statusText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching multiple clans:', error)
+    throw error
+  }
+}
+
+/**
+ * Search clans by name
+ */
+export const searchClans = async (name, limit = 10) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/clans/search/${encodeURIComponent(name)}?limit=${limit}`)
+    
+    if (!response.ok) {
+      throw new Error(`Failed to search clans: ${response.statusText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error('Error searching clans:', error)
+    throw error
+  }
+}
+
+/**
+ * Get current war for a clan
+ */
+export const fetchClanWar = async (clanTag) => {
+  try {
+    const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
+    const response = await fetch(`${API_BASE_URL}/clans/${encodedTag}/war`)
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch war data: ${response.statusText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching war data:', error)
+    throw error
+  }
+}
+
+/**
+ * Get CWL group for a clan
+ */
+export const fetchClanCWL = async (clanTag) => {
+  try {
+    const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
+    const response = await fetch(`${API_BASE_URL}/clans/${encodedTag}/cwl`)
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch CWL data: ${response.statusText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching CWL data:', error)
+    throw error
+  }
+}
+
+/**
+ * Check if backend server is running
+ */
+export const checkServerHealth = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/health`)
+    
+    if (!response.ok) {
+      return false
+    }
+    
+    const data = await response.json()
+    return data.status === 'ok'
+  } catch (error) {
+    return false
+  }
+}
+

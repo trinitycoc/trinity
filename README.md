@@ -1,165 +1,222 @@
-# Trinity
+# Trinity Frontend
 
-A modern, responsive React website built with Vite and ready for deployment on GitHub Pages.
+A modern, professional React website for Trinity Clash of Clans family - built with Vite, React Router, and SCSS.
 
-## Features
+> **Note:** This is the frontend only. The backend API server is in a separate repository: `Trinity-Backend/`
+
+## 🌟 Features
 
 - ⚡ **Lightning Fast** - Built with Vite for optimal performance
 - 🎨 **Modern Design** - Clean, responsive UI with smooth animations
-- 💅 **SCSS Styling** - Powered by SCSS with variables, mixins, and nesting
+- 💅 **SCSS Styling** - Organized styles with variables, mixins, and nesting
 - 🌙 **Dark Mode** - Automatic dark mode based on system preferences
-- 🚀 **Easy Deployment** - One-command deployment to GitHub Pages
+- 🧭 **React Router** - Multi-page navigation with client-side routing
+- 📦 **Component-Based** - Reusable components and clean architecture
+- 🎮 **Live Clan Data** - Real-time data from Clash of Clans API via backend
+- 🚀 **Easy Deploy** - One-command deployment to GitHub Pages
 
-## Getting Started
+## 📁 Project Structure
+
+```
+Trinity/
+├── src/
+│   ├── components/         # Reusable UI components
+│   │   ├── Button.jsx
+│   │   ├── Card.jsx
+│   │   ├── ClanCard.jsx
+│   │   └── SectionTitle.jsx
+│   ├── layouts/           # Layout wrappers
+│   │   ├── Header.jsx
+│   │   ├── Footer.jsx
+│   │   └── MainLayout.jsx
+│   ├── pages/             # Route-level pages
+│   │   ├── Home.jsx
+│   │   ├── About.jsx
+│   │   ├── Clans.jsx
+│   │   ├── CWL.jsx
+│   │   ├── FarmingBaseLayouts.jsx
+│   │   └── Contact.jsx
+│   ├── services/          # API client
+│   │   └── api.js         # Calls backend API
+│   ├── config/            # Configuration
+│   │   └── clans.js       # Trinity clan tags
+│   ├── styles/            # SCSS styles
+│   │   ├── variables.scss
+│   │   ├── mixins.scss
+│   │   ├── base.scss
+│   │   ├── layouts.scss
+│   │   ├── components.scss
+│   │   ├── pages.scss
+│   │   └── main.scss
+│   ├── App.jsx
+│   └── main.jsx
+├── public/
+│   ├── Trinity_Logo.png
+│   └── trinity-bg.jpeg
+├── package.json
+├── vite.config.js
+└── README.md
+```
+
+## 🚀 Quick Start
 
 ### Prerequisites
-
-- Node.js (version 18 or higher)
+- Node.js 18+
 - npm or yarn
+- Backend server running (see `Trinity-Backend` repository)
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone and install:**
 ```bash
 git clone https://github.com/YOUR_USERNAME/Trinity.git
 cd Trinity
-```
-
-2. Install dependencies:
-```bash
 npm install
 ```
 
-3. Start the development server:
+2. **Configure clan tags** in `src/config/clans.js`:
+```javascript
+export const TRINITY_CLAN_TAGS = [
+  '#J9UGCPR2',
+  '#YOUR_CLAN_TAG',
+  // Add your clan tags...
+]
+```
+
+3. **Start development server:**
 ```bash
 npm run dev
 ```
 
-The site will be available at `http://localhost:5173`
+Visit `http://localhost:5173`
 
-## Building for Production
+## 🔗 Backend Setup
 
-To create a production build:
+This frontend requires the backend server to fetch live clan data.
 
+**Backend Repository:** `Trinity-Backend/` (separate directory)
+
+**Quick Backend Start:**
 ```bash
-npm run build
+cd ../Trinity-Backend
+npm install
+# Create .env with your CoC API credentials
+npm run dev
 ```
 
-To preview the production build locally:
+The backend should run on `http://localhost:3001`
 
-```bash
-npm run preview
-```
+For detailed backend setup, see `SETUP.md`
 
-## Deploying to GitHub Pages
+## 📜 Available Scripts
 
-### Method 1: Manual Deployment
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run deploy` - Deploy to GitHub Pages
 
-1. Update the `base` in `vite.config.js` to match your repository name:
+## 🎨 Pages
+
+- **Home** - Welcome hero section
+- **About** - Trinity information and features
+- **Clans** - Live clan data grid with stats
+- **CWL** - Clan War League information
+- **Farming Base Layouts** - Base layout resources
+- **Contact** - Contact methods
+
+## 🛠️ Technologies
+
+- [React 18](https://react.dev/)
+- [React Router 6](https://reactrouter.com/)
+- [Vite](https://vitejs.dev/)
+- [SCSS](https://sass-lang.com/)
+
+## 🌐 Deployment
+
+### GitHub Pages
+
+1. Update `vite.config.js`:
 ```javascript
-base: '/YOUR-REPO-NAME/',
+export default defineConfig(({ mode }) => ({
+  plugins: [react()],
+  base: mode === 'production' ? '/Trinity/' : '/',
+}))
 ```
 
-2. Run the deploy command:
+2. Update `src/App.jsx`:
+```javascript
+const basename = import.meta.env.MODE === 'production' ? '/Trinity/' : '/'
+```
+
+3. Deploy:
 ```bash
 npm run deploy
 ```
 
-This will build your site and push it to the `gh-pages` branch.
+Your site will be live at: `https://YOUR_USERNAME.github.io/Trinity/`
 
-### Method 2: Automatic Deployment with GitHub Actions
+**Important:** The backend must be deployed separately to a Node.js hosting service (Heroku, Railway, Render, etc.)
 
-The project includes a GitHub Actions workflow that automatically deploys your site when you push to the `main` branch.
+## 🔧 Configuration
 
-**Setup Steps:**
+### API Endpoint
 
-1. Go to your GitHub repository settings
-2. Navigate to **Settings > Pages**
-3. Under "Build and deployment":
-   - Source: Select **GitHub Actions**
-   
-4. Update the `base` in `vite.config.js` to match your repository name:
+By default, the frontend calls `http://localhost:3001/api` for development.
+
+To change the API URL:
+1. Create `.env` file:
+```env
+VITE_API_URL=https://your-backend-url.com/api
+```
+
+2. The frontend automatically uses this in `src/services/api.js`
+
+### Clan Tags
+
+Edit `src/config/clans.js` to manage your Trinity family clans:
 ```javascript
-base: '/YOUR-REPO-NAME/',
+export const TRINITY_CLAN_TAGS = [
+  '#J9UGCPR2',
+  '#ANOTHER_TAG',
+  // Add more...
+]
 ```
 
-5. Commit and push your changes to the `main` branch:
-```bash
-git add .
-git commit -m "Configure for GitHub Pages"
-git push origin main
-```
+## 🐛 Troubleshooting
 
-The GitHub Actions workflow will automatically build and deploy your site. You can monitor the deployment progress in the **Actions** tab of your repository.
+### Backend Connection Error
+**Error:** "Backend server is not running"
 
-Your site will be available at: `https://YOUR_USERNAME.github.io/YOUR-REPO-NAME/`
+**Fix:** 
+1. Navigate to backend: `cd ../Trinity-Backend`
+2. Start server: `npm run dev`
+3. Verify it's running at `http://localhost:3001/api/health`
 
-## Project Structure
+### CORS Errors
+The backend is configured to accept requests from the frontend. If you get CORS errors, check the backend's CORS configuration in `Trinity-Backend/index.js`.
 
-```
-Trinity/
-├── .github/
-│   └── workflows/
-│       └── deploy.yml          # GitHub Actions workflow
-├── public/
-│   └── vite.svg               # Public assets
-├── src/
-│   ├── App.jsx                # Main App component
-│   ├── App.scss               # App styles with SCSS
-│   ├── main.jsx               # Entry point
-│   └── index.scss             # Global styles with SCSS
-├── index.html                 # HTML template
-├── package.json               # Dependencies and scripts
-├── vite.config.js             # Vite configuration
-└── README.md                  # This file
-```
+### Blank Page
+1. Check browser console (F12) for errors
+2. Ensure both frontend and backend are running
+3. Verify API URL is correct
 
-## Customization
+## 📖 Documentation
 
-### Change Colors
+- `QUICKSTART.md` - Quick start guide
+- `SETUP.md` - Complete setup with backend
+- `Trinity-Backend/README.md` - Backend API documentation
 
-Edit the SCSS variables in `src/App.scss`:
-```scss
-$primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-$primary-color: #667eea;
-$secondary-color: #764ba2;
-```
+## 📄 License
 
-### Modify Content
+MIT License - Feel free to use this template!
 
-Edit the content in `src/App.jsx` to customize the hero section, features, and other content.
+## 🤝 Support
 
-### SCSS Features
-
-The project uses SCSS with:
-- **Variables** for colors and breakpoints
-- **Mixins** for reusable styles
-- **Nesting** for cleaner code
-- **BEM-style** class naming
-
-### Add Pages
-
-To add more pages/routes, consider installing React Router:
-```bash
-npm install react-router-dom
-```
-
-## Technologies Used
-
-- [React 18](https://react.dev/) - UI library
-- [Vite](https://vitejs.dev/) - Build tool
-- [SCSS](https://sass-lang.com/) - CSS preprocessor
-- [GitHub Pages](https://pages.github.com/) - Hosting
-
-## License
-
-MIT License - feel free to use this template for your own projects!
-
-## Support
-
-If you have any questions or issues, please open an issue on GitHub.
+For issues related to:
+- **Frontend:** Open an issue on this repository
+- **Backend:** Check `Trinity-Backend` repository
+- **CoC API:** Visit [developer.clashofclans.com](https://developer.clashofclans.com)
 
 ---
 
 Built with ❤️ using React + Vite
-

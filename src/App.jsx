@@ -12,7 +12,7 @@ import './styles/main.scss'
 
 function App() {
   // Base path for GitHub Pages deployment
-  const basename = import.meta.env.MODE === 'production' ? '/Trinity' : ''
+  const basename = import.meta.env.MODE === 'production' ? '/trinity' : ''
   
   return (
     <BrowserRouter basename={basename}>

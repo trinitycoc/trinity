@@ -1,5 +1,11 @@
 import React from 'react'
 import SectionTitle from '../components/SectionTitle'
+import th17Image from '/th-17.png'
+import th16Image from '/th-16.png'
+import th15Image from '/th-15.png'
+import th14Image from '/th-14.png'
+import th13Image from '/th-13.png'
+import th12Image from '/th-12.png'
 
 function FarmingBaseLayouts() {
   return (
@@ -91,6 +97,7 @@ function FarmingBaseLayouts() {
               rel="noopener noreferrer"
               className="base-link-card"
             >
+              <img src={th17Image} alt="TH17" className="base-link-image" />
               <span className="base-link-th">TH17</span>
             </a>
 
@@ -100,6 +107,7 @@ function FarmingBaseLayouts() {
               rel="noopener noreferrer"
               className="base-link-card"
             >
+              <img src={th16Image} alt="TH16" className="base-link-image" />
               <span className="base-link-th">TH16</span>
             </a>
 
@@ -109,6 +117,7 @@ function FarmingBaseLayouts() {
               rel="noopener noreferrer"
               className="base-link-card"
             >
+              <img src={th15Image} alt="TH15" className="base-link-image" />
               <span className="base-link-th">TH15</span>
             </a>
 
@@ -118,6 +127,7 @@ function FarmingBaseLayouts() {
               rel="noopener noreferrer"
               className="base-link-card"
             >
+              <img src={th14Image} alt="TH14" className="base-link-image" />
               <span className="base-link-th">TH14</span>
             </a>
 
@@ -127,6 +137,7 @@ function FarmingBaseLayouts() {
               rel="noopener noreferrer"
               className="base-link-card"
             >
+              <img src={th13Image} alt="TH13" className="base-link-image" />
               <span className="base-link-th">TH13</span>
             </a>
 
@@ -136,6 +147,7 @@ function FarmingBaseLayouts() {
               rel="noopener noreferrer"
               className="base-link-card"
             >
+              <img src={th12Image} alt="TH12" className="base-link-image" />
               <span className="base-link-th">TH12</span>
             </a>
           </div>

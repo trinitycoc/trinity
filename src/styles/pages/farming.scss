@@ -121,18 +121,25 @@
   text-decoration: none;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
   transition: all 0.3s ease;
-  min-height: 100px;
+  min-height: 140px;
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
   }
 
+  .base-link-image {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: $spacing-xs;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+
   .base-link-th {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: white;
-    margin-bottom: $spacing-xs;
   }
 
   .base-link-arrow {
@@ -192,10 +199,15 @@
 
   .base-link-card {
     padding: $spacing-md;
-    min-height: 80px;
+    min-height: 120px;
+
+    .base-link-image {
+      width: 50px;
+      height: 50px;
+    }
 
     .base-link-th {
-      font-size: 1.25rem;
+      font-size: 1.125rem;
     }
 
     .base-link-arrow {

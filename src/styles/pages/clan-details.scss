@@ -216,12 +216,22 @@
 
       .th-label {
         display: flex;
+        align-items: center;
         justify-content: space-between;
         font-weight: 600;
+        gap: $spacing-xs;
+
+        .th-icon {
+          width: 28px;
+          height: 28px;
+          object-fit: contain;
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
 
         .th-level {
           font-size: 1.1rem;
           color: $primary-color;
+          margin-right: auto;
         }
 
         .th-count {
@@ -708,6 +718,11 @@
     .th-composition {
       .th-label {
         font-size: 0.9rem;
+
+        .th-icon {
+          width: 24px;
+          height: 24px;
+        }
       }
 
       .th-bar {

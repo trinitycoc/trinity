@@ -1,5 +1,6 @@
 import React from 'react'
 import SectionTitle from '../SectionTitle'
+import cwlImage from '/cwl.webp'
 
 function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, showCapitalRaids, setShowCurrentWar, setShowWarLog, setShowCapitalRaids }) {
   return (
@@ -23,7 +24,7 @@ function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, show
         {clan.warLeague?.name && (
           <div className="clan-info-item clan-info-inline">
             <span className="info-value">
-              <img src="/cwl.webp" alt="CWL" className="cwl-icon-inline" /> {clan.warLeague.name}
+              <img src={cwlImage} alt="CWL" className="cwl-icon-inline" /> {clan.warLeague.name}
             </span>
           </div>
         )}

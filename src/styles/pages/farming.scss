@@ -82,6 +82,66 @@
   }
 }
 
+// Base Links Section
+.base-links-section {
+  margin-top: 2rem;
+  text-align: center;
+
+  .links-title {
+    font-size: 2rem;
+    margin-bottom: $spacing-sm;
+    color: $primary-color;
+    font-weight: 700;
+  }
+
+  .links-description {
+    font-size: 1.125rem;
+    color: $text-secondary;
+    margin-bottom: $spacing-lg;
+    line-height: 1.6;
+  }
+}
+
+.base-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: $spacing-md;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.base-link-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  background: $primary-gradient;
+  border-radius: $radius-lg;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  min-height: 100px;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  }
+
+  .base-link-th {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: $spacing-xs;
+  }
+
+  .base-link-arrow {
+    font-size: 1.5rem;
+    color: white;
+    opacity: 0.9;
+  }
+}
+
 // Responsive
 @include mobile {
   .farming-page {
@@ -112,6 +172,34 @@
       &::before {
         font-size: 1rem;
       }
+    }
+  }
+
+  .base-links-section {
+    .links-title {
+      font-size: 1.5rem;
+    }
+
+    .links-description {
+      font-size: 1rem;
+    }
+  }
+
+  .base-links-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-sm;
+  }
+
+  .base-link-card {
+    padding: $spacing-md;
+    min-height: 80px;
+
+    .base-link-th {
+      font-size: 1.25rem;
+    }
+
+    .base-link-arrow {
+      font-size: 1.25rem;
     }
   }
 }
@@ -146,5 +234,23 @@
       }
     }
   }
-}
 
+  .base-links-section {
+    .links-title {
+      color: lighten($primary-color, 15%);
+    }
+
+    .links-description {
+      color: $text-dark-secondary;
+    }
+  }
+
+  .base-link-card {
+    background: $primary-gradient;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+
+    &:hover {
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+    }
+  }
+}

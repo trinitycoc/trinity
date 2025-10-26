@@ -77,6 +77,70 @@ function FarmingBaseLayouts() {
           </div>
         </div>
 
+        {/* Base Layout Links */}
+        <div className="base-links-section">
+          <h3 className="links-title">📋 Copy Farm War Layouts</h3>
+          <p className="links-description">
+            The links below allow you to directly copy a farm war layout for any TH level!
+          </p>
+          
+          <div className="base-links-grid">
+            <a 
+              href="https://link.clashofclans.com/en?action=OpenLayout&id=TH17%3AWB%3AAAAASQAAAAH7Ro8xiCMQ04FOKPXoE4Bu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="base-link-card"
+            >
+              <span className="base-link-th">TH17</span>
+            </a>
+
+            <a 
+              href="https://link.clashofclans.com/en?action=OpenLayout&id=TH16%3AWB%3AAAAAFAAAAAKVSF59rsHsGIF4LfJeXhCS"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="base-link-card"
+            >
+              <span className="base-link-th">TH16</span>
+            </a>
+
+            <a 
+              href="https://link.clashofclans.com/en?action=OpenLayout&id=TH15%3AWB%3AAAAACAAAAALIH4f53xM6pggJHTwWvF5_"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="base-link-card"
+            >
+              <span className="base-link-th">TH15</span>
+            </a>
+
+            <a 
+              href="https://link.clashofclans.com/en?action=OpenLayout&id=TH14%3AWB%3AAAAAXQAAAAG1_9Za4FikUiFTsiZAoYew"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="base-link-card"
+            >
+              <span className="base-link-th">TH14</span>
+            </a>
+
+            <a 
+              href="https://link.clashofclans.com/en?action=OpenLayout&id=TH13%3AWB%3AAAAAFAAAAAKOTjVupZ084j5rcN4mi6qz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="base-link-card"
+            >
+              <span className="base-link-th">TH13</span>
+            </a>
+
+            <a 
+              href="https://link.clashofclans.com/en?action=OpenLayout&id=TH12%3AWB%3AAAAAUQAAAAHVDfJe2UzXU9dHXBoRIdzj"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="base-link-card"
+            >
+              <span className="base-link-th">TH12</span>
+            </a>
+          </div>
+        </div>
+
       </div>
     </section>
   )

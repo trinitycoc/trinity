@@ -1,0 +1,69 @@
+@import '../variables';
+@import '../mixins';
+
+// Contact Page
+.contact-page {
+  @include page-wrapper;
+}
+
+.contact-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.contact-methods {
+  @include content-grid(280px);
+}
+
+.contact-card {
+  @include card-base($spacing-xl $spacing-lg);
+  text-align: center;
+
+  h4 {
+    font-size: 1.5rem;
+    margin: $spacing-sm 0;
+  }
+
+  p {
+    color: $text-secondary;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.contact-icon {
+  font-size: 3rem;
+  margin-bottom: $spacing-sm;
+}
+
+// Responsive
+@include mobile {
+  .contact-methods {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+
+  .contact-card {
+    padding: $spacing-lg;
+
+    h4 {
+      font-size: 1.25rem;
+    }
+
+    p {
+      font-size: 0.95rem;
+      margin-bottom: $spacing-md;
+    }
+  }
+
+  .contact-icon {
+    font-size: 2.5rem;
+  }
+}
+
+// Dark Mode
+@media (prefers-color-scheme: dark) {
+  .contact-card {
+    @include card-dark-mode;
+  }
+}
+

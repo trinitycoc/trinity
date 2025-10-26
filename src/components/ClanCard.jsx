@@ -51,7 +51,7 @@ function ClanCard({ clan, isLoading, error }) {
               alt="CWL badge" 
               className="league-icon-img"
             />
-            <span className="league-name">{clan.warLeague}</span>
+            <span className="league-name">{clan.warLeague.name}</span>
           </div>
         )}
         

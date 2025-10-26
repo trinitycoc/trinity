@@ -1,0 +1,42 @@
+@import '../variables';
+@import '../mixins';
+
+// CWL Page
+.cwl-page {
+  @include page-wrapper;
+}
+
+.cwl-info {
+  @include content-grid(300px);
+}
+
+.info-card {
+  @include card-base;
+  @include card-content;
+}
+
+// Responsive
+@include mobile {
+  .cwl-info {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+
+  .info-card {
+    h4 {
+      font-size: 1.25rem;
+    }
+
+    p {
+      font-size: 0.95rem;
+    }
+  }
+}
+
+// Dark Mode
+@media (prefers-color-scheme: dark) {
+  .info-card {
+    @include card-dark-mode;
+  }
+}
+

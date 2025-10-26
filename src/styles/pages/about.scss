@@ -1,0 +1,51 @@
+@import '../variables';
+@import '../mixins';
+
+// About Page
+.about {
+  @include page-wrapper;
+
+  &-content {
+    max-width: 800px;
+    margin: 0 auto 4rem;
+  }
+
+  &-description {
+    font-size: 1.125rem;
+    color: $text-secondary;
+    text-align: center;
+    line-height: 1.8;
+  }
+}
+
+.feature-grid {
+  @include content-grid(280px);
+  margin-top: 0; // Override default margin-top from mixin
+}
+
+// Responsive
+@include mobile {
+  .about {
+    &-content {
+      margin-bottom: 2rem;
+    }
+
+    &-description {
+      font-size: 1rem;
+      padding: 0 $spacing-sm;
+    }
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+}
+
+// Dark Mode
+@media (prefers-color-scheme: dark) {
+  .about-description {
+    color: $text-dark-secondary;
+  }
+}
+

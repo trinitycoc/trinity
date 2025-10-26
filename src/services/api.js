@@ -48,24 +48,6 @@ export const fetchMultipleClans = async (clanTags) => {
 }
 
 /**
- * Search clans by name
- */
-export const searchClans = async (name, limit = 10) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/clans/search/${encodeURIComponent(name)}?limit=${limit}`)
-    
-    if (!response.ok) {
-      throw new Error(`Failed to search clans: ${response.statusText}`)
-    }
-    
-    return await response.json()
-  } catch (error) {
-    console.error('Error searching clans:', error)
-    throw error
-  }
-}
-
-/**
  * Get current war for a clan
  */
 export const fetchClanWar = async (clanTag) => {
@@ -80,25 +62,6 @@ export const fetchClanWar = async (clanTag) => {
     return await response.json()
   } catch (error) {
     console.error('Error fetching war data:', error)
-    throw error
-  }
-}
-
-/**
- * Get CWL group for a clan
- */
-export const fetchClanCWL = async (clanTag) => {
-  try {
-    const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
-    const response = await fetch(`${API_BASE_URL}/clans/${encodedTag}/cwl`)
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch CWL data: ${response.statusText}`)
-    }
-    
-    return await response.json()
-  } catch (error) {
-    console.error('Error fetching CWL data:', error)
     throw error
   }
 }

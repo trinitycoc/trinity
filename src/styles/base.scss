@@ -27,10 +27,22 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 #root {
   width: 100%;
+}
+
+// Mobile Responsive
+@media (max-width: 768px) {
+  :root {
+    font-size: 14px;
+  }
+
+  body {
+    min-width: 280px;
+  }
 }
 
 // Dark Mode

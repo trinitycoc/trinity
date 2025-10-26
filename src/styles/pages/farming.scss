@@ -1,0 +1,70 @@
+@import '../variables';
+@import '../mixins';
+
+// Farming Base Layouts Page
+.farming-page {
+  @include page-wrapper;
+}
+
+.layouts-grid {
+  @include content-grid(300px);
+}
+
+.layout-card {
+  @include card-base;
+  text-align: center;
+
+  h4 {
+    font-size: 1.25rem;
+    margin: $spacing-sm 0;
+  }
+
+  p {
+    color: $text-secondary;
+  }
+}
+
+.layout-placeholder {
+  width: 100%;
+  height: 200px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: $radius-sm;
+  @include flex-center;
+  font-size: 2rem;
+  margin-bottom: $spacing-sm;
+}
+
+// Responsive
+@include mobile {
+  .layouts-grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+
+  .layout-card {
+    h4 {
+      font-size: 1.125rem;
+    }
+
+    p {
+      font-size: 0.95rem;
+    }
+  }
+
+  .layout-placeholder {
+    height: 150px;
+    font-size: 1.5rem;
+  }
+}
+
+// Dark Mode
+@media (prefers-color-scheme: dark) {
+  .layout-card {
+    @include card-dark-mode;
+  }
+
+  .layout-placeholder {
+    background: rgba(102, 126, 234, 0.15);
+  }
+}
+

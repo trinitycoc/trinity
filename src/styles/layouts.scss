@@ -117,8 +117,52 @@
 
 // Responsive
 @include mobile {
-  .nav-links {
+  .main {
+    padding: $spacing-md $spacing-sm;
+  }
+
+  .header {
+    padding: $spacing-sm;
+  }
+
+  .nav {
+    flex-direction: column;
     gap: $spacing-sm;
+    align-items: flex-start;
+  }
+
+  .logo {
+    &-image {
+      height: 35px;
+    }
+
+    &-text {
+      font-size: 1.25rem;
+    }
+  }
+
+  .nav-links {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    font-size: 0.85rem;
+
+    li {
+      flex: 1;
+      min-width: calc(33.333% - $spacing-xs);
+    }
+
+    a {
+      display: block;
+      padding: $spacing-xs;
+      text-align: center;
+      background: rgba(102, 126, 234, 0.05);
+      border-radius: $radius-sm;
+    }
+  }
+
+  .footer {
+    padding: $spacing-md;
     font-size: 0.9rem;
   }
 }

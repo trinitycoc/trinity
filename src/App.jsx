@@ -11,8 +11,11 @@ import Contact from './pages/Contact'
 import './styles/main.scss'
 
 function App() {
+  // Base path for GitHub Pages deployment
+  const basename = import.meta.env.MODE === 'production' ? '/Trinity' : ''
+  
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />

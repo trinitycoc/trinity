@@ -1,5 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import cwlImage from '/cwl.webp'
+import capitalImage from '/Capital.webp'
 
 function ClanCard({ clan, isLoading, error }) {
   const navigate = useNavigate()
@@ -47,7 +49,7 @@ function ClanCard({ clan, isLoading, error }) {
         {clan.warLeague && (
           <div className="clan-league-mini">
             <img 
-              src={`${import.meta.env.BASE_URL}cwl.webp`}
+              src={cwlImage}
               alt="CWL badge" 
               className="league-icon-img"
             />
@@ -57,7 +59,7 @@ function ClanCard({ clan, isLoading, error }) {
         
         <div className="clan-capital">
           <img 
-            src={`${import.meta.env.BASE_URL}Capital.webp`}
+            src={capitalImage}
             alt="Capital badge" 
             className="capital-icon-img"
           />

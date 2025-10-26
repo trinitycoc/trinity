@@ -2,13 +2,13 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Header from './Header'
 import Footer from './Footer'
+import bgImage from '/trinity-bg.jpeg'
 
 function MainLayout() {
   // Set background image URL as CSS variable
-  const bgImageUrl = `${import.meta.env.BASE_URL}trinity-bg.jpeg`
   
   return (
-    <div className="app" style={{ '--bg-image-url': `url(${bgImageUrl})` }}>
+    <div className="app" style={{ '--bg-image-url': `url(${bgImage})` }}>
       <Header />
       <main className="main">
         <Outlet />

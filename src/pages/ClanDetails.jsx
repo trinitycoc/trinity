@@ -33,8 +33,6 @@ function ClanDetails() {
           fetchClanCapitalRaids(clanTag).catch(() => [])
         ])
 
-        console.log('Current war data received:', currentWarData)
-
         setClan(clanData)
         setWarLog(Array.isArray(warLogData) ? warLogData : [])
         setCurrentWar(currentWarData)
@@ -138,8 +136,6 @@ function ClanDetails() {
               <button
                 className="war-log-toggle"
                 onClick={() => {
-                  console.log('Toggle current war clicked. Current state:', showCurrentWar)
-                  console.log('Current war object:', currentWar)
                   // If turning on current war, turn off others
                   if (!showCurrentWar) {
                     setShowWarLog(false)

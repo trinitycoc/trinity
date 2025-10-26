@@ -371,6 +371,13 @@
           background: rgba(102, 126, 234, 0.1);
           border-radius: $radius-sm;
         }
+      }
+
+      .header-actions {
+        display: flex;
+        gap: $spacing-sm;
+        margin-top: $spacing-md;
+        flex-wrap: wrap;
 
         .war-log-toggle {
           padding: $spacing-xs $spacing-md;
@@ -546,17 +553,17 @@
 
   // War Log
   .war-log {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: $spacing-md;
 
     .war-log-item {
       display: flex;
-      gap: $spacing-sm;
-      padding: $spacing-md;
+      padding: $spacing-lg;
       border-radius: $radius-md;
       border: 2px solid;
       transition: all 0.2s ease;
+      width: 100%;
 
       &:hover {
         transform: translateY(-2px);
@@ -578,25 +585,41 @@
         border-color: rgba(234, 179, 8, 0.3);
       }
 
-      .war-result-badge {
-        font-size: 2rem;
-      }
-
       .war-info {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
 
-        .war-opponent {
-          font-weight: 700;
-          font-size: 1.1rem;
-          margin-bottom: $spacing-xs;
+        .war-clans-matchup {
+          display: flex;
+          align-items: center;
+          gap: $spacing-xs;
+          flex-wrap: wrap;
+          margin-bottom: $spacing-sm;
+
+          .war-clan-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: $primary-color;
+          }
+
+          .war-vs-text {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: $text-secondary;
+            padding: 0 $spacing-xs;
+          }
         }
 
         .war-details {
           display: flex;
-          gap: $spacing-md;
-          font-size: 0.9rem;
+          gap: $spacing-lg;
+          font-size: 1rem;
           color: $text-secondary;
           flex-wrap: wrap;
+          font-weight: 600;
+          align-items: center;
         }
       }
     }
@@ -607,6 +630,215 @@
     padding: $spacing-xl;
     color: $text-secondary;
     font-size: 1.1rem;
+  }
+
+  // Current War
+  .current-war {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+
+    .war-header {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      gap: $spacing-lg;
+      padding: $spacing-lg;
+      background: rgba(102, 126, 234, 0.05);
+      border-radius: $radius-md;
+      flex-wrap: wrap;
+
+      .war-clan {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        flex: 1;
+        min-width: 200px;
+
+        .war-clan-badge {
+          width: 60px;
+          height: 60px;
+          object-fit: contain;
+        }
+
+        h4 {
+          font-size: 1.3rem;
+          margin: 0;
+          color: $primary-color;
+        }
+
+        p {
+          font-size: 0.9rem;
+          color: $text-secondary;
+          margin: $spacing-xs 0 0;
+        }
+      }
+
+      .war-vs {
+        font-size: 2rem;
+        font-weight: 900;
+        color: $primary-color;
+        text-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+      }
+    }
+
+    .war-stats {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+
+      .war-stat-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: $spacing-md;
+      }
+
+      .war-stat {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xs;
+        padding: $spacing-md;
+        background: rgba(102, 126, 234, 0.08);
+        border-radius: $radius-sm;
+        border: 1px solid rgba(102, 126, 234, 0.15);
+
+        .stat-label {
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: $text-secondary;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: $primary-color;
+        }
+      }
+
+      .war-time {
+        padding: $spacing-md;
+        background: rgba(234, 179, 8, 0.1);
+        border: 1px solid rgba(234, 179, 8, 0.3);
+        border-radius: $radius-sm;
+        text-align: center;
+        font-weight: 600;
+        color: #d97706;
+      }
+    }
+  }
+
+  // Capital Raids
+  .capital-raids {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    .capital-raid-item {
+      padding: $spacing-lg;
+      background: rgba(102, 126, 234, 0.05);
+      border: 2px solid rgba(102, 126, 234, 0.15);
+      border-radius: $radius-md;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: rgba(102, 126, 234, 0.3);
+      }
+
+      .raid-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-md;
+        padding-bottom: $spacing-sm;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.15);
+
+        .raid-date {
+          font-weight: 700;
+          font-size: 1.1rem;
+          color: $primary-color;
+        }
+
+        .raid-state {
+          padding: $spacing-xs $spacing-md;
+          background: rgba(34, 197, 94, 0.15);
+          border: 1px solid rgba(34, 197, 94, 0.3);
+          border-radius: $radius-sm;
+          font-weight: 600;
+          font-size: 0.85rem;
+          color: #16a34a;
+          text-transform: uppercase;
+        }
+      }
+
+      .raid-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: $spacing-md;
+        margin-bottom: $spacing-md;
+
+        .raid-stat {
+          display: flex;
+          flex-direction: column;
+          gap: $spacing-xs;
+          padding: $spacing-sm;
+          background: rgba(255, 255, 255, 0.5);
+          border-radius: $radius-sm;
+
+          .stat-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: $text-secondary;
+          }
+
+          .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: $primary-color;
+          }
+        }
+      }
+
+      .raid-attacks {
+        margin-top: $spacing-md;
+        padding-top: $spacing-md;
+        border-top: 1px solid rgba(102, 126, 234, 0.15);
+
+        h5 {
+          font-size: 1rem;
+          margin-bottom: $spacing-sm;
+          color: $primary-color;
+        }
+
+        .attack-log {
+          display: flex;
+          flex-direction: column;
+          gap: $spacing-xs;
+
+          .attack-item {
+            display: flex;
+            justify-content: space-between;
+            padding: $spacing-xs $spacing-sm;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: $radius-sm;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+            gap: $spacing-xs;
+
+            span {
+              &:first-child {
+                font-weight: 600;
+                flex: 1;
+                min-width: 120px;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   .loading-container,
@@ -868,10 +1100,116 @@
         background: rgba(234, 179, 8, 0.15);
         border-color: rgba(234, 179, 8, 0.4);
       }
+
+      .war-info {
+        .war-clans-matchup {
+          .war-clan-name {
+            color: #8b9eff;
+          }
+
+          .war-vs-text {
+            color: $text-dark-secondary;
+          }
+        }
+      }
     }
 
     .war-log-private {
       color: $text-dark-secondary;
+    }
+
+    // Current War Dark Mode
+    .current-war {
+      .war-header {
+        background: rgba(102, 126, 234, 0.1);
+
+        .war-clan {
+          h4 {
+            color: #8b9eff;
+          }
+
+          p {
+            color: $text-dark-secondary;
+          }
+        }
+
+        .war-vs {
+          color: #8b9eff;
+        }
+      }
+
+      .war-stats {
+        .war-stat {
+          background: rgba(102, 126, 234, 0.12);
+          border-color: rgba(102, 126, 234, 0.2);
+
+          .stat-label {
+            color: $text-dark-secondary;
+          }
+
+          .stat-value {
+            color: #8b9eff;
+          }
+        }
+
+        .war-time {
+          background: rgba(234, 179, 8, 0.15);
+          border-color: rgba(234, 179, 8, 0.4);
+        }
+      }
+    }
+
+    // Capital Raids Dark Mode
+    .capital-raids {
+      .capital-raid-item {
+        background: rgba(102, 126, 234, 0.08);
+        border-color: rgba(102, 126, 234, 0.2);
+
+        &:hover {
+          border-color: rgba(102, 126, 234, 0.35);
+        }
+
+        .raid-header {
+          border-bottom-color: rgba(102, 126, 234, 0.2);
+
+          .raid-date {
+            color: #8b9eff;
+          }
+
+          .raid-state {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.4);
+          }
+        }
+
+        .raid-stats {
+          .raid-stat {
+            background: rgba(31, 41, 55, 0.5);
+
+            .stat-label {
+              color: $text-dark-secondary;
+            }
+
+            .stat-value {
+              color: #8b9eff;
+            }
+          }
+        }
+
+        .raid-attacks {
+          border-top-color: rgba(102, 126, 234, 0.2);
+
+          h5 {
+            color: #8b9eff;
+          }
+
+          .attack-log {
+            .attack-item {
+              background: rgba(102, 126, 234, 0.08);
+            }
+          }
+        }
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 // API client for making requests to the backend server
 
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://trinity-backend-6qzr.onrender.com/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://trinity-backend-6qzr.onrender.com/api'
 
 /**
  * Fetch a single clan by tag
@@ -118,6 +118,25 @@ export const fetchClanWarLog = async (clanTag) => {
     return await response.json()
   } catch (error) {
     console.error('Error fetching war log:', error)
+    throw error
+  }
+}
+
+/**
+ * Get capital raid seasons for a clan
+ */
+export const fetchClanCapitalRaids = async (clanTag) => {
+  try {
+    const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
+    const response = await fetch(`${API_BASE_URL}/clans/${encodedTag}/capitalraids`)
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch capital raids: ${response.statusText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching capital raids:', error)
     throw error
   }
 }

@@ -135,6 +135,17 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null }) {
           </div>
         )}
       </div>
+
+      {/* Visit In-Game Button */}
+      <a 
+        href={`https://link.clashofclans.com/en/?action=OpenClanProfile&tag=${clan.tag.replace('#', '%23')}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="visit-ingame-btn"
+        onClick={(e) => e.stopPropagation()}
+      >
+        Visit In-Game
+      </a>
     </div>
   )
 }

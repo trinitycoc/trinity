@@ -10,29 +10,34 @@ function Contact() {
         <p className="page-description">
           Have questions or want to join the Trinity family? Get in touch with us!
         </p>
-        
+
         <div className="contact-methods">
           <div className="contact-card">
             <div className="contact-icon">💬</div>
             <h4>Discord</h4>
-            <p>Join our Discord server for instant communication</p>
-            <Button variant="primary">Join Discord</Button>
+            <p>Join our Discord server for instant communication and community updates</p>
+            <a
+              href="https://discord.gg/Cqsq65tY2S"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+            >
+              Join Discord
+            </a>
           </div>
-          
+
           <div className="contact-card">
-            <div className="contact-icon">📧</div>
-            <h4>Email</h4>
-            <p>Send us an email for inquiries</p>
-            <Button variant="secondary" href="mailto:trinity@example.com">
-              Send Email
-            </Button>
-          </div>
-          
-          <div className="contact-card">
-            <div className="contact-icon">🎮</div>
-            <h4>In-Game</h4>
-            <p>Visit any of our clans in Clash of Clans</p>
-            <Button variant="secondary">View Clans</Button>
+            <div className="contact-icon">📱</div>
+            <h4>WhatsApp</h4>
+            <p>Connect with us on WhatsApp for recruitment and clan discussions</p>
+            <a
+              href="https://chat.whatsapp.com/HBCQFJ6xvcy5Lq8tW3YjG6"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+            >
+              Join WhatsApp
+            </a>
           </div>
         </div>
       </div>

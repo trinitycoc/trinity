@@ -56,6 +56,47 @@ function About() {
         </div>
       </div>
 
+      <div className="about-perks">
+        <h3 className="perks-title">Why Join Trinity?</h3>
+        <div className="perks-grid">
+          <div className="perk-item">
+            <div className="perk-icon">🎯</div>
+            <h5>Max Clan Games</h5>
+            <p>Always reach maximum rewards every clan games event</p>
+          </div>
+
+          <div className="perk-item">
+            <div className="perk-icon">💰</div>
+            <h5>1500+ Capital Medals</h5>
+            <p>High capital raid medals every weekend for all members</p>
+          </div>
+
+          <div className="perk-item">
+            <div className="perk-icon">🤝</div>
+            <h5>Friendly Behaviour</h5>
+            <p>Welcoming and supportive community atmosphere</p>
+          </div>
+
+          <div className="perk-item">
+            <div className="perk-icon">🗣️</div>
+            <h5>English Chat</h5>
+            <p>Clear communication in English across all clans</p>
+          </div>
+
+          <div className="perk-item">
+            <div className="perk-icon">🏅</div>
+            <h5>High CWL Leagues</h5>
+            <p>Competitive CWL clans in top leagues</p>
+          </div>
+
+          <div className="perk-item">
+            <div className="perk-icon">🎮</div>
+            <h5>Active Community</h5>
+            <p>Engaged players and regular clan activities</p>
+          </div>
+        </div>
+      </div>
+
       <div className="about-cta">
         <p>Explore our clans in the <strong>Clans</strong> section and find CWL opportunities in the <strong>CWL</strong> section.</p>
       </div>

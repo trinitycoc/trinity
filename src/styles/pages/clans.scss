@@ -161,6 +161,31 @@
       color: #9333ea;
     }
   }
+
+  .visit-ingame-btn {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    margin-top: $spacing-xs;
+    background: $primary-gradient;
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
 }
 
 // Loading State
@@ -286,6 +311,11 @@
         height: 20px;
       }
     }
+
+    .visit-ingame-btn {
+      padding: $spacing-xs $spacing-sm;
+      font-size: 0.85rem;
+    }
   }
 
   .error-banner {
@@ -349,6 +379,15 @@
 
       .league-name {
         color: #c084fc;
+      }
+    }
+
+    .visit-ingame-btn {
+      background: $primary-gradient;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+
+      &:hover {
+        box-shadow: 0 6px 15px rgba(102, 126, 234, 0.5);
       }
     }
   }

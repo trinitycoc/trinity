@@ -144,6 +144,32 @@
             transform: translateY(0);
           }
         }
+
+        .visit-ingame-btn {
+          padding: $spacing-xs $spacing-md;
+          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+          color: white;
+          text-decoration: none;
+          border: none;
+          border-radius: $radius-sm;
+          font-weight: 700;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+          }
+
+          &:active {
+            transform: translateY(0);
+          }
+        }
       }
     }
   }
@@ -656,7 +682,8 @@
           flex-direction: column;
           gap: $spacing-xs;
 
-          .war-log-toggle {
+          .war-log-toggle,
+          .visit-ingame-btn {
             width: 100%;
             font-size: 0.9rem;
             padding: $spacing-sm;

@@ -103,6 +103,14 @@ function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, show
             {showCapitalRaids ? '🏰 Hide Capital Raids' : '🏰 Show Capital Raids'}
           </button>
         )}
+        <a
+          href={`https://link.clashofclans.com/en/?action=OpenClanProfile&tag=${clan.tag.replace('#', '%23')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="visit-ingame-btn"
+        >
+          🎮 Visit In-Game
+        </a>
       </div>
     </div>
   )

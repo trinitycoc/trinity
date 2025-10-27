@@ -4,6 +4,118 @@ import CWLClanCard from '../components/CWLClanCard'
 import { fetchMultipleClans, checkServerHealth } from '../services/api'
 import { fetchCWLClansDetailsFromSheet } from '../services/googleSheets'
 
+/**
+ * Calculate eligible members based on TH requirements
+ */
+const calculateEligibleMembers = (sheetData, memberList) => {
+  if (!sheetData?.townHall || !memberList) return 0
+
+  const thRequirement = sheetData.townHall.toLowerCase()
+  
+  // Parse TH levels from the requirement string
+  const thNumbers = []
+  const matches = thRequirement.match(/th\s*(\d+)/gi)
+  
+  if (matches) {
+    matches.forEach(match => {
+      const num = parseInt(match.replace(/th\s*/i, ''))
+      if (!isNaN(num)) thNumbers.push(num)
+    })
+  }
+
+  if (thNumbers.length === 0) return 0
+
+  // Determine if it's "and below" requirement
+  const isAndBelow = thRequirement.includes('and below') || thRequirement.includes('below')
+  
+  // Get min and max TH from requirements
+  const minTH = Math.min(...thNumbers)
+  const maxTH = Math.max(...thNumbers)
+
+  // Count members matching the criteria
+  let count = 0
+  if (isAndBelow) {
+    // Count members with TH <= maxTH
+    count = memberList.filter(member => member.townHallLevel <= maxTH).length
+  } else if (thNumbers.length === 1) {
+    // Single TH requirement
+    count = memberList.filter(member => member.townHallLevel === thNumbers[0]).length
+  } else {
+    // Multiple TH requirements (e.g., Th17, Th16, Th15)
+    count = memberList.filter(member => 
+      member.townHallLevel >= minTH && member.townHallLevel <= maxTH
+    ).length
+  }
+  
+  return count
+}
+
+/**
+ * Filter clans by capacity logic:
+ * - Group by league
+ * - Sort by "In Use" value within each league
+ * - Only show next clan when previous one is full (eligible >= allowed)
+ */
+const filterClansByCapacity = (clans) => {
+  // Group clans by league
+  const clansByLeague = {}
+  
+  clans.forEach(clan => {
+    const leagueName = clan.warLeague?.name || 'Unknown'
+    if (!clansByLeague[leagueName]) {
+      clansByLeague[leagueName] = []
+    }
+    clansByLeague[leagueName].push(clan)
+  })
+
+  // Process each league group
+  const visibleClans = []
+  
+  Object.keys(clansByLeague).forEach(leagueName => {
+    const leagueClans = clansByLeague[leagueName]
+    
+    // Sort by "In Use" value (ascending)
+    leagueClans.sort((a, b) => {
+      const aInUse = a.sheetData?.inUse || 999
+      const bInUse = b.sheetData?.inUse || 999
+      return aInUse - bInUse
+    })
+    
+    // Determine which clans to show
+    for (let i = 0; i < leagueClans.length; i++) {
+      const clan = leagueClans[i]
+      
+      // Always show the first clan in each league
+      if (i === 0) {
+        visibleClans.push(clan)
+        continue
+      }
+
+      // For subsequent clans, check if the previous clan is full
+      const previousClan = leagueClans[i - 1]
+      const prevEligible = calculateEligibleMembers(previousClan.sheetData, previousClan.memberList)
+      const prevRequired = parseInt(previousClan.sheetData?.members) || 0
+
+      // Show this clan only if the previous clan is full
+      if (prevEligible >= prevRequired) {
+        visibleClans.push(clan)
+      } else {
+        // Don't show this clan or any after it in this league
+        break
+      }
+    }
+  })
+
+  // Sort final result by "In Use" value globally
+  visibleClans.sort((a, b) => {
+    const aInUse = a.sheetData?.inUse || 999
+    const bInUse = b.sheetData?.inUse || 999
+    return aInUse - bInUse
+  })
+
+  return visibleClans
+}
+
 function CWL() {
   const [clansData, setClansData] = useState([])
   const [loading, setLoading] = useState(true)
@@ -50,7 +162,10 @@ function CWL() {
           }
         })
 
-        setClansData(mergedData)
+        // Filter clans based on capacity logic
+        const filteredClans = filterClansByCapacity(mergedData)
+        
+        setClansData(filteredClans)
       } catch (err) {
         console.error('Error loading CWL clans:', err)
         setError(err.message || 'Failed to load CWL clan data')

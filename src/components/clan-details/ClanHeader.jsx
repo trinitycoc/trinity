@@ -61,20 +61,18 @@ function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, show
       </div>
       
       <div className="header-actions">
-        {currentWar && currentWar.state !== 'notInWar' && (
-          <button
-            className="war-log-toggle"
-            onClick={() => {
-              if (!showCurrentWar) {
-                setShowWarLog(false)
-                if (!isCWLClan) setShowCapitalRaids(false)
-              }
-              setShowCurrentWar(!showCurrentWar)
-            }}
-          >
-            {showCurrentWar ? '🗡️ Hide Current War' : '🗡️ Show Current War'}
-          </button>
-        )}
+        <button
+          className="war-log-toggle"
+          onClick={() => {
+            if (!showCurrentWar) {
+              setShowWarLog(false)
+              if (!isCWLClan) setShowCapitalRaids(false)
+            }
+            setShowCurrentWar(!showCurrentWar)
+          }}
+        >
+          {showCurrentWar ? '🗡️ Hide Current War' : '🗡️ Show Current War'}
+        </button>
         {(warLog.length > 0 || clan.isWarLogPublic) && (
           <button
             className="war-log-toggle"

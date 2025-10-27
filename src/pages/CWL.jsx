@@ -81,27 +81,50 @@ const filterClansByCapacity = (clans) => {
       return aInUse - bInUse
     })
     
+    // Track visible clans in this league and their formats
+    const visibleFormatsInLeague = new Set()
+    
     // Determine which clans to show
     for (let i = 0; i < leagueClans.length; i++) {
       const clan = leagueClans[i]
+      const clanFormat = clan.sheetData?.format || 'Unknown'
       
       // Always show the first clan in each league
       if (i === 0) {
         visibleClans.push(clan)
+        visibleFormatsInLeague.add(clanFormat)
         continue
       }
 
-      // For subsequent clans, check if the previous clan is full
-      const previousClan = leagueClans[i - 1]
-      const prevEligible = calculateEligibleMembers(previousClan.sheetData, previousClan.memberList)
-      const prevRequired = parseInt(previousClan.sheetData?.members) || 0
-
-      // Show this clan only if the previous clan is full
-      if (prevEligible >= prevRequired) {
+      // Check if this clan has a different format than all visible clans in this league
+      const hasDifferentFormat = !visibleFormatsInLeague.has(clanFormat)
+      
+      if (hasDifferentFormat) {
+        // Always show clans with different formats
         visibleClans.push(clan)
-      } else {
-        // Don't show this clan or any after it in this league
-        break
+        visibleFormatsInLeague.add(clanFormat)
+        continue
+      }
+
+      // For same format, check if the previous clan with same format is full
+      // Find the last visible clan with the same format
+      const previousSameFormatClan = leagueClans
+        .slice(0, i)
+        .reverse()
+        .find(c => {
+          const format = c.sheetData?.format || 'Unknown'
+          return format === clanFormat && visibleClans.includes(c)
+        })
+
+      if (previousSameFormatClan) {
+        const prevEligible = calculateEligibleMembers(previousSameFormatClan.sheetData, previousSameFormatClan.memberList)
+        const prevRequired = parseInt(previousSameFormatClan.sheetData?.members) || 0
+
+        // Show this clan only if the previous clan with same format is full
+        if (prevEligible >= prevRequired) {
+          visibleClans.push(clan)
+        }
+        // If not full, don't show but continue checking other formats
       }
     }
   })

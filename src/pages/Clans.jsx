@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import SectionTitle from '../components/SectionTitle'
 import ClanCard from '../components/ClanCard'
-import { fetchMultipleClans, checkServerHealth } from '../services/api'
-import { fetchTrinityClansFromSheet } from '../services/googleSheets'
+import { fetchMultipleClans, checkServerHealth, fetchTrinityClansFromSheet } from '../services/api'
 
 function Clans() {
   const [clansData, setClansData] = useState([])

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { fetchCWLClansFromSheet } from '../services/googleSheets'
+import { fetchCWLClansFromSheet } from '../services/api'
 
 const CWLContext = createContext()
 

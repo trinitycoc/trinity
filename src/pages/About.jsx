@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import SectionTitle from '../components/SectionTitle'
-import { fetchTrinityClansFromSheet } from '../services/googleSheets'
+import { fetchTrinityClansFromSheet } from '../services/api'
 
 function About() {
   const [clanCount, setClanCount] = useState(0) // Default to 0 while loading

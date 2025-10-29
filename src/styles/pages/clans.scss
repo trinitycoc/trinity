@@ -217,6 +217,24 @@
     }
   }
 
+  .clan-members-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-md;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+
+    .members-label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #2563eb;
+    }
+  }
+
   .clan-league-mini {
     display: flex;
     align-items: center;
@@ -384,6 +402,7 @@
     }
 
     .clan-capital,
+    .clan-members-count,
     .clan-league-mini {
       padding: $spacing-xs $spacing-sm;
       font-size: 0.85rem;
@@ -392,6 +411,10 @@
       .league-icon-img {
         width: 20px;
         height: 20px;
+      }
+
+      .members-label {
+        font-size: 0.85rem;
       }
     }
 
@@ -492,6 +515,15 @@
 
       .capital-level {
         color: #fbbf24;
+      }
+    }
+
+    .clan-members-count {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(37, 99, 235, 0.25) 100%);
+      border-color: rgba(59, 130, 246, 0.4);
+
+      .members-label {
+        color: #60a5fa;
       }
     }
 

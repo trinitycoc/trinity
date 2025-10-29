@@ -46,6 +46,11 @@ function ClanCard({ clan, isLoading, error }) {
       <p className="clan-tag">{clan.tag}</p>
       
       <div className="clan-info-row">
+        {clan.members !== undefined && (
+          <div className="clan-members-count">
+            <span className="members-label">👥 {clan.members}/50</span>
+          </div>
+        )}
         {clan.warLeague && (
           <div className="clan-league-mini">
             <img 

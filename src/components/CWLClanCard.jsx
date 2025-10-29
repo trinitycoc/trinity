@@ -152,8 +152,13 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null }) {
         </div>
       )}
       
-      {/* CWL League Badge */}
+      {/* Members Count and CWL League Badge */}
       <div className="clan-info-row">
+        {clan.members !== undefined && (
+          <div className="clan-members-count">
+            <span className="members-label">👥 {clan.members}/50</span>
+          </div>
+        )}
         {clan.warLeague && (
           <div className="clan-league-mini">
             <img 

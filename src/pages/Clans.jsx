@@ -19,7 +19,9 @@ function Clans() {
         const tagsFromSheet = await fetchTrinityClansFromSheet()
 
         if (tagsFromSheet.length === 0) {
-          throw new Error('No Trinity clans found in Google Sheets')
+          // Keep loading state instead of showing error
+          setLoading(true)
+          return
         }
 
         // Check if backend server is running
@@ -27,23 +29,28 @@ function Clans() {
         setServerOnline(isOnline)
 
         if (!isOnline) {
-          throw new Error('Backend server is not running')
+          // Keep loading state instead of showing error
+          setLoading(true)
+          return
         }
 
         // Fetch all clan data using the backend API
         const fetchedClans = await fetchMultipleClans(tagsFromSheet)
         
         if (fetchedClans.length === 0) {
-          throw new Error('No clan data could be fetched')
+          // Keep loading state instead of showing error
+          setLoading(true)
+          return
         }
 
         setClansData(fetchedClans)
-      } catch (err) {
-        console.error('Error loading clans:', err)
-        setError(err.message || 'Failed to load clan data')
-        setClansData([])
-      } finally {
         setLoading(false)
+      } catch (err) {
+        // Catch all errors (API_BASE_URL undefined, network errors, etc.) and show loading
+        console.error('Error loading clans:', err)
+        setLoading(true)
+        setError(null)
+        setClansData([])
       }
     }
 
@@ -57,29 +64,6 @@ function Clans() {
         Explore our family of clans. Each clan has its own unique culture and requirements, 
         but all share the Trinity spirit of excellence and camaraderie.
       </p>
-
-      {error && (
-        <div className="error-banner">
-          <p>⚠️ {error}</p>
-          {!serverOnline ? (
-            <div>
-              <p className="error-hint">
-                The backend server is not running. Please start it with:
-              </p>
-              <code className="error-code">cd server && npm install && npm run dev</code>
-            </div>
-          ) : (
-            <div>
-              <p className="error-hint">
-                Make sure you have set up your Clash of Clans credentials in the <code>.env</code> file.
-              </p>
-              <p className="error-hint">
-                Copy <code>.env.example</code> to <code>.env</code> and fill in your credentials.
-              </p>
-            </div>
-          )}
-        </div>
-      )}
 
       <div className="clans-grid">
         {loading ? (

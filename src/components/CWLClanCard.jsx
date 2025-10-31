@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import cwlImage from '/cwl.webp'
 
-function CWLClanCard({ clan, isLoading, error, sheetData = null }) {
+function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUsers = true, isAdminMode = false }) {
   const navigate = useNavigate()
 
   // Calculate matching TH count based on sheet requirements
@@ -52,6 +52,20 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null }) {
 
   const thCount = calculateTHCount()
 
+  // Calculate available space for the banner
+  const calculateAvailableSpace = () => {
+    if (!sheetData?.members || !thCount) return null
+    
+    const required = parseInt(sheetData.members) || 0
+    const eligible = parseInt(thCount) || 0
+    const available = Math.max(0, required - eligible)
+    const isFull = eligible >= required
+    
+    return { required, eligible, available, isFull }
+  }
+
+  const spaceInfo = calculateAvailableSpace()
+
   const handleClick = () => {
     if (clan && clan.tag) {
       // Navigate to clan details page with the clan tag (remove # for URL)
@@ -82,7 +96,27 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null }) {
   }
 
   return (
-    <div className={`clan-card clan-card-detailed cwl-clan-card clan-status-${clan.type || 'unknown'}`} onClick={handleClick}>
+    <div className={`clan-card clan-card-detailed cwl-clan-card clan-status-${clan.type || 'unknown'} ${isAdminMode && !isVisibleToUsers ? 'cwl-clan-hidden' : ''} ${isAdminMode && isVisibleToUsers ? 'cwl-clan-visible' : ''}`} onClick={handleClick}>
+      {/* Space Available Banner with String and Nail */}
+      {spaceInfo && (
+        <div className="cwl-banner-container">
+          {/* Nail at the top */}
+          <div className="cwl-nail"></div>
+          {/* String hanging from nail */}
+          <div className="cwl-string"></div>
+          {/* Banner attached to string */}
+          <div className={`cwl-space-banner ${spaceInfo.isFull ? 'cwl-space-banner-full' : ''}`}>
+            {spaceInfo.isFull ? (
+              <span className="cwl-banner-message">Join Next Clans</span>
+            ) : (
+              <span className="cwl-banner-message">
+                <span className="cwl-banner-space">Space: {spaceInfo.available}</span>
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+      
       {/* Header Row with Badge and Name */}
       <div className="clan-header-row">
         <img 
@@ -119,6 +153,12 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null }) {
             )}
           </div>
           <p className="clan-tag">{clan.tag}</p>
+          {/* Admin Mode Indicator - Under clan tag */}
+          {isAdminMode && (
+            <div className={`cwl-admin-indicator ${isVisibleToUsers ? 'cwl-visible-badge' : 'cwl-hidden-badge'}`}>
+              {isVisibleToUsers ? 'Currently Visible' : 'Hidden from Users'}
+            </div>
+          )}
         </div>
       </div>
       

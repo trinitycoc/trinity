@@ -5,6 +5,19 @@
 .cwl-page {
   @include page-wrapper;
 
+  .cwl-title-wrapper {
+    cursor: pointer;
+    display: block;
+    text-align: center;
+    user-select: none;
+    transition: opacity 0.2s ease;
+    width: 100%;
+    
+    &:active {
+      opacity: 0.7;
+    }
+  }
+
   .page-description {
     text-align: center;
     font-size: 1.125rem;

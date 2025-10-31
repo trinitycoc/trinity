@@ -472,10 +472,23 @@
 .clan-card-error {
   opacity: 0.6;
 
+  .clan-error {
+    padding: $spacing-lg;
+    text-align: center;
+  }
+
+  .error-title {
+    color: #ef4444;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: $spacing-sm;
+  }
+
   .error-message {
     color: #ef4444;
     font-size: 0.85rem;
     margin: $spacing-xs 0;
+    line-height: 1.5;
   }
 
   .error-hint {

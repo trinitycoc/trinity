@@ -41,8 +41,8 @@ function CWL() {
         setServerOnline(isOnline)
 
         if (!isOnline) {
-          // Keep loading state instead of showing error
-          setLoading(true)
+          setLoading(false)
+          setError('Backend server is not running. Please start it with: cd Trinity_Backend && npm install && npm run dev')
           return
         }
 
@@ -55,7 +55,8 @@ function CWL() {
           ])
           
           if (allClans.length === 0) {
-            setLoading(true)
+            setLoading(false)
+            setError('No CWL clan data available. Please check your configuration.')
             return
           }
           
@@ -68,7 +69,8 @@ function CWL() {
           const filteredClans = await fetchFilteredCWLClans(false)
           
           if (filteredClans.length === 0) {
-            setLoading(true)
+            setLoading(false)
+            setError('No CWL clan data available. Please check your configuration.')
             return
           }
           
@@ -78,10 +80,10 @@ function CWL() {
         
         setLoading(false)
       } catch (err) {
-        // Catch all errors (API_BASE_URL undefined, network errors, etc.) and show loading
+        // Catch all errors (API_BASE_URL undefined, network errors, etc.)
         console.error('Error loading CWL clans:', err)
-        setLoading(true)
-        setError(null)
+        setLoading(false)
+        setError(err.message || 'Failed to load CWL clans. Please check your connection and try again.')
         setClansData([])
       }
     }
@@ -152,11 +154,19 @@ function CWL() {
 
       <div className="clans-grid">
         {loading ? (
-          // Show loading state - either loading data or backend not online
+          // Show loading state
           <div className="clan-card clan-card-loading">
             <div className="clan-loading">
               <div className="spinner"></div>
               <p>Loading CWL clan data...</p>
+            </div>
+          </div>
+        ) : error ? (
+          // Show error message
+          <div className="clan-card clan-card-error">
+            <div className="clan-error">
+              <p className="error-title">⚠️ Error Loading CWL Clans</p>
+              <p className="error-message">{error}</p>
             </div>
           </div>
         ) : clansData.length > 0 ? (

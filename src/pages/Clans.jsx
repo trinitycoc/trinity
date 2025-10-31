@@ -19,8 +19,8 @@ function Clans() {
         const tagsFromSheet = await fetchTrinityClansFromSheet()
 
         if (tagsFromSheet.length === 0) {
-          // Keep loading state instead of showing error
-          setLoading(true)
+          setLoading(false)
+          setError('No clan tags found in Google Sheets. Please check your configuration.')
           return
         }
 
@@ -29,8 +29,8 @@ function Clans() {
         setServerOnline(isOnline)
 
         if (!isOnline) {
-          // Keep loading state instead of showing error
-          setLoading(true)
+          setLoading(false)
+          setError('Backend server is not running. Please start it with: cd Trinity_Backend && npm install && npm run dev')
           return
         }
 
@@ -38,18 +38,18 @@ function Clans() {
         const fetchedClans = await fetchMultipleClans(tagsFromSheet)
         
         if (fetchedClans.length === 0) {
-          // Keep loading state instead of showing error
-          setLoading(true)
+          setLoading(false)
+          setError('No clan data available. Please check your configuration.')
           return
         }
 
         setClansData(fetchedClans)
         setLoading(false)
       } catch (err) {
-        // Catch all errors (API_BASE_URL undefined, network errors, etc.) and show loading
+        // Catch all errors (API_BASE_URL undefined, network errors, etc.)
         console.error('Error loading clans:', err)
-        setLoading(true)
-        setError(null)
+        setLoading(false)
+        setError(err.message || 'Failed to load clans. Please check your connection and try again.')
         setClansData([])
       }
     }
@@ -69,6 +69,14 @@ function Clans() {
         {loading ? (
           // Show single loading skeleton
           <ClanCard isLoading={true} />
+        ) : error ? (
+          // Show error message
+          <div className="clan-card clan-card-error">
+            <div className="clan-error">
+              <p className="error-title">⚠️ Error Loading Clans</p>
+              <p className="error-message">{error}</p>
+            </div>
+          </div>
         ) : clansData.length > 0 ? (
           // Show clan cards with fetched data
           clansData.map((clan) => (

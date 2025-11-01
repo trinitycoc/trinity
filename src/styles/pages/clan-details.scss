@@ -272,7 +272,7 @@
     overflow-x: auto;
 
     .members-table {
-      min-width: 600px;
+      min-width: 700px;
       display: flex;
       flex-direction: column;
       gap: 2px;
@@ -280,7 +280,7 @@
       .members-header,
       .member-row {
         display: grid;
-        grid-template-columns: 50px 1fr 120px 80px 120px 140px;
+        grid-template-columns: 50px 1fr 100px 120px 80px 120px 140px;
         gap: $spacing-sm;
         padding: $spacing-sm $spacing-md;
         align-items: center;
@@ -312,6 +312,13 @@
 
         .member-name {
           font-weight: 600;
+        }
+
+        .member-tag {
+          font-size: 0.85rem;
+          color: $text-secondary;
+          font-family: 'Courier New', monospace;
+          word-break: break-all;
         }
 
         .member-role {
@@ -739,7 +746,7 @@
       .members-table {
         .members-header,
         .member-row {
-          grid-template-columns: 40px 1fr 80px 60px 90px 100px;
+          grid-template-columns: 40px 1fr 70px 80px 60px 90px 100px;
           padding: $spacing-xs $spacing-sm;
           font-size: 0.85rem;
         }

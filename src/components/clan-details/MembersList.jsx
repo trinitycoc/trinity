@@ -29,6 +29,7 @@ function MembersList({ memberList, totalMembers }) {
           <div className="members-header">
             <div className="member-rank">#</div>
             <div className="member-name">Name</div>
+            <div className="member-tag">Tag</div>
             <div className="member-role">Role</div>
             <div className="member-th">TH</div>
             <div className="member-trophies">Trophies</div>
@@ -40,6 +41,7 @@ function MembersList({ memberList, totalMembers }) {
               <div className="member-name">
                 {getRoleIcon(member.role)} {member.name}
               </div>
+              <div className="member-tag">{member.tag || 'N/A'}</div>
               <div className="member-role">{getRoleName(member.role)}</div>
               <div className="member-th">TH{member.townHallLevel}</div>
               <div className="member-trophies">🏆 {member.trophies.toLocaleString()}</div>

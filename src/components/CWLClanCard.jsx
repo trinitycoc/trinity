@@ -66,6 +66,38 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
 
   const spaceInfo = calculateAvailableSpace()
 
+  // Check if current date/time is within CWL period (1st 1:30 PM IST to 3rd 1:30 PM IST)
+  const isCWLPeriod = () => {
+    const now = new Date()
+    
+    // Convert current UTC time to IST (UTC+5:30)
+    // Get UTC time in milliseconds
+    const utcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000)
+    // Add IST offset (5 hours 30 minutes = 5.5 hours)
+    const istTime = utcTime + (5.5 * 60 * 60 * 1000)
+    
+    // Create a new date object for IST
+    const istNow = new Date(istTime)
+    
+    const currentDate = istNow.getUTCDate()
+    const currentHour = istNow.getUTCHours()
+    const currentMinute = istNow.getUTCMinutes()
+    
+    // Check if current date/time is between start and end
+    if (currentDate === 1) {
+      // On 1st: check if time is >= 1:30 PM IST
+      return currentHour > 13 || (currentHour === 13 && currentMinute >= 30)
+    } else if (currentDate === 2) {
+      // On 2nd: always within period
+      return true
+    } else if (currentDate === 3) {
+      // On 3rd: check if time is <= 1:30 PM IST
+      return currentHour < 13 || (currentHour === 13 && currentMinute <= 30)
+    }
+    
+    return false
+  }
+
   const handleClick = () => {
     if (clan && clan.tag) {
       // Navigate to clan details page with the clan tag (remove # for URL)
@@ -106,7 +138,10 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
           <div className="cwl-string"></div>
           {/* Banner attached to string */}
           <div className={`cwl-space-banner ${spaceInfo.isFull ? 'cwl-space-banner-full' : ''}`}>
-            {spaceInfo.isFull ? (
+            {/* Show CWL started message if clan is closed during CWL period (1st-3rd, 1:30 PM IST) */}
+            {clan.type === 'closed' && isCWLPeriod() ? (
+              <span className="cwl-banner-message">CWL already started in this clan</span>
+            ) : spaceInfo.isFull ? (
               <span className="cwl-banner-message">Join Next Clans</span>
             ) : (
               <span className="cwl-banner-message">

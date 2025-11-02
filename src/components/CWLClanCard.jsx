@@ -199,6 +199,7 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
           )}
         </div>
       )}
+
       
       {/* Members Count and CWL League Badge */}
       <div className="clan-info-row">

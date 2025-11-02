@@ -9,6 +9,7 @@ import MembersList from '../components/clan-details/MembersList'
 import CurrentWar from '../components/clan-details/CurrentWar'
 import WarLog from '../components/clan-details/WarLog'
 import CapitalRaids from '../components/clan-details/CapitalRaids'
+import CWLDetails from '../components/clan-details/CWLDetails'
 
 function ClanDetails() {
   const { clanTag } = useParams()
@@ -23,9 +24,10 @@ function ClanDetails() {
   const [showWarLog, setShowWarLog] = useState(false)
   const [showCurrentWar, setShowCurrentWar] = useState(false)
   const [showCapitalRaids, setShowCapitalRaids] = useState(false)
+  const [showCWLDetails, setShowCWLDetails] = useState(false)
   
-  // Check if this is a CWL clan
-  const isCWLClan = clan && checkIsCWLClan(clan.tag)
+  // Check if this is a CWL clan - show button if clan has warLeague or is in CWL list
+  const isCWLClan = clan && (clan.warLeague?.name || checkIsCWLClan(clan.tag))
 
   useEffect(() => {
     const loadClanDetails = async () => {
@@ -123,22 +125,27 @@ function ClanDetails() {
           showCurrentWar={showCurrentWar}
           showWarLog={showWarLog}
           showCapitalRaids={showCapitalRaids}
+          showCWLDetails={showCWLDetails}
           setShowCurrentWar={setShowCurrentWar}
           setShowWarLog={setShowWarLog}
           setShowCapitalRaids={setShowCapitalRaids}
+          setShowCWLDetails={setShowCWLDetails}
           isCWLClan={isCWLClan}
         />
       </div>
 
       <div className="clan-details-content">
         {/* Show clan info sections only when war sections are not shown */}
-        {!showCurrentWar && !showWarLog && !showCapitalRaids && (
+        {!showCurrentWar && !showWarLog && !showCapitalRaids && !showCWLDetails && (
           <>
             <ClanDescription description={clan.description} />
             <TownHallComposition memberList={clan.memberList} totalMembers={clan.members} />
             <MembersList memberList={clan.memberList} totalMembers={clan.members} />
           </>
         )}
+
+        {/* CWL Details - Only show for CWL clans */}
+        {isCWLClan && showCWLDetails && <CWLDetails clanTag={clan.tag} showDetails={showCWLDetails} />}
 
         {/* Current War */}
         {showCurrentWar && <CurrentWar currentWar={currentWar} />}

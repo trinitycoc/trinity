@@ -2,7 +2,7 @@ import React from 'react'
 import SectionTitle from '../SectionTitle'
 import cwlImage from '/cwl.webp'
 
-function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, showCapitalRaids, setShowCurrentWar, setShowWarLog, setShowCapitalRaids, isCWLClan }) {
+function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, showCapitalRaids, showCWLDetails, setShowCurrentWar, setShowWarLog, setShowCapitalRaids, setShowCWLDetails, isCWLClan }) {
   return (
     <div className="clan-header-info">
       <SectionTitle>{clan.name}</SectionTitle>
@@ -66,6 +66,7 @@ function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, show
           onClick={() => {
             if (!showCurrentWar) {
               setShowWarLog(false)
+              setShowCWLDetails(false)
               if (!isCWLClan) setShowCapitalRaids(false)
             }
             setShowCurrentWar(!showCurrentWar)
@@ -79,12 +80,27 @@ function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, show
             onClick={() => {
               if (!showWarLog) {
                 setShowCurrentWar(false)
+                setShowCWLDetails(false)
                 if (!isCWLClan) setShowCapitalRaids(false)
               }
               setShowWarLog(!showWarLog)
             }}
           >
             {showWarLog ? '📊 Hide War Log' : '📊 Show War Log'}
+          </button>
+        )}
+        {isCWLClan && (
+          <button
+            className="war-log-toggle"
+            onClick={() => {
+              if (!showCWLDetails) {
+                setShowCurrentWar(false)
+                setShowWarLog(false)
+              }
+              setShowCWLDetails(!showCWLDetails)
+            }}
+          >
+            {showCWLDetails ? '🏆 Hide CWL Data' : '🏆 Show CWL Data'}
           </button>
         )}
         {!isCWLClan && (

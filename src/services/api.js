@@ -250,6 +250,58 @@ export const fetchCWLStatus = async (clanTag) => {
   }
 }
 
+/**
+ * Get full CWL group data for a specific clan (all available details)
+ * @param {string} clanTag - Clan tag (with or without #)
+ * @param {boolean} includeAllWars - If true, includes all wars from all rounds
+ */
+export const fetchCWLGroup = async (clanTag, includeAllWars = false) => {
+  try {
+    // Remove # from tag for URL encoding
+    const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
+    const url = includeAllWars 
+      ? `${API_BASE_URL}/cwl/clans/${encodedTag}/group?allWars=true`
+      : `${API_BASE_URL}/cwl/clans/${encodedTag}/group`
+    const response = await fetch(url)
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch CWL group: ${response.statusText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching CWL group:', error)
+    throw error
+  }
+}
+
+/**
+ * Get CWL war details by war tag
+ * @param {string} warTag - War tag (with or without #)
+ * @param {string} clanTag - Clan tag (required to get CWL group)
+ */
+export const fetchCWLWarByTag = async (warTag, clanTag) => {
+  try {
+    if (!clanTag) {
+      throw new Error('Clan tag is required to fetch war details')
+    }
+    
+    // Remove # from tags for URL encoding
+    const encodedWarTag = encodeURIComponent(warTag.replace('#', ''))
+    const encodedClanTag = encodeURIComponent(clanTag.replace('#', ''))
+    const response = await fetch(`${API_BASE_URL}/cwl/wars/${encodedWarTag}?clanTag=${encodedClanTag}`)
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch war details: ${response.statusText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching war by tag:', error)
+    throw error
+  }
+}
+
 // ============================================
 // STATS ENDPOINTS
 // ============================================

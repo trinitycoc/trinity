@@ -178,6 +178,750 @@
     display: flex;
     flex-direction: column;
     gap: $spacing-lg;
+
+    // CWL Details Section
+    .cwl-details-section {
+      margin-top: $spacing-md;
+      padding: $spacing-md;
+      background: rgba(102, 126, 234, 0.05);
+      border: 1px solid rgba(102, 126, 234, 0.15);
+      border-radius: $radius-md;
+      
+      .cwl-details-toggle-btn {
+        width: 100%;
+        padding: $spacing-md;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
+        border: 2px solid rgba(102, 126, 234, 0.2);
+        border-radius: $radius-md;
+        color: #667eea;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: $spacing-md;
+        
+        &:hover {
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(102, 126, 234, 0.1) 100%);
+          border-color: rgba(102, 126, 234, 0.4);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+
+      .cwl-details-group {
+        margin-top: $spacing-sm;
+        
+        .cwl-details-label {
+          font-weight: 600;
+          font-size: 0.9rem;
+          color: $text-primary;
+          margin-bottom: $spacing-xs;
+        }
+        
+        .cwl-details-content {
+          padding: $spacing-sm;
+          background: rgba(255, 255, 255, 0.5);
+          border-radius: $radius-sm;
+          
+          .cwl-detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: $spacing-xs 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 0.85rem;
+            
+            &:last-child {
+              border-bottom: none;
+            }
+            
+            &.error {
+              color: #dc2626;
+            }
+            
+            .detail-label {
+              font-weight: 600;
+              color: $text-secondary;
+              margin-right: $spacing-xs;
+            }
+            
+            .detail-value {
+              font-weight: 500;
+              color: $text-primary;
+              text-align: right;
+              word-break: break-word;
+            }
+          }
+        }
+        
+        .cwl-details-loading,
+        .cwl-details-error,
+        .cwl-details-placeholder {
+          padding: $spacing-sm;
+          text-align: center;
+          color: $text-secondary;
+          font-size: 0.85rem;
+          font-style: italic;
+        }
+        
+        .cwl-details-error {
+          color: #dc2626;
+        }
+      }
+
+        .cwl-subsection {
+        margin-top: $spacing-md;
+        padding: $spacing-md;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: $radius-md;
+        border-left: 4px solid rgba(102, 126, 234, 0.2);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        &:hover {
+          box-shadow: 0 4px 20px rgba(102, 126, 234, 0.1);
+          transform: translateX(2px);
+        }
+        
+        .cwl-subsection-title {
+          font-weight: 700;
+          font-size: 0.95rem;
+          color: $primary-color;
+          margin-bottom: $spacing-sm;
+          padding-bottom: $spacing-xs;
+          border-bottom: 2px solid rgba(102, 126, 234, 0.15);
+          transition: all 0.3s ease;
+        }
+        
+        // Center align headers in "Clans in Group" table
+        &.cwl-clans-in-group {
+          .cwl-table thead th {
+            text-align: center;
+          }
+        }
+
+        .cwl-subsection-title-small {
+          font-weight: 600;
+          font-size: 0.875rem;
+          color: $primary-color;
+          margin: $spacing-xs 0;
+          padding-bottom: 4px;
+          border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+          transition: all 0.3s ease;
+        }
+
+        .cwl-subsection-title-tiny {
+          font-weight: 600;
+          font-size: 0.8rem;
+          color: $text-primary;
+          margin: $spacing-xs 0;
+          opacity: 0.9;
+          transition: opacity 0.3s ease;
+        }
+      }
+      
+      .cwl-round-item,
+      .cwl-clan-item,
+      .cwl-war-item {
+        margin: $spacing-xs 0;
+        padding: $spacing-xs;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: $radius-sm;
+        
+        .cwl-war-tags {
+          margin-top: $spacing-md;
+          display: flex;
+          flex-wrap: wrap;
+          gap: $spacing-sm;
+
+          .war-tag {
+            padding: $spacing-xs $spacing-sm;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: $radius-sm;
+            color: $primary-color;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+
+            &:hover {
+              background: rgba(102, 126, 234, 0.2);
+              border-color: rgba(102, 126, 234, 0.5);
+            }
+
+            &.active {
+              background: $primary-gradient;
+              color: white;
+              border-color: transparent;
+            }
+          }
+        }
+
+        .cwl-wars-note {
+          margin-top: $spacing-md;
+          font-size: 0.85rem;
+          color: $text-secondary;
+        }
+
+        .cwl-no-attacks {
+          color: $text-secondary;
+          font-style: italic;
+        }
+
+        .cwl-attack-details-inline {
+          display: inline;
+          
+          .cwl-attack-item {
+            display: inline;
+            
+            &:not(:last-child)::after {
+              content: ', ';
+            }
+          }
+        }
+      }
+      
+      .cwl-clans-list,
+      .cwl-members-list,
+      .cwl-war-members,
+      .cwl-attacks-list {
+        margin-top: $spacing-xs;
+        padding: $spacing-sm;
+        background: rgba(102, 126, 234, 0.05);
+        border-radius: $radius-md;
+        max-height: 300px;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        
+        &::-webkit-scrollbar {
+          width: 8px;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: rgba(102, 126, 234, 0.05);
+          border-radius: 4px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: rgba(102, 126, 234, 0.2);
+          border-radius: 4px;
+          transition: background 0.3s ease;
+          
+          &:hover {
+            background: rgba(102, 126, 234, 0.3);
+          }
+        }
+      }
+
+      .cwl-war-tags-full {
+        margin-top: $spacing-xs;
+        padding: $spacing-xs;
+        background: rgba(102, 126, 234, 0.05);
+        border-radius: $radius-sm;
+      }
+      
+      .cwl-war-member,
+      .cwl-member-item,
+      .cwl-attack-item {
+        margin: $spacing-xs 0;
+        padding: $spacing-sm;
+        background: rgba(102, 126, 234, 0.05);
+        border-radius: $radius-md;
+        border-left: 3px solid rgba(102, 126, 234, 0.2);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        &:hover {
+          background: rgba(102, 126, 234, 0.1);
+          border-left-color: rgba(102, 126, 234, 0.4);
+          transform: translateX(4px);
+          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+      }
+
+      .cwl-war-clan,
+      .cwl-war-opponent {
+        margin-top: $spacing-sm;
+        padding: $spacing-sm;
+        background: rgba(102, 126, 234, 0.05);
+        border-radius: $radius-sm;
+        border-left: 3px solid rgba(102, 126, 234, 0.2);
+      }
+
+      .cwl-war-members-summary {
+        margin-top: $spacing-xs;
+        padding: $spacing-xs;
+        background: rgba(102, 126, 234, 0.08);
+        border-radius: $radius-sm;
+        font-size: 0.85rem;
+        color: $text-secondary;
+      }
+      
+      .cwl-json-display {
+        background: rgba(0, 0, 0, 0.05);
+        padding: $spacing-sm;
+        border-radius: $radius-sm;
+        font-family: 'Courier New', monospace;
+        font-size: 0.75rem;
+        overflow-x: auto;
+        max-height: 400px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      // CWL Tables
+      .cwl-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: $spacing-sm 0;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: $radius-md;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        thead {
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(102, 126, 234, 0.1) 100%);
+          
+          th {
+            padding: $spacing-md $spacing-lg;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: $primary-color;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+            white-space: nowrap;
+            transition: all 0.3s ease;
+          }
+        }
+
+        tbody {
+          tr {
+            border-bottom: 1px solid rgba(102, 126, 234, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+            &:hover {
+              background: rgba(102, 126, 234, 0.08);
+              transform: scale(1.01);
+            }
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            &.error-row {
+              background: rgba(239, 68, 68, 0.1);
+              transition: background 0.3s ease;
+              
+              .cwl-table-value {
+                color: #dc2626;
+              }
+            }
+          }
+        }
+
+        .cwl-table-label {
+          padding: $spacing-md $spacing-lg;
+          font-weight: 600;
+          color: $text-secondary;
+          font-size: 0.85rem;
+          background: rgba(102, 126, 234, 0.05);
+          border-right: 1px solid rgba(102, 126, 234, 0.1);
+          white-space: nowrap;
+          min-width: 150px;
+          transition: all 0.3s ease;
+        }
+
+        .cwl-table-value {
+          padding: $spacing-md $spacing-lg;
+          font-weight: 500;
+          color: $text-primary;
+          font-size: 0.85rem;
+          word-break: break-word;
+          transition: color 0.3s ease;
+          text-align: center;
+
+          .cwl-link {
+            color: $primary-color;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+
+            &:hover {
+              color: $secondary-color;
+              text-decoration: underline;
+              transform: translateX(2px);
+            }
+          }
+        }
+
+        td {
+          padding: $spacing-sm $spacing-md;
+          font-size: 0.85rem;
+        }
+
+        // Nested tables (for attack details)
+        &.cwl-table-nested {
+          background: rgba(255, 255, 255, 0.8);
+          font-size: 0.75rem;
+          margin: $spacing-xs 0;
+
+          thead th {
+            padding: $spacing-xs $spacing-sm;
+            font-size: 0.8rem;
+          }
+
+          tbody td {
+            padding: $spacing-xs $spacing-sm;
+            font-size: 0.75rem;
+          }
+        }
+      }
+
+      // War tags in table cells
+      .cwl-war-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        
+        .war-tag {
+          padding: 4px 10px;
+          background: rgba(102, 126, 234, 0.1);
+          border: 1px solid rgba(102, 126, 234, 0.2);
+          border-radius: $radius-sm;
+          font-size: 0.75rem;
+          font-family: monospace;
+          color: $primary-color;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          
+          &:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+          }
+          
+          &.active {
+            background: $primary-gradient;
+            color: white;
+            border-color: $primary-color;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+            transform: scale(1.05);
+          }
+        }
+      }
+
+      // War sections
+      .cwl-war-section {
+        margin: $spacing-md 0;
+        padding: $spacing-lg;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+        border-radius: $radius-md;
+        border: 2px solid rgba(102, 126, 234, 0.15);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: fadeIn 0.5s ease-in-out;
+
+        &:hover {
+          box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+          transform: translateY(-2px);
+        }
+      }
+
+      .cwl-war-header {
+        margin-bottom: $spacing-md;
+
+        .cwl-war-title-section {
+          display: flex;
+          flex-direction: column;
+          gap: $spacing-sm;
+          align-items: center;
+          margin-bottom: $spacing-md;
+        }
+
+        h4 {
+          font-weight: 700;
+          font-size: 1.1rem;
+          color: $primary-color;
+          margin: 0;
+          transition: color 0.3s ease;
+        }
+      }
+
+      .cwl-war-countdown {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+        padding: $spacing-xs $spacing-md;
+        background: rgba(102, 126, 234, 0.1);
+        border-radius: $radius-sm;
+        font-size: 0.9rem;
+        
+        .cwl-countdown-label {
+          font-weight: 600;
+          color: $text-secondary;
+        }
+        
+        .cwl-countdown-time {
+          font-weight: 700;
+          color: $primary-color;
+          font-family: monospace;
+          font-size: 1rem;
+        }
+      }
+
+      .cwl-war-comparison {
+        margin: $spacing-md 0;
+        
+        .cwl-war-stats-title {
+          font-weight: 700;
+          font-size: 1.2rem;
+          color: $primary-color;
+          text-align: center;
+          margin: 0 0 $spacing-lg 0;
+          padding-bottom: $spacing-md;
+          border-bottom: 2px solid rgba(102, 126, 234, 0.15);
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+        
+        .cwl-table {
+          thead th {
+            text-align: center;
+          }
+          
+          .cwl-table-value {
+            text-align: center;
+          }
+        }
+      }
+
+      .cwl-war-members-section {
+        margin: $spacing-md 0;
+        
+        .cwl-table {
+          thead th {
+            text-align: center;
+          }
+        }
+      }
+
+      // Attacks table within member row
+      .cwl-attacks-table {
+        margin-top: $spacing-xs;
+      }
+
+      .cwl-best-defense {
+        margin-top: $spacing-xs;
+        padding: $spacing-xs;
+        background: rgba(239, 68, 68, 0.1);
+        border-radius: 4px;
+        font-size: 0.75rem;
+        color: #dc2626;
+        font-weight: 600;
+      }
+
+      // Clan name with toggle button
+      .cwl-clan-name-with-toggle {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+        
+        span {
+          flex: 1;
+        }
+        
+        .cwl-toggle-members-btn {
+          background: rgba(255, 255, 255, 0.8);
+          border: 2px solid rgba(102, 126, 234, 0.25);
+          border-radius: $radius-md;
+          padding: $spacing-md $spacing-xl;
+          font-size: 0.875rem;
+          color: $primary-color;
+          cursor: pointer;
+          transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+          font-weight: 700;
+          line-height: 1.4;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: $spacing-xs;
+          min-width: 160px;
+          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.12);
+          position: relative;
+          overflow: hidden;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          backdrop-filter: blur(10px);
+          
+          &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.25);
+            color: $secondary-color;
+            
+            &::before {
+              left: 100%;
+            }
+          }
+          
+          &:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+          }
+          
+          // Active state (when members are shown)
+          &.active {
+            background: $primary-gradient;
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+            transform: translateY(-2px);
+            letter-spacing: 1px;
+            
+            &:hover {
+              background: linear-gradient(135deg, rgba(102, 126, 234, 0.98) 0%, rgba(118, 75, 162, 0.98) 100%);
+              box-shadow: 0 8px 24px rgba(102, 126, 234, 0.5);
+              transform: translateY(-4px);
+            }
+            
+            &::before {
+              background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            }
+            
+            &:active {
+              transform: translateY(-2px) scale(0.98);
+            }
+          }
+        }
+      }
+
+      // Members by clan
+      .cwl-members-by-clan {
+        margin-top: $spacing-md;
+
+        .cwl-clan-members {
+          margin: $spacing-md 0;
+          padding: $spacing-lg;
+          background: rgba(102, 126, 234, 0.05);
+          border-radius: $radius-md;
+          border-left: 4px solid rgba(102, 126, 234, 0.2);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          animation: slideIn 0.4s ease-out;
+          
+          &:hover {
+            background: rgba(102, 126, 234, 0.08);
+            border-left-color: rgba(102, 126, 234, 0.4);
+          }
+        }
+      }
+
+      // Responsive table wrapper
+      .cwl-table-wrapper {
+        overflow-x: auto;
+        margin: $spacing-sm 0;
+        
+        .cwl-table {
+          min-width: 600px;
+        }
+      }
+
+      // War Details Modal/Section
+      .cwl-war-details-modal {
+        margin-top: $spacing-lg;
+        padding: $spacing-xl;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+        border: 2px solid rgba(102, 126, 234, 0.15);
+        border-radius: $radius-lg;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        .cwl-war-details-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: $spacing-lg;
+          padding-bottom: $spacing-md;
+          border-bottom: 2px solid rgba(102, 126, 234, 0.15);
+          
+          h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: $primary-color;
+            transition: color 0.3s ease;
+          }
+          
+          .cwl-close-button {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: $radius-sm;
+            padding: $spacing-xs $spacing-md;
+            font-size: 1.2rem;
+            color: #dc2626;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 700;
+            line-height: 1;
+            
+            &:hover {
+              background: rgba(239, 68, 68, 0.2);
+              border-color: #dc2626;
+              transform: scale(1.1) rotate(90deg);
+              box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+            }
+            
+            &:active {
+              transform: scale(0.95);
+            }
+          }
+        }
+        
+        .cwl-war-details-content {
+          max-height: 70vh;
+          overflow-y: auto;
+          padding-right: $spacing-xs;
+          
+          // Custom scrollbar
+          &::-webkit-scrollbar {
+            width: 8px;
+          }
+          
+          &::-webkit-scrollbar-track {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 4px;
+          }
+          
+          &::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 4px;
+            
+            &:hover {
+              background: rgba(102, 126, 234, 0.5);
+            }
+          }
+        }
+      }
+    }
   }
 
   .detail-section {
@@ -878,6 +1622,272 @@
           .attack-log {
             .attack-item {
               font-size: 0.85rem;
+            }
+          }
+        }
+      }
+    }
+
+    // CWL Details Section
+    .cwl-details-section {
+      padding: $spacing-sm 0;
+
+      .cwl-details-loading,
+      .cwl-details-error {
+        font-size: 0.9rem;
+        padding: $spacing-md;
+      }
+
+      .cwl-subsection {
+        padding: $spacing-md;
+        margin: $spacing-sm 0;
+
+        .cwl-subsection-title {
+          font-size: 1.1rem;
+          margin-bottom: $spacing-sm;
+        }
+
+        .cwl-subsection-title-small {
+          font-size: 0.8rem;
+        }
+
+        // CWL Table Wrapper - make tables scrollable
+        .cwl-table-wrapper {
+          margin: $spacing-xs 0;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+
+          .cwl-table {
+            min-width: 500px;
+            font-size: 0.75rem;
+
+            thead th {
+              padding: $spacing-sm $spacing-md;
+              font-size: 0.75rem;
+            }
+
+            .cwl-table-label {
+              padding: $spacing-sm $spacing-md;
+              font-size: 0.7rem;
+              min-width: 100px;
+            }
+
+            .cwl-table-value {
+              padding: $spacing-sm $spacing-md;
+              font-size: 0.75rem;
+            }
+
+            tbody td {
+              padding: $spacing-xs $spacing-sm;
+              font-size: 0.7rem;
+            }
+          }
+        }
+
+        // Clans in Group table
+        .cwl-clans-in-group {
+          .cwl-table-wrapper {
+            .cwl-table {
+              min-width: 600px;
+            }
+          }
+        }
+
+        // Show Members button
+        .cwl-toggle-members-btn {
+          padding: $spacing-sm $spacing-md;
+          font-size: 0.75rem;
+          min-width: 120px;
+        }
+
+        // Members by Clan
+        .cwl-members-by-clan {
+          .cwl-clan-members {
+            padding: $spacing-md;
+            margin: $spacing-sm 0;
+          }
+        }
+
+        // Wars Navigation
+        .cwl-wars-navigation {
+          .cwl-wars-header {
+            font-size: 1.2rem;
+            margin-bottom: $spacing-sm;
+          }
+
+          .cwl-days-container {
+            gap: $spacing-xs;
+            
+            .cwl-day-button {
+              padding: $spacing-sm $spacing-md;
+              font-size: 0.8rem;
+              min-height: 44px; // Touch target size
+              white-space: normal;
+              word-break: break-word;
+              line-height: 1.3;
+
+              &:disabled {
+                opacity: 0.5;
+              }
+            }
+          }
+        }
+
+        // Day Wars
+        .cwl-day-wars {
+          margin-top: $spacing-md;
+
+          .cwl-no-wars {
+            font-size: 0.85rem;
+            padding: $spacing-md;
+          }
+
+          .cwl-war-tags {
+            gap: $spacing-xs;
+            margin-top: $spacing-sm;
+
+            .war-tag {
+              padding: $spacing-xs $spacing-sm;
+              font-size: 0.7rem;
+              min-height: 32px; // Touch target
+            }
+          }
+
+          .cwl-wars-note {
+            font-size: 0.75rem;
+            padding: $spacing-sm;
+          }
+        }
+
+        // War Section
+        .cwl-war-section {
+          padding: $spacing-md;
+          margin: $spacing-sm 0;
+
+          .cwl-war-header {
+            margin-bottom: $spacing-sm;
+
+            .cwl-war-title-section {
+              gap: $spacing-xs;
+
+              h4 {
+                font-size: 1rem;
+                text-align: center;
+                line-height: 1.3;
+              }
+
+              .cwl-war-countdown {
+                padding: $spacing-xs $spacing-sm;
+                font-size: 0.75rem;
+                flex-direction: column;
+                gap: $spacing-xs;
+                text-align: center;
+
+                .cwl-countdown-label {
+                  font-size: 0.7rem;
+                }
+
+                .cwl-countdown-time {
+                  font-size: 0.85rem;
+                }
+              }
+            }
+          }
+
+          // War Stats
+          .cwl-war-comparison {
+            margin: $spacing-sm 0;
+
+            .cwl-war-stats-title {
+              font-size: 1rem;
+              margin-bottom: $spacing-sm;
+              padding-bottom: $spacing-xs;
+            }
+
+            .cwl-table-wrapper {
+              .cwl-table {
+                min-width: 400px;
+
+                thead th {
+                  padding: $spacing-xs $spacing-sm;
+                  font-size: 0.7rem;
+                }
+
+                .cwl-table-label {
+                  padding: $spacing-xs $spacing-sm;
+                  font-size: 0.65rem;
+                  min-width: 80px;
+                }
+
+                .cwl-table-value {
+                  padding: $spacing-xs $spacing-sm;
+                  font-size: 0.7rem;
+                }
+              }
+            }
+          }
+
+          // War Members Section
+          .cwl-war-members-section {
+            margin: $spacing-sm 0;
+
+            .cwl-subsection-title-small {
+              font-size: 0.85rem;
+              margin-bottom: $spacing-xs;
+            }
+
+            .cwl-table-wrapper {
+              .cwl-table {
+                min-width: 600px;
+
+                thead th {
+                  padding: $spacing-xs $spacing-sm;
+                  font-size: 0.7rem;
+                }
+
+                .cwl-table-value {
+                  padding: $spacing-xs $spacing-sm;
+                  font-size: 0.7rem;
+
+                  .cwl-attack-details-inline {
+                    .cwl-attack-item {
+                      font-size: 0.65rem;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // War Details Modal
+        .cwl-war-details-modal {
+          max-width: 100vw;
+          max-height: 100vh;
+          margin: 0;
+          border-radius: 0;
+          padding: $spacing-md;
+
+          .cwl-war-details-header {
+            padding: $spacing-sm $spacing-md;
+            margin-bottom: $spacing-md;
+
+            h3 {
+              font-size: 1rem;
+              word-break: break-word;
+            }
+
+            .cwl-close-button {
+              width: 36px;
+              height: 36px;
+              font-size: 1.2rem;
+            }
+          }
+
+          .cwl-war-details-content {
+            .cwl-war-comparison,
+            .cwl-war-members-section {
+              margin: $spacing-sm 0;
             }
           }
         }
@@ -1674,6 +2684,161 @@
     .no-members {
       color: $text-secondary;
     }
+  }
+
+  // WARS Navigation Header and Day Buttons
+  .cwl-wars-navigation {
+    margin: $spacing-md 0;
+    
+    .cwl-wars-header {
+      width: 100%;
+      padding: $spacing-lg;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+      border: 2px solid rgba(102, 126, 234, 0.15);
+      border-radius: $radius-md;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: $primary-color;
+      text-transform: uppercase;
+      margin-bottom: $spacing-md;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 1px;
+      
+      &:hover {
+        box-shadow: 0 6px 24px rgba(102, 126, 234, 0.15);
+        transform: translateY(-2px);
+      }
+    }
+    
+    .cwl-days-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: $spacing-sm;
+      
+      .cwl-day-button {
+        padding: $spacing-md $spacing-lg;
+        background: rgba(102, 126, 234, 0.05);
+        border: 2px solid rgba(102, 126, 234, 0.15);
+        border-radius: $radius-md;
+        text-align: center;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: $text-primary;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+          transition: left 0.5s ease;
+        }
+        
+        &:hover:not(:disabled) {
+          background: rgba(102, 126, 234, 0.1);
+          border-color: rgba(102, 126, 234, 0.3);
+          transform: translateY(-3px);
+          box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+          
+          &::before {
+            left: 100%;
+          }
+        }
+        
+        &:active:not(:disabled) {
+          transform: translateY(-1px);
+        }
+        
+        &.active {
+          background: $primary-gradient;
+          border-color: $primary-color;
+          color: white;
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+          transform: translateY(-2px);
+          
+          &::before {
+            display: none;
+          }
+        }
+        
+        &.has-wars {
+          border-color: rgba(102, 126, 234, 0.25);
+        }
+        
+        &:disabled {
+          background: rgba(200, 200, 200, 0.15);
+          border-color: rgba(200, 200, 200, 0.2);
+          color: $text-secondary;
+          cursor: not-allowed;
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+  
+  .cwl-day-wars {
+    margin-top: $spacing-md;
+    padding: $spacing-lg;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+    border-radius: $radius-md;
+    border: 2px solid rgba(102, 126, 234, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.5s ease-in-out;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    &:hover {
+      box-shadow: 0 6px 24px rgba(102, 126, 234, 0.12);
+    }
+  }
+  
+  .cwl-no-wars {
+    padding: $spacing-lg;
+    text-align: center;
+    color: $text-secondary;
+    font-style: italic;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+}
+
+// Smooth animations for CWL sections
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 

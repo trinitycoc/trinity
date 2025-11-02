@@ -229,6 +229,27 @@ export const fetchFilteredCWLClans = async (showAll = false) => {
   }
 }
 
+/**
+ * Get CWL status for a specific clan
+ * @param {string} clanTag - Clan tag (with or without #)
+ */
+export const fetchCWLStatus = async (clanTag) => {
+  try {
+    // Remove # from tag for URL encoding
+    const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
+    const response = await fetch(`${API_BASE_URL}/cwl/clans/${encodedTag}/status`)
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch CWL status: ${response.statusText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching CWL status:', error)
+    throw error
+  }
+}
+
 // ============================================
 // STATS ENDPOINTS
 // ============================================

@@ -367,6 +367,12 @@
       animation: pulse-full 2s ease-in-out infinite;
     }
 
+    &.cwl-space-banner-started {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(220, 38, 38, 0.9) 100%);
+      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+      animation: pulse-full 2s ease-in-out infinite;
+    }
+
     .cwl-banner-message {
       display: flex;
       align-items: center;
@@ -743,6 +749,11 @@
       box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
 
       &.cwl-space-banner-full {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.95) 100%);
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
+      }
+
+      &.cwl-space-banner-started {
         background: linear-gradient(135deg, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.95) 100%);
         box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
       }

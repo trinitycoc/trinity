@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useCountdown } from '../hooks/useCountdown'
 import cwlImage from '/cwl.webp'
 
 function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUsers = true, isAdminMode = false }) {
@@ -10,11 +11,11 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
     if (!sheetData?.townHall || !clan?.memberList) return null
 
     const thRequirement = sheetData.townHall.toLowerCase()
-    
+
     // Parse TH levels from the requirement string
     const thNumbers = []
     const matches = thRequirement.match(/th\s*(\d+)/gi)
-    
+
     if (matches) {
       matches.forEach(match => {
         const num = parseInt(match.replace(/th\s*/i, ''))
@@ -26,7 +27,7 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
 
     // Determine if it's "and below" requirement
     const isAndBelow = thRequirement.includes('and below') || thRequirement.includes('below')
-    
+
     // Get min and max TH from requirements
     const minTH = Math.min(...thNumbers)
     const maxTH = Math.max(...thNumbers)
@@ -43,7 +44,7 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
       return `${count}`
     } else {
       // Multiple TH requirements (e.g., Th17, Th16, Th15)
-      count = clan.memberList.filter(member => 
+      count = clan.memberList.filter(member =>
         member.townHallLevel >= minTH && member.townHallLevel <= maxTH
       ).length
       return `${count}`
@@ -55,12 +56,12 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
   // Calculate available space for the banner
   const calculateAvailableSpace = () => {
     if (!sheetData?.members || !thCount) return null
-    
+
     const required = parseInt(sheetData.members) || 0
     const eligible = parseInt(thCount) || 0
     const available = Math.max(0, required - eligible)
     const isFull = eligible >= required
-    
+
     return { required, eligible, available, isFull }
   }
 
@@ -70,6 +71,29 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
   // Only show "CWL already started" when state is "preparation" or "inWar"
   const cwlState = clan?.cwlStatus?.state || 'unknown'
   const showCWLStarted = cwlState === 'preparation' || cwlState === 'inWar'
+
+  // Get active war for countdown display
+  const activeWar = clan?.cwlStatus?.activeWar || null
+  const isPreparation = activeWar?.state === 'preparation'
+  const isInWar = activeWar?.state === 'inWar'
+
+  // Determine target time based on war state
+  const targetTime = isPreparation ? activeWar?.startTime : (isInWar ? activeWar?.endTime : null)
+  const countdown = useCountdown(targetTime)
+
+  // Format countdown message
+  const getCountdownMessage = () => {
+    if (!activeWar || !targetTime || !countdown || countdown === 'Ended') return null
+
+    if (isPreparation) {
+      return `Battle starts in ${countdown}`
+    } else if (isInWar) {
+      return `Battle ends in ${countdown}`
+    }
+    return null
+  }
+
+  const countdownMessage = getCountdownMessage()
 
   const handleClick = () => {
     if (clan && clan.tag) {
@@ -113,7 +137,12 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
           <div className={`cwl-space-banner ${showCWLStarted ? 'cwl-space-banner-started' : spaceInfo.isFull ? 'cwl-space-banner-full' : ''}`}>
             {/* Show CWL started message only when state is "preparation" or "inWar" */}
             {showCWLStarted ? (
-              <span className="cwl-banner-message">CWL already started in this clan</span>
+              <span className="cwl-banner-message">
+                CWL already started in this clan
+                {countdownMessage && (
+                  <span className="cwl-banner-countdown"> • {countdownMessage}</span>
+                )}
+              </span>
             ) : spaceInfo.isFull ? (
               <span className="cwl-banner-message">Join Next Clans</span>
             ) : (
@@ -124,15 +153,15 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
           </div>
         </div>
       )}
-      
+
       {/* Header Row with Badge and Name */}
       <div className="clan-header-row">
-        <img 
-          src={clan.badgeUrls?.medium || clan.badgeUrls?.small || clan.badgeUrls?.large} 
-          alt={`${clan.name} badge`} 
+        <img
+          src={clan.badgeUrls?.medium || clan.badgeUrls?.small || clan.badgeUrls?.large}
+          alt={`${clan.name} badge`}
           className="clan-badge"
         />
-        
+
         <div className="clan-name-section">
           <div className="clan-name-status-row">
             <h4 className="clan-name">{clan.name}</h4>
@@ -169,7 +198,7 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
           )}
         </div>
       </div>
-      
+
       {/* Show Google Sheets data for CWL clans */}
       {sheetData && (
         <div className="clan-sheet-info">
@@ -179,19 +208,19 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
               <span className="info-value">{sheetData.format}</span>
             </div>
           )}
-          {sheetData.members && (
+          {sheetData.hasOwnProperty('members') && (
             <div className="sheet-info-item">
               <span className="info-label">Allowed Members:</span>
-              <span className="info-value">{sheetData.members}</span>
+              <span className="info-value">{sheetData.members || '0'}</span>
             </div>
           )}
-          {sheetData.townHall && (
+          {sheetData.hasOwnProperty('townHall') && (
             <div className="sheet-info-item">
               <span className="info-label">TH Allowed:</span>
-              <span className="info-value">{sheetData.townHall}</span>
+              <span className="info-value">{sheetData.townHall || 'N/A'}</span>
             </div>
           )}
-          {thCount && (
+          {thCount !== null && thCount !== undefined && (
             <div className="sheet-info-item">
               <span className="info-label">Eligible Members:</span>
               <span className="info-value">{thCount}</span>
@@ -200,7 +229,7 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
         </div>
       )}
 
-      
+
       {/* Members Count and CWL League Badge */}
       <div className="clan-info-row">
         {clan.members !== undefined && (
@@ -210,9 +239,9 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
         )}
         {clan.warLeague && (
           <div className="clan-league-mini">
-            <img 
+            <img
               src={cwlImage}
-              alt="CWL badge" 
+              alt="CWL badge"
               className="league-icon-img"
             />
             <span className="league-name">{clan.warLeague.name}</span>
@@ -221,7 +250,7 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
       </div>
 
       {/* Visit In-Game Button */}
-      <a 
+      <a
         href={`https://link.clashofclans.com/en/?action=OpenClanProfile&tag=${clan.tag.replace('#', '%23')}`}
         target="_blank"
         rel="noopener noreferrer"

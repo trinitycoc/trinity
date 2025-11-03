@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { getValidWarTags, filterWarsForDay } from '../../../utils/cwlUtils'
+import { getValidWarTags, filterWarsForDay, normalizeTag } from '../../../utils/cwlUtils'
 import { WarCountdown } from '../wars/WarCountdown'
 import { WarMembersTable } from '../wars/WarMembersTable'
 
 export const CWLWarDetails = ({
   selectedDay,
   cwlGroupData,
+  clanTag,
   fetchedWarsForDay,
   loadingFetchedWars
 }) => {
@@ -71,59 +72,81 @@ export const CWLWarDetails = ({
     return <div className="cwl-no-wars">No wars found for Day {selectedDay}</div>
   }
 
+  // Helper function to determine which clan is "our clan" and which is "opponent"
+  const getOurClanAndOpponent = (war) => {
+    if (!war.clan || !war.opponent || !clanTag) {
+      return { ourClan: war.clan, opponentClan: war.opponent }
+    }
+    
+    const normalizedOurTag = normalizeTag(clanTag) || clanTag
+    const normalizedWarClanTag = normalizeTag(war.clan.tag) || war.clan.tag
+    
+    // If war.clan.tag matches our clanTag, then war.clan is our clan
+    if (normalizedWarClanTag === normalizedOurTag) {
+      return { ourClan: war.clan, opponentClan: war.opponent }
+    } else {
+      // Otherwise, war.opponent is our clan
+      return { ourClan: war.opponent, opponentClan: war.clan }
+    }
+  }
+
   return (
     <div className="cwl-day-wars">
-      {warsForDay.map((war, idx) => (
-        <div key={idx} className="cwl-war-section">
-          <div className="cwl-war-header">
-            {war.clan && war.opponent ? (
-              <div className="cwl-war-title-section">
-                <h4>{war.clan.name} vs {war.opponent.name}</h4>
-                <WarCountdown war={war} />
-              </div>
-            ) : (
-              <div className="cwl-war-title-section">
-                <h4>War {idx + 1}</h4>
-                <WarCountdown war={war} />
-              </div>
+      {warsForDay.map((war, idx) => {
+        const { ourClan, opponentClan } = getOurClanAndOpponent(war)
+        
+        return (
+          <div key={idx} className="cwl-war-section">
+            <div className="cwl-war-header">
+              {ourClan && opponentClan ? (
+                <div className="cwl-war-title-section">
+                  <h4>{ourClan.name || 'Our Clan'} vs {opponentClan.name || 'Opponent Clan'}</h4>
+                  <WarCountdown war={war} />
+                </div>
+              ) : (
+                <div className="cwl-war-title-section">
+                  <h4>War {idx + 1}</h4>
+                  <WarCountdown war={war} />
+                </div>
+              )}
+            </div>
+
+            {/* Toggle Buttons */}
+            <div className="cwl-members-view-toggle">
+              <button
+                className={`cwl-toggle-btn ${getActiveView(idx) === 'ourClan' ? 'active' : ''}`}
+                onClick={() => setActiveView(idx, 'ourClan')}
+              >
+                Our Attacks
+              </button>
+              <button
+                className={`cwl-toggle-btn ${getActiveView(idx) === 'opponent' ? 'active' : ''}`}
+                onClick={() => setActiveView(idx, 'opponent')}
+              >
+                Opponent Attacks
+              </button>
+            </div>
+
+            {/* Our Clan Members - Show when ourClan is selected */}
+            {getActiveView(idx) === 'ourClan' && ourClan?.members?.length > 0 && (
+              <WarMembersTable
+                members={ourClan.members}
+                title="Our Clan Members"
+                opponentMembers={opponentClan?.members || []}
+              />
+            )}
+
+            {/* Opponent Members - Show when opponent is selected */}
+            {getActiveView(idx) === 'opponent' && opponentClan?.members?.length > 0 && (
+              <WarMembersTable
+                members={opponentClan.members}
+                title="Opponent Members"
+                opponentMembers={ourClan?.members || []}
+              />
             )}
           </div>
-
-          {/* Toggle Buttons */}
-          <div className="cwl-members-view-toggle">
-            <button
-              className={`cwl-toggle-btn ${getActiveView(idx) === 'ourClan' ? 'active' : ''}`}
-              onClick={() => setActiveView(idx, 'ourClan')}
-            >
-              Our Attacks
-            </button>
-            <button
-              className={`cwl-toggle-btn ${getActiveView(idx) === 'opponent' ? 'active' : ''}`}
-              onClick={() => setActiveView(idx, 'opponent')}
-            >
-              Opponent Attacks
-            </button>
-          </div>
-
-          {/* Our Clan Members - Show when ourClan is selected */}
-          {getActiveView(idx) === 'ourClan' && war.clan?.members?.length > 0 && (
-            <WarMembersTable
-              members={war.clan.members}
-              title="Our Clan Members"
-              opponentMembers={war.opponent?.members || []}
-            />
-          )}
-
-          {/* Opponent Members - Show when opponent is selected */}
-          {getActiveView(idx) === 'opponent' && war.opponent?.members?.length > 0 && (
-            <WarMembersTable
-              members={war.opponent.members}
-              title="Opponent Members"
-              opponentMembers={war.clan?.members || []}
-            />
-          )}
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

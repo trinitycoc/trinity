@@ -274,6 +274,7 @@ export const CWLRoundsTable = ({
                   <CWLWarDetails
                     selectedDay={day}
                     cwlGroupData={cwlGroupData}
+                    clanTag={clanTag}
                     fetchedWarsForDay={
                       day === selectedDay 
                         ? fetchedWarsForDay 

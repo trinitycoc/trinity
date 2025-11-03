@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { fetchClan, fetchClanWarLog, fetchClanWar, fetchClanCapitalRaids } from '../services/api'
+import { fetchClan, fetchClanWarLog, fetchClanWar /* fetchClanCapitalRaids */ } from '../services/api'
 import { useCWL } from '../contexts/CWLContext'
 import ClanHeader from '../components/clan-details/ClanHeader'
 import ClanDescription from '../components/clan-details/ClanDescription'
 import TownHallComposition from '../components/clan-details/TownHallComposition'
 import MembersList from '../components/clan-details/MembersList'
-import CurrentWar from '../components/clan-details/CurrentWar'
-import WarLog from '../components/clan-details/WarLog'
-import CapitalRaids from '../components/clan-details/CapitalRaids'
-import CWLDetails from '../components/clan-details/CWLDetails'
+import { CurrentWar, WarLog } from '../components/clan-details/wars'
+// import CapitalRaids from '../components/clan-details/CapitalRaids'
+import { CWLDetails } from '../components/clan-details/cwl'
 
 function ClanDetails() {
   const { clanTag } = useParams()
@@ -18,12 +17,12 @@ function ClanDetails() {
   const [clan, setClan] = useState(null)
   const [warLog, setWarLog] = useState([])
   const [currentWar, setCurrentWar] = useState(null)
-  const [capitalRaids, setCapitalRaids] = useState([])
+  // const [capitalRaids, setCapitalRaids] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [showWarLog, setShowWarLog] = useState(false)
   const [showCurrentWar, setShowCurrentWar] = useState(false)
-  const [showCapitalRaids, setShowCapitalRaids] = useState(false)
+  // const [showCapitalRaids, setShowCapitalRaids] = useState(false)
   const [showCWLDetails, setShowCWLDetails] = useState(false)
   
   // Check if this is a CWL clan - show button if clan has warLeague or is in CWL list
@@ -36,24 +35,26 @@ function ClanDetails() {
         setError(null)
 
         // Fetch clan data, war log, current war, and capital raids
-        const [clanData, warLogData, currentWarData, capitalRaidsData] = await Promise.all([
+        // TODO: Capital Raids not integrated yet - commenting out to prevent unnecessary API calls
+        const [clanData, warLogData, currentWarData /* , capitalRaidsData */] = await Promise.all([
           fetchClan(clanTag),
           fetchClanWarLog(clanTag).catch(() => []),
           fetchClanWar(clanTag).catch((err) => {
             console.error('Error fetching current war:', err)
             return null
           }),
-          fetchClanCapitalRaids(clanTag).catch(() => [])
+          // fetchClanCapitalRaids(clanTag).catch(() => [])
         ])
 
         setClan(clanData)
         setWarLog(Array.isArray(warLogData) ? warLogData : [])
         setCurrentWar(currentWarData)
         // Handle capital raids - API might return {items: [...]} or direct array
-        const raidsArray = Array.isArray(capitalRaidsData) 
-          ? capitalRaidsData 
-          : (capitalRaidsData?.items || [])
-        setCapitalRaids(raidsArray)
+        // TODO: Capital Raids not integrated yet
+        // const raidsArray = Array.isArray(capitalRaidsData) 
+        //   ? capitalRaidsData 
+        //   : (capitalRaidsData?.items || [])
+        // setCapitalRaids(raidsArray)
       } catch (err) {
         console.error('Error loading clan details:', err)
         setError(err.message || 'Failed to load clan details')
@@ -124,11 +125,11 @@ function ClanDetails() {
           warLog={warLog}
           showCurrentWar={showCurrentWar}
           showWarLog={showWarLog}
-          showCapitalRaids={showCapitalRaids}
+          showCapitalRaids={false /* showCapitalRaids */}
           showCWLDetails={showCWLDetails}
           setShowCurrentWar={setShowCurrentWar}
           setShowWarLog={setShowWarLog}
-          setShowCapitalRaids={setShowCapitalRaids}
+          setShowCapitalRaids={() => {} /* setShowCapitalRaids */}
           setShowCWLDetails={setShowCWLDetails}
           isCWLClan={isCWLClan}
         />
@@ -136,25 +137,37 @@ function ClanDetails() {
 
       <div className="clan-details-content">
         {/* Show clan info sections only when war sections are not shown */}
-        {!showCurrentWar && !showWarLog && !showCapitalRaids && !showCWLDetails && (
+        {/* TODO: Capital Raids not integrated yet - removed showCapitalRaids check */}
+        {!showCurrentWar && !showWarLog && !showCWLDetails && (
           <>
             <ClanDescription description={clan.description} />
-            <TownHallComposition memberList={clan.memberList} totalMembers={clan.members} />
+            <TownHallComposition 
+              memberList={clan.memberList} 
+              totalMembers={clan.members} 
+              thComposition={clan.thComposition} 
+            />
             <MembersList memberList={clan.memberList} totalMembers={clan.members} />
           </>
         )}
 
-        {/* CWL Details - Only show for CWL clans */}
-        {isCWLClan && showCWLDetails && <CWLDetails clanTag={clan.tag} showDetails={showCWLDetails} />}
-
         {/* Current War */}
         {showCurrentWar && <CurrentWar currentWar={currentWar} />}
+
+        {/* CWL Details - Only show for CWL clans */}
+        {isCWLClan && showCWLDetails && (
+          <CWLDetails 
+            clanTag={clan.tag} 
+            showDetails={showCWLDetails}
+            leagueName={clan.warLeague?.name}
+          />
+        )}
 
         {/* War Log */}
         {showWarLog && <WarLog warLog={warLog} isWarLogPublic={clan.isWarLogPublic} />}
 
         {/* Capital Raids */}
-        {showCapitalRaids && <CapitalRaids capitalRaids={capitalRaids} />}
+        {/* TODO: Capital Raids not integrated yet - commenting out to prevent unnecessary API calls */}
+        {/* {showCapitalRaids && <CapitalRaids capitalRaids={capitalRaids} />} */}
       </div>
     </section>
   )

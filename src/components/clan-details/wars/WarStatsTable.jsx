@@ -1,5 +1,5 @@
 import React from 'react'
-import { formatDestruction } from '../../utils/cwlUtils'
+import { formatDestruction } from '../../../utils/cwlUtils'
 
 /**
  * Component to display war statistics comparison table
@@ -56,4 +56,3 @@ export const WarStatsTable = ({ clan, opponent, title = 'War Stats' }) => {
     </div>
   )
 }
-

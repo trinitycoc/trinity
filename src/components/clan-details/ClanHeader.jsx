@@ -1,8 +1,9 @@
 import React from 'react'
 import SectionTitle from '../SectionTitle'
 import cwlImage from '/cwl.webp'
+import { getLeagueImage } from '../../constants/leagueImages'
 
-function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, showCapitalRaids, showCWLDetails, setShowCurrentWar, setShowWarLog, setShowCapitalRaids, setShowCWLDetails, isCWLClan }) {
+function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, showCapitalRaids /* commented out - not integrated yet */, showCWLDetails, setShowCurrentWar, setShowWarLog, setShowCapitalRaids /* commented out - not integrated yet */, setShowCWLDetails, isCWLClan }) {
   return (
     <div className="clan-header-info">
       <SectionTitle>{clan.name}</SectionTitle>
@@ -26,7 +27,23 @@ function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, show
         {clan.warLeague?.name && (
           <div className="clan-info-item clan-info-inline">
             <span className="info-value">
-              <img src={cwlImage} alt="CWL" className="cwl-icon-inline" /> {clan.warLeague.name}
+              {(() => {
+                const leagueImg = getLeagueImage(clan.warLeague.name)
+                if (leagueImg) {
+                  return (
+                    <img 
+                      src={leagueImg} 
+                      alt={clan.warLeague.name} 
+                      className="cwl-icon-inline"
+                      onError={(e) => {
+                        e.target.src = cwlImage
+                      }}
+                    />
+                  )
+                }
+                return <img src={cwlImage} alt="CWL" className="cwl-icon-inline" />
+              })()}
+              {clan.warLeague.name}
             </span>
           </div>
         )}
@@ -67,7 +84,7 @@ function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, show
             if (!showCurrentWar) {
               setShowWarLog(false)
               setShowCWLDetails(false)
-              if (!isCWLClan) setShowCapitalRaids(false)
+              // if (!isCWLClan) setShowCapitalRaids(false) // TODO: Capital Raids not integrated yet
             }
             setShowCurrentWar(!showCurrentWar)
           }}
@@ -81,7 +98,7 @@ function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, show
               if (!showWarLog) {
                 setShowCurrentWar(false)
                 setShowCWLDetails(false)
-                if (!isCWLClan) setShowCapitalRaids(false)
+                // if (!isCWLClan) setShowCapitalRaids(false) // TODO: Capital Raids not integrated yet
               }
               setShowWarLog(!showWarLog)
             }}
@@ -103,7 +120,8 @@ function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, show
             {showCWLDetails ? '🏆 Hide CWL Data' : '🏆 Show CWL Data'}
           </button>
         )}
-        {!isCWLClan && (
+        {/* TODO: Capital Raids not integrated yet - commenting out to prevent unnecessary API calls */}
+        {/* {!isCWLClan && (
           <button
             className="war-log-toggle"
             onClick={() => {
@@ -116,7 +134,7 @@ function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, show
           >
             {showCapitalRaids ? '🏰 Hide Capital Raids' : '🏰 Show Capital Raids'}
           </button>
-        )}
+        )} */}
         <a
           href={`https://link.clashofclans.com/en/?action=OpenClanProfile&tag=${clan.tag.replace('#', '%23')}`}
           target="_blank"

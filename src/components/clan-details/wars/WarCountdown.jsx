@@ -1,5 +1,5 @@
 import React from 'react'
-import { useCountdown } from '../../hooks/useCountdown'
+import { useCountdown } from '../../../hooks/useCountdown'
 
 export const WarCountdown = ({ war }) => {
   if (!war) return null
@@ -20,4 +20,3 @@ export const WarCountdown = ({ war }) => {
     </div>
   )
 }
-

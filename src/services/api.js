@@ -1,7 +1,7 @@
 // API client for making requests to the backend server
 
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://trinity-backend-6qzr.onrender.com/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://trinity-backend-6qzr.onrender.com/api'
 
 /**
  * Fetch a single clan by tag
@@ -87,7 +87,9 @@ export const fetchClanWarLog = async (clanTag) => {
 
 /**
  * Get capital raid seasons for a clan
+ * TODO: Capital Raids not integrated yet - commenting out to prevent unnecessary API calls
  */
+/*
 export const fetchClanCapitalRaids = async (clanTag) => {
   try {
     const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
@@ -103,6 +105,7 @@ export const fetchClanCapitalRaids = async (clanTag) => {
     throw error
   }
 }
+*/
 
 /**
  * Check if backend server is running
@@ -252,6 +255,7 @@ export const fetchCWLStatus = async (clanTag) => {
 
 /**
  * Get full CWL group data for a specific clan (all available details)
+ * Now includes pre-calculated leaderboard, roundStats, and warsByRound from backend
  * @param {string} clanTag - Clan tag (with or without #)
  * @param {boolean} includeAllWars - If true, includes all wars from all rounds
  */
@@ -271,6 +275,27 @@ export const fetchCWLGroup = async (clanTag, includeAllWars = false) => {
     return await response.json()
   } catch (error) {
     console.error('Error fetching CWL group:', error)
+    throw error
+  }
+}
+
+/**
+ * Get CWL leaderboard for a specific clan (pre-calculated on backend)
+ * @param {string} clanTag - Clan tag (with or without #)
+ */
+export const fetchCWLLeaderboard = async (clanTag) => {
+  try {
+    // Remove # from tag for URL encoding
+    const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
+    const response = await fetch(`${API_BASE_URL}/cwl/clans/${encodedTag}/leaderboard`)
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch CWL leaderboard: ${response.statusText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching CWL leaderboard:', error)
     throw error
   }
 }

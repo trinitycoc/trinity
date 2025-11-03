@@ -6,52 +6,45 @@ import cwlImage from '/cwl.webp'
 function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUsers = true, isAdminMode = false }) {
   const navigate = useNavigate()
 
-  // Calculate matching TH count based on sheet requirements
-  const calculateTHCount = () => {
-    if (!sheetData?.townHall || !clan?.memberList) return null
+  // Use pre-calculated eligibleMembers from backend if available
+  // Fallback to calculating if backend doesn't provide it (backward compatibility)
+  const thCount = clan.eligibleMembers !== undefined 
+    ? `${clan.eligibleMembers}`
+    : (() => {
+        // Fallback calculation (should not be needed with backend optimization)
+        if (!sheetData?.townHall || !clan?.memberList) return null
 
-    const thRequirement = sheetData.townHall.toLowerCase()
+        const thRequirement = sheetData.townHall.toLowerCase()
+        const thNumbers = []
+        const matches = thRequirement.match(/th\s*(\d+)/gi)
 
-    // Parse TH levels from the requirement string
-    const thNumbers = []
-    const matches = thRequirement.match(/th\s*(\d+)/gi)
+        if (matches) {
+          matches.forEach(match => {
+            const num = parseInt(match.replace(/th\s*/i, ''))
+            if (!isNaN(num)) thNumbers.push(num)
+          })
+        }
 
-    if (matches) {
-      matches.forEach(match => {
-        const num = parseInt(match.replace(/th\s*/i, ''))
-        if (!isNaN(num)) thNumbers.push(num)
-      })
-    }
+        if (thNumbers.length === 0) return null
 
-    if (thNumbers.length === 0) return null
+        const isAndBelow = thRequirement.includes('and below') || thRequirement.includes('below')
+        const minTH = Math.min(...thNumbers)
+        const maxTH = Math.max(...thNumbers)
 
-    // Determine if it's "and below" requirement
-    const isAndBelow = thRequirement.includes('and below') || thRequirement.includes('below')
-
-    // Get min and max TH from requirements
-    const minTH = Math.min(...thNumbers)
-    const maxTH = Math.max(...thNumbers)
-
-    // Count members matching the criteria
-    let count = 0
-    if (isAndBelow) {
-      // Count members with TH <= maxTH
-      count = clan.memberList.filter(member => member.townHallLevel <= maxTH).length
-      return `${count}`
-    } else if (thNumbers.length === 1) {
-      // Single TH requirement
-      count = clan.memberList.filter(member => member.townHallLevel === thNumbers[0]).length
-      return `${count}`
-    } else {
-      // Multiple TH requirements (e.g., Th17, Th16, Th15)
-      count = clan.memberList.filter(member =>
-        member.townHallLevel >= minTH && member.townHallLevel <= maxTH
-      ).length
-      return `${count}`
-    }
-  }
-
-  const thCount = calculateTHCount()
+        let count = 0
+        if (isAndBelow) {
+          count = clan.memberList.filter(member => member.townHallLevel <= maxTH).length
+          return `${count}`
+        } else if (thNumbers.length === 1) {
+          count = clan.memberList.filter(member => member.townHallLevel === thNumbers[0]).length
+          return `${count}`
+        } else {
+          count = clan.memberList.filter(member =>
+            member.townHallLevel >= minTH && member.townHallLevel <= maxTH
+          ).length
+          return `${count}`
+        }
+      })()
 
   // Calculate available space for the banner
   const calculateAvailableSpace = () => {

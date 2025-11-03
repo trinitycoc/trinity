@@ -1,7 +1,7 @@
 // API client for making requests to the backend server
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://trinity-backend-6qzr.onrender.com/api'
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://trinity-backend-6qzr.onrender.com/api'
 
 /**
  * Fetch a single clan by tag
@@ -317,6 +317,11 @@ export const fetchCWLWarByTag = async (warTag, clanTag) => {
     const response = await fetch(`${API_BASE_URL}/cwl/wars/${encodedWarTag}?clanTag=${encodedClanTag}`)
     
     if (!response.ok) {
+      // Handle 404 (war not found) more gracefully
+      if (response.status === 404) {
+        const errorData = await response.json().catch(() => ({ message: 'War not found' }))
+        throw new Error(errorData.message || 'War not found')
+      }
       throw new Error(`Failed to fetch war details: ${response.statusText}`)
     }
     

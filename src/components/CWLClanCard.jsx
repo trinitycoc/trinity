@@ -78,10 +78,12 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
   const getCountdownMessage = () => {
     if (!activeWar || !targetTime || !countdown || countdown === 'Ended') return null
 
+    const roundNumber = activeWar?.round || null
+
     if (isPreparation) {
       return `Battle starts in ${countdown}`
     } else if (isInWar) {
-      return `Battle ends in ${countdown}`
+      return roundNumber ? `Round (${roundNumber}) ends in ${countdown}` : `Battle ends in ${countdown}`
     }
     return null
   }

@@ -207,6 +207,10 @@ export const calculateCWLLeaderboard = (clans, wars) => {
 
 /**
  * Get promotion and demotion slots based on league name
+ * 
+ * @deprecated This function is deprecated. Promotion/demotion calculations are now performed on the backend.
+ * This is kept for backward compatibility only. Use backend-provided values when available.
+ * 
  * @param {string} leagueName - League name (e.g., "Master I", "Crystal II", "Bronze III")
  * @returns {Object} Object with promotionCount and demotionCount
  */
@@ -278,6 +282,10 @@ export const getPromotionDemotionSlots = (leagueName) => {
 
 /**
  * Check if a rank is in promotion zone
+ * 
+ * @deprecated This function is deprecated. Promotion/demotion calculations are now performed on the backend.
+ * This is kept for backward compatibility only. Use backend-provided values when available.
+ * 
  * @param {number} rank - Clan rank (1-8)
  * @param {number} promotionCount - Number of promotion slots
  * @returns {boolean}
@@ -288,6 +296,10 @@ export const isPromotionRank = (rank, promotionCount) => {
 
 /**
  * Check if a rank is in demotion zone
+ * 
+ * @deprecated This function is deprecated. Promotion/demotion calculations are now performed on the backend.
+ * This is kept for backward compatibility only. Use backend-provided values when available.
+ * 
  * @param {number} rank - Clan rank (1-8)
  * @param {number} demotionCount - Number of demotion slots
  * @returns {boolean}
@@ -295,5 +307,69 @@ export const isPromotionRank = (rank, promotionCount) => {
 export const isDemotionRank = (rank, demotionCount) => {
   if (demotionCount === 0) return false
   return rank > (8 - demotionCount)
+}
+
+/**
+ * Get CWL medals per member by league and position (for 8 stars each)
+ * 
+ * @deprecated This function is deprecated. Medal calculations are now performed on the backend.
+ * This is kept for backward compatibility only. Use backend-provided values when available.
+ * This function now always returns null as the medal data has been moved to the backend.
+ * 
+ * @param {string} leagueName - League name (e.g., "Master I", "Crystal II")
+ * @param {number} position - Position in leaderboard (1-8)
+ * @returns {number|null} Medals per member, or null if not found
+ */
+export const getCWLMedalsByPosition = (leagueName, position) => {
+  // Medal data has been moved to backend - this function is only for backward compatibility
+  return null
+}
+
+/**
+ * Get bonus medals per league
+ * 
+ * @deprecated This function is deprecated. Medal calculations are now performed on the backend.
+ * This is kept for backward compatibility only. Use backend-provided values when available.
+ * This function now always returns null as the medal data has been moved to the backend.
+ * 
+ * @param {string} leagueName - League name (e.g., "Master I", "Crystal II")
+ * @returns {number|null} Bonus medals, or null if not found
+ */
+export const getCWLBonusMedals = (leagueName) => {
+  // Medal data has been moved to backend - this function is only for backward compatibility
+  return null
+}
+
+/**
+ * Get base number of bonuses per league
+ * 
+ * @deprecated This function is deprecated. Medal calculations are now performed on the backend.
+ * This is kept for backward compatibility only. Use backend-provided values when available.
+ * This function now always returns null as the medal data has been moved to the backend.
+ * 
+ * @param {string} leagueName - League name (e.g., "Master I", "Crystal II")
+ * @returns {number|null} Base number of bonuses, or null if not found
+ */
+export const getCWLBonusCount = (leagueName) => {
+  // Medal data has been moved to backend - this function is only for backward compatibility
+  return null
+}
+
+/**
+ * Calculate total bonuses (base bonuses + wars won)
+ * 
+ * @deprecated This function is deprecated. Medal calculations are now performed on the backend.
+ * This is kept for backward compatibility only. Use backend-provided values when available.
+ * 
+ * @param {string} leagueName - League name
+ * @param {number} wins - Number of wars won
+ * @returns {number|null} Total bonuses, or null if league not found
+ */
+export const getCWLTotalBonuses = (leagueName, wins) => {
+  const baseBonuses = getCWLBonusCount(leagueName)
+  if (baseBonuses === null) return null
+  
+  const winsCount = wins || 0
+  return baseBonuses + winsCount
 }
 

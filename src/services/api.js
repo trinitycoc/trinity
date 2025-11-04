@@ -258,14 +258,22 @@ export const fetchCWLStatus = async (clanTag) => {
  * Now includes pre-calculated leaderboard, roundStats, and warsByRound from backend
  * @param {string} clanTag - Clan tag (with or without #)
  * @param {boolean} includeAllWars - If true, includes all wars from all rounds
+ * @param {string} leagueName - League name for medal calculations (optional)
  */
-export const fetchCWLGroup = async (clanTag, includeAllWars = false) => {
+export const fetchCWLGroup = async (clanTag, includeAllWars = false, leagueName = null) => {
   try {
     // Remove # from tag for URL encoding
     const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
-    const url = includeAllWars 
+    let url = includeAllWars 
       ? `${API_BASE_URL}/cwl/clans/${encodedTag}/group?allWars=true`
       : `${API_BASE_URL}/cwl/clans/${encodedTag}/group`
+    
+    // Add leagueName as query parameter if provided
+    if (leagueName) {
+      const separator = url.includes('?') ? '&' : '?'
+      url += `${separator}leagueName=${encodeURIComponent(leagueName)}`
+    }
+    
     const response = await fetch(url)
     
     if (!response.ok) {

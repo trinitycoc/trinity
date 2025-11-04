@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { normalizeTag, sortMembersByTH, getPromotionDemotionSlots, isPromotionRank, isDemotionRank } from '../../../utils/cwlUtils'
+import { normalizeTag, sortMembersByTH, getPromotionDemotionSlots, isPromotionRank, isDemotionRank, getCWLMedalsByPosition, getCWLBonusMedals, getCWLTotalBonuses } from '../../../utils/cwlUtils'
 import { thImages } from '../../../constants/thImages'
 import { getLeagueImage } from '../../../constants/leagueImages'
 
@@ -12,12 +12,19 @@ export const CWLLeaderboard = ({ cwlGroupData, expandedClans, setExpandedClans, 
   // Fallback to calculating if backend doesn't provide it (backward compatibility)
   const leaderboard = cwlGroupData.leaderboard || []
 
-  // Get promotion and demotion slots based on league
-  const { promotionCount, demotionCount } = getPromotionDemotionSlots(leagueName)
+  // Get promotion and demotion slots from backend if available, otherwise calculate
+  const promotionDemotion = cwlGroupData.promotionDemotion || (leagueName ? getPromotionDemotionSlots(leagueName) : { promotionCount: 0, demotionCount: 0 })
+  const { promotionCount, demotionCount } = promotionDemotion
 
   // Count clans in promotion and demotion zones
-  const promotedCount = leaderboard.filter(clan => isPromotionRank(clan.rank, promotionCount)).length
-  const demotedCount = leaderboard.filter(clan => isDemotionRank(clan.rank, demotionCount)).length
+  const promotedCount = leaderboard.filter(clan => {
+    // Use backend-provided value if available, otherwise calculate
+    return clan.isPromoted !== undefined ? clan.isPromoted : isPromotionRank(clan.rank, promotionCount)
+  }).length
+  const demotedCount = leaderboard.filter(clan => {
+    // Use backend-provided value if available, otherwise calculate
+    return clan.isDemoted !== undefined ? clan.isDemoted : isDemotionRank(clan.rank, demotionCount)
+  }).length
 
   return (
     <div className="cwl-subsection cwl-leaderboard">
@@ -46,6 +53,7 @@ export const CWLLeaderboard = ({ cwlGroupData, expandedClans, setExpandedClans, 
               <th className="cwl-lb-stars">STARS</th>
               <th className="cwl-lb-destruction">DESTRUCTION</th>
               <th className="cwl-lb-record">RECORD</th>
+              <th className="cwl-lb-medals">MEDALS</th>
             </tr>
           </thead>
           <tbody>
@@ -73,8 +81,27 @@ export const CWLLeaderboard = ({ cwlGroupData, expandedClans, setExpandedClans, 
                 }
               }
 
-              const isPromoted = isPromotionRank(group.rank, promotionCount)
-              const isDemoted = isDemotionRank(group.rank, demotionCount)
+              // Use backend-provided values if available, otherwise calculate
+              const isPromoted = group.isPromoted !== undefined 
+                ? group.isPromoted 
+                : isPromotionRank(group.rank, promotionCount)
+              const isDemoted = group.isDemoted !== undefined 
+                ? group.isDemoted 
+                : isDemotionRank(group.rank, demotionCount)
+
+              // Parse wins from record (format: "wins-ties-losses")
+              const [wins, ties, losses] = group.record ? group.record.split('-').map(v => parseInt(v) || 0) : [0, 0, 0]
+              
+              // Get medal information - use backend-provided values if available, otherwise calculate
+              const medalsPerMember = group.medalsPerMember !== undefined && group.medalsPerMember !== null
+                ? group.medalsPerMember
+                : (leagueName ? getCWLMedalsByPosition(leagueName, group.rank) : null)
+              const bonusMedals = group.bonusMedals !== undefined && group.bonusMedals !== null
+                ? group.bonusMedals
+                : (leagueName ? getCWLBonusMedals(leagueName) : null)
+              const totalBonuses = group.totalBonuses !== undefined && group.totalBonuses !== null
+                ? group.totalBonuses
+                : (leagueName ? getCWLTotalBonuses(leagueName, wins) : null)
 
               return (
                 <tr key={idx} className={`cwl-lb-row ${isPromoted ? 'promotion-zone' : ''} ${isDemoted ? 'demotion-zone' : ''}`}>
@@ -116,17 +143,36 @@ export const CWLLeaderboard = ({ cwlGroupData, expandedClans, setExpandedClans, 
                   </td>
                   <td className="cwl-lb-record">
                     <span className="cwl-lb-record-value">
-                      {(() => {
-                        const [wins, ties, losses] = group.record.split('-').map(v => parseInt(v) || 0)
-                        return (
-                          <>
-                            <span>({wins} win{wins !== 1 ? 's' : ''})</span>
-                            <span className="cwl-record-separator"> - </span>
-                            <span className="cwl-record-loss">({losses} lose{losses !== 1 ? 's' : ''})</span>
-                          </>
-                        )
-                      })()}
+                      <>
+                        <span>({wins} win{wins !== 1 ? 's' : ''})</span>
+                        <span className="cwl-record-separator"> - </span>
+                        <span className="cwl-record-loss">({losses} lose{losses !== 1 ? 's' : ''})</span>
+                      </>
                     </span>
+                  </td>
+                  <td className="cwl-lb-medals">
+                    {leagueName && (
+                      <div className="cwl-lb-medals-info">
+                        {medalsPerMember !== null && (
+                          <div className="cwl-lb-medals-per-member">
+                            <span className="cwl-lb-medals-label">Medals:</span>
+                            <span className="cwl-lb-medals-value">{medalsPerMember}</span>
+                          </div>
+                        )}
+                        {bonusMedals !== null && (
+                          <div className="cwl-lb-bonus-medals">
+                            <span className="cwl-lb-medals-label">Bonus:</span>
+                            <span className="cwl-lb-medals-value">{bonusMedals}</span>
+                          </div>
+                        )}
+                        {totalBonuses !== null && (
+                          <div className="cwl-lb-total-bonuses">
+                            <span className="cwl-lb-medals-label">Bonuses:</span>
+                            <span className="cwl-lb-medals-value">{totalBonuses}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </td>
                 </tr>
               )

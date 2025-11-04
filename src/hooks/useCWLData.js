@@ -33,8 +33,11 @@ export const useCWLStatus = (clanTag) => {
 
 /**
  * Hook for fetching and managing CWL group data
+ * @param {string} clanTag - Clan tag
+ * @param {boolean} shouldFetch - Whether to fetch the data
+ * @param {string} leagueName - League name for medal calculations (optional)
  */
-export const useCWLGroup = (clanTag, shouldFetch) => {
+export const useCWLGroup = (clanTag, shouldFetch, leagueName = null) => {
   const [cwlGroupData, setCwlGroupData] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -44,7 +47,7 @@ export const useCWLGroup = (clanTag, shouldFetch) => {
     const fetchGroupData = async () => {
       setLoading(true)
       try {
-        const data = await fetchCWLGroup(clanTag, true)
+        const data = await fetchCWLGroup(clanTag, true, leagueName)
         setCwlGroupData(data)
       } catch (err) {
         console.error('Error fetching CWL group data:', err)
@@ -55,7 +58,7 @@ export const useCWLGroup = (clanTag, shouldFetch) => {
     }
 
     fetchGroupData()
-  }, [shouldFetch, clanTag, cwlGroupData, loading])
+  }, [shouldFetch, clanTag, leagueName, cwlGroupData, loading])
 
   return { cwlGroupData, loading }
 }

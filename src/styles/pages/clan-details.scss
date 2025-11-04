@@ -503,6 +503,12 @@
                     width: 180px;
                     min-width: 180px;
                   }
+
+                  &.cwl-lb-medals {
+                    text-align: left;
+                    width: 150px;
+                    min-width: 150px;
+                  }
                 }
               }
 
@@ -675,6 +681,57 @@
                       >span:first-child {
                         color: #4ADE80;
                         white-space: nowrap;
+                      }
+                    }
+                  }
+
+                  &.cwl-lb-medals {
+                    text-align: left;
+                    vertical-align: top;
+
+                    .cwl-lb-medals-info {
+                      display: flex;
+                      flex-direction: column;
+                      gap: 6px;
+
+                      .cwl-lb-medals-per-member,
+                      .cwl-lb-bonus-medals,
+                      .cwl-lb-total-bonuses {
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        font-size: 0.85rem;
+
+                        .cwl-lb-medals-label {
+                          color: rgba(255, 255, 255, 0.6);
+                          font-weight: 500;
+                          font-size: 0.8rem;
+                          white-space: nowrap;
+                        }
+
+                        .cwl-lb-medals-value {
+                          color: #FFD700;
+                          font-weight: 700;
+                          font-size: 0.9rem;
+                        }
+                      }
+
+                      .cwl-lb-medals-per-member {
+                        .cwl-lb-medals-value {
+                          color: #FFD700;
+                        }
+                      }
+
+                      .cwl-lb-bonus-medals {
+                        .cwl-lb-medals-value {
+                          color: #4ADE80;
+                        }
+                      }
+
+                      .cwl-lb-total-bonuses {
+                        .cwl-lb-medals-value {
+                          color: #60A5FA;
+                        }
                       }
                     }
                   }

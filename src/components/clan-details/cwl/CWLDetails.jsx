@@ -20,7 +20,7 @@ function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName 
 
   // Use custom hooks for data fetching
   const { cwlStatus, loading: loadingStatus } = useCWLStatus(clanTag)
-  const { cwlGroupData, loading: loadingGroup } = useCWLGroup(clanTag, showAllDetails)
+  const { cwlGroupData, loading: loadingGroup } = useCWLGroup(clanTag, showAllDetails, leagueName)
   const { fetchedWarsForDay, fetchedWarsByRound, loading: loadingFetchedWars } = useCWLDailyWars(
     selectedDay,
     cwlGroupData,

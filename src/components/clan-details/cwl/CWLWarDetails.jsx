@@ -112,26 +112,26 @@ export const CWLWarDetails = ({
 
             {/* Toggle Buttons */}
             <div className="cwl-members-view-toggle">
-              {isAdmin && (
-                <button
-                  className={`cwl-toggle-btn ${getActiveView(idx) === 'warEvents' ? 'active' : ''}`}
-                  onClick={() => setActiveView(idx, 'warEvents')}
-                >
-                  📜 War Events
-                </button>
-              )}
               <button
                 className={`cwl-toggle-btn ${getActiveView(idx) === 'ourClan' ? 'active' : ''}`}
                 onClick={() => setActiveView(idx, 'ourClan')}
-              >
+                >
                 Our Attacks
               </button>
               <button
                 className={`cwl-toggle-btn ${getActiveView(idx) === 'opponent' ? 'active' : ''}`}
                 onClick={() => setActiveView(idx, 'opponent')}
-              >
+                >
                 Opponent Attacks
               </button>
+                {isAdmin && (
+                  <button
+                    className={`cwl-toggle-btn ${getActiveView(idx) === 'warEvents' ? 'active' : ''}`}
+                    onClick={() => setActiveView(idx, 'warEvents')}
+                  >
+                    📜 War Events
+                  </button>
+                )}
             </div>
 
             {/* War Events Timeline - Show when warEvents is selected (admin only) */}

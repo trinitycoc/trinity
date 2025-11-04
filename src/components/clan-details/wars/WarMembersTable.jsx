@@ -47,24 +47,24 @@ export const WarMembersTable = ({ members, title, sortBy = 'position', opponentM
             {sortedMembers.map((member, idx) => {
               const attacks = member.attacks || []
               
-              // Check if any attack is a mirror attack (only in admin mode)
-              let hasMirrorAttack = false
+              // Check if any attack is a mirror bonus attack (only in admin mode)
+              let hasMirrorBonusRule = false
               if (isAdmin) {
                 const attackerSequentialPos = getSequentialPosition(member, sortedMembers)
-                hasMirrorAttack = attacks.some((attack) => {
+                hasMirrorBonusRule = attacks.some((attack) => {
                   const defender = findDefender(attack.defenderTag)
                   if (!defender || !attackerSequentialPos) return false
                   
                   // Get sequential position of defender (1-based position in sorted opponent array)
                   const defenderSequentialPos = getSequentialPosition(defender, sortedOpponentMembers)
                   
-                  // Mirror attack if sequential positions match
+                  // Mirror bonus attack if sequential positions match
                   return attackerSequentialPos === defenderSequentialPos
                 })
               }
               
               return (
-                <tr key={idx} className={hasMirrorAttack ? 'mirror-attack-row' : ''}>
+                <tr key={idx} className={hasMirrorBonusRule ? 'mirror-bonus-rule-row' : ''}>
                   <td className="cwl-table-value">{member.mapPosition}</td>
                   <td className="cwl-table-value">
                     <div className="cwl-attacker-info">

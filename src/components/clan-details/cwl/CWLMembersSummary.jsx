@@ -8,7 +8,7 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag }) => {
       return []
     }
 
-    const memberStatsMap = new Map() // Map of member tag -> { member, rounds: { 1: {...}, 2: {...}, ... }, totals: {...}, mirrorRuleByRound: { 1: true/false, 2: true/false, ... }, hasMirrorAttack: boolean }
+    const memberStatsMap = new Map() // Map of member tag -> { member, rounds: { 1: {...}, 2: {...}, ... }, totals: {...}, mirrorBonusRuleByRound: { 1: true/false, 2: true/false, ... }, hasMirrorBonusRule: boolean }
 
     // Process rounds - use array index + 1 as round number if round.round is not reliable
     // Process up to 7 rounds (or however many are available)
@@ -57,7 +57,7 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag }) => {
 
         if (!ourClan?.members) return
 
-        // Sort members by position for mirror rule checking
+        // Sort members by position for mirror bonus rule checking
         const sortedOurMembers = sortMembersByPosition(ourClan.members || [])
         const sortedOpponentMembers = sortMembersByPosition(opponentClan?.members || [])
 
@@ -99,8 +99,8 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag }) => {
                 destruction: 0,
                 attacks: 0
               },
-              mirrorRuleByRound: {}, // Track mirror rule compliance per round
-              hasMirrorAttack: false
+              mirrorBonusRuleByRound: {}, // Track mirror bonus rule compliance per round
+              hasMirrorBonusRule: false
             })
           }
 
@@ -111,7 +111,7 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag }) => {
               destruction: 0,
               attacks: 0,
               hasAttacks: false,
-              hasMirrorInRound: false
+              hasMirrorBonusInRound: false
             })
           }
 
@@ -128,22 +128,22 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag }) => {
             const roundStats = roundMemberStats.get(memberTag)
             roundStats.hasAttacks = true
 
-            // Check if any attack is a mirror attack
+            // Check if any attack is a mirror bonus attack
             const attackerSequentialPos = getSequentialPosition(member, sortedOurMembers)
-            const hasMirrorInThisWar = attackerSequentialPos && attacks.some((attack) => {
+            const hasMirrorBonusInThisWar = attackerSequentialPos && attacks.some((attack) => {
               const defender = findDefender(attack.defenderTag)
               if (!defender || !attackerSequentialPos) return false
               
               // Get sequential position of defender (1-based position in sorted opponent array)
               const defenderSequentialPos = getSequentialPosition(defender, sortedOpponentMembers)
               
-              // Mirror attack if sequential positions match
+              // Mirror bonus attack if sequential positions match
               return attackerSequentialPos === defenderSequentialPos
             })
 
-            // Update mirror rule status for this round
-            if (hasMirrorInThisWar) {
-              roundStats.hasMirrorInRound = true
+            // Update mirror bonus rule status for this round
+            if (hasMirrorBonusInThisWar) {
+              roundStats.hasMirrorBonusInRound = true
             }
           }
 
@@ -166,10 +166,10 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag }) => {
             attacks: roundStats.attacks
           }
 
-          // Track mirror rule compliance for this round
-          // If member had attacks in this round, check if they followed mirror rule
+          // Track mirror bonus rule compliance for this round
+          // If member had attacks in this round, check if they followed mirror bonus rule
           if (roundStats.hasAttacks) {
-            memberStats.mirrorRuleByRound[roundNum] = roundStats.hasMirrorInRound
+            memberStats.mirrorBonusRuleByRound[roundNum] = roundStats.hasMirrorBonusInRound
           }
 
           // Update totals
@@ -180,20 +180,20 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag }) => {
       })
     }
 
-    // Determine final mirror rule compliance: must follow mirror rule in ALL rounds where they had attacks
+    // Determine final mirror bonus rule compliance: must follow mirror bonus rule in ALL rounds where they had attacks
     memberStatsMap.forEach((memberStats, memberTag) => {
-      const roundsWithAttacks = Object.keys(memberStats.mirrorRuleByRound)
+      const roundsWithAttacks = Object.keys(memberStats.mirrorBonusRuleByRound)
       
       // If member participated in at least one round
       if (roundsWithAttacks.length > 0) {
-        // Check if they followed mirror rule in ALL rounds where they had attacks
-        const allRoundsFollowMirrorRule = roundsWithAttacks.every(roundNum => 
-          memberStats.mirrorRuleByRound[roundNum] === true
+        // Check if they followed mirror bonus rule in ALL rounds where they had attacks
+        const allRoundsFollowMirrorBonusRule = roundsWithAttacks.every(roundNum => 
+          memberStats.mirrorBonusRuleByRound[roundNum] === true
         )
-        memberStats.hasMirrorAttack = allRoundsFollowMirrorRule
+        memberStats.hasMirrorBonusRule = allRoundsFollowMirrorBonusRule
       } else {
-        // No attacks in any round, so no mirror rule to follow
-        memberStats.hasMirrorAttack = false
+        // No attacks in any round, so no mirror bonus rule to follow
+        memberStats.hasMirrorBonusRule = false
       }
     })
 
@@ -241,7 +241,7 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag }) => {
           </thead>
           <tbody>
             {summaryData.map((memberData, idx) => (
-              <tr key={memberData.member.tag || idx} className={memberData.hasMirrorAttack ? 'mirror-attack-row' : ''}>
+              <tr key={memberData.member.tag || idx} className={memberData.hasMirrorBonusRule ? 'mirror-bonus-rule-row' : ''}>
                 <td className="cwl-summary-srno-cell">{idx + 1}</td>
                 <td className="cwl-summary-member-cell">
                   <div className="cwl-summary-member-info">

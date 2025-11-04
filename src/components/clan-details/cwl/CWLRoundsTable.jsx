@@ -11,7 +11,8 @@ export const CWLRoundsTable = ({
   setSelectedDay,
   fetchedWarsByRound,
   fetchedWarsForDay,
-  loadingFetchedWars
+  loadingFetchedWars,
+  isAdmin = false
 }) => {
   const [expandedRound, setExpandedRound] = useState(null)
 
@@ -201,6 +202,7 @@ export const CWLRoundsTable = ({
                 fetchedWarsForDay={fetchedWarsForDay}
                 fetchedWarsByRound={fetchedWarsByRound}
                 loadingFetchedWars={loadingFetchedWars}
+                isAdmin={isAdmin}
               />
             )
           })}

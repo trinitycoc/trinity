@@ -5,10 +5,11 @@ import { useCWLWarNames } from '../../../hooks/useCWLWarNames'
 import { CWLLeaderboard } from './CWLLeaderboard'
 import { CWLRoundsTable } from './CWLRoundsTable'
 import { CWLWarDetails } from './CWLWarDetails'
+import { CWLMembersSummary } from './CWLMembersSummary'
 import { WarStatsTable } from '../wars/WarStatsTable'
 import { WarMembersTable } from '../wars/WarMembersTable'
 
-function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName }) {
+function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName, isAdmin = false }) {
   const [showAllDetails, setShowAllDetails] = useState(false)
   const [showDetails, setShowDetails] = useState(showDetailsProp)
   const [selectedDay, setSelectedDay] = useState(null)
@@ -114,6 +115,15 @@ function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName 
                           fetchedWarsByRound={fetchedWarsByRound}
                           fetchedWarsForDay={fetchedWarsForDay}
                           loadingFetchedWars={loadingFetchedWars}
+                          isAdmin={isAdmin}
+                        />
+                      </div>
+
+                      {/* CWL Members Summary */}
+                      <div className="cwl-card-container">
+                        <CWLMembersSummary
+                          cwlGroupData={cwlGroupData}
+                          clanTag={clanTag}
                         />
                       </div>
                     </>

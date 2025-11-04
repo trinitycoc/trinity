@@ -7,7 +7,8 @@ export const CWLWarDetails = ({
   cwlGroupData,
   clanTag,
   fetchedWarsForDay,
-  loadingFetchedWars
+  loadingFetchedWars,
+  isAdmin = false
 }) => {
   const [activeViews, setActiveViews] = useState({}) // Track view state per war index
   
@@ -16,7 +17,8 @@ export const CWLWarDetails = ({
   }
   
   const getActiveView = (warIdx) => {
-    return activeViews[warIdx] || 'ourClan' // Default to 'ourClan'
+    // Default to 'ourClan' if not admin, 'warEvents' if admin
+    return activeViews[warIdx] || (isAdmin ? 'warEvents' : 'ourClan')
   }
   
   const setActiveView = (warIdx, view) => {
@@ -110,6 +112,14 @@ export const CWLWarDetails = ({
 
             {/* Toggle Buttons */}
             <div className="cwl-members-view-toggle">
+              {isAdmin && (
+                <button
+                  className={`cwl-toggle-btn ${getActiveView(idx) === 'warEvents' ? 'active' : ''}`}
+                  onClick={() => setActiveView(idx, 'warEvents')}
+                >
+                  📜 War Events
+                </button>
+              )}
               <button
                 className={`cwl-toggle-btn ${getActiveView(idx) === 'ourClan' ? 'active' : ''}`}
                 onClick={() => setActiveView(idx, 'ourClan')}
@@ -124,12 +134,126 @@ export const CWLWarDetails = ({
               </button>
             </div>
 
+            {/* War Events Timeline - Show when warEvents is selected (admin only) */}
+            {isAdmin && getActiveView(idx) === 'warEvents' && (
+              <div className="war-events-timeline">
+                <h4 className="timeline-header">
+                  📜 Attack Timeline ({(() => {
+                    const allAttacks = []
+                    ourClan?.members?.forEach(member => {
+                      member.attacks?.forEach(attack => allAttacks.push({ ...attack, isOurClan: true, attacker: member }))
+                    })
+                    opponentClan?.members?.forEach(member => {
+                      member.attacks?.forEach(attack => allAttacks.push({ ...attack, isOurClan: false, attacker: member }))
+                    })
+                    return allAttacks.length
+                  })()})
+                </h4>
+                {(() => {
+                  // Collect all attacks from both clans
+                  const allAttacks = []
+                  
+                  // Add our clan's attacks
+                  ourClan?.members?.forEach(member => {
+                    member.attacks?.forEach(attack => {
+                      // Find defender
+                      const defender = opponentClan?.members?.find(m => {
+                        const normalizedDefenderTag = (attack.defenderTag || '').replace('#', '').toUpperCase()
+                        const normalizedMemberTag = (m.tag || '').replace('#', '').toUpperCase()
+                        return normalizedMemberTag === normalizedDefenderTag
+                      })
+                      allAttacks.push({
+                        ...attack,
+                        attacker: member,
+                        defender: defender,
+                        attackerClan: ourClan,
+                        defenderClan: opponentClan,
+                        isOurAttack: true
+                      })
+                    })
+                  })
+                  
+                  // Add opponent's attacks
+                  opponentClan?.members?.forEach(member => {
+                    member.attacks?.forEach(attack => {
+                      // Find defender
+                      const defender = ourClan?.members?.find(m => {
+                        const normalizedDefenderTag = (attack.defenderTag || '').replace('#', '').toUpperCase()
+                        const normalizedMemberTag = (m.tag || '').replace('#', '').toUpperCase()
+                        return normalizedMemberTag === normalizedDefenderTag
+                      })
+                      allAttacks.push({
+                        ...attack,
+                        attacker: member,
+                        defender: defender,
+                        attackerClan: opponentClan,
+                        defenderClan: ourClan,
+                        isOurAttack: false
+                      })
+                    })
+                  })
+                  
+                  // Sort by attack order (descending - newest first)
+                  allAttacks.sort((a, b) => (b.order || 0) - (a.order || 0))
+                  
+                  return allAttacks.length > 0 ? (
+                    <div className="events-list">
+                      {allAttacks.map((attack, index) => {
+                        // For defenses, swap attacker and defender positions
+                        const leftPlayer = attack.isOurAttack ? attack.attacker : attack.defender
+                        const rightPlayer = attack.isOurAttack ? attack.defender : attack.attacker
+                        
+                        return (
+                          <div key={index} className={`event-item ${attack.isOurAttack ? 'our-attack' : 'our-defense'}`}>
+                            <div className="event-order">#{attack.order}</div>
+                            
+                            <div className="event-attacker">
+                              <div className="player-position">#{leftPlayer?.mapPosition || '?'}</div>
+                              <div className="player-info">
+                                <div className="player-name">{leftPlayer?.name || 'Unknown'}</div>
+                                <div className="player-th">TH{leftPlayer?.townHallLevel || '?'}</div>
+                              </div>
+                            </div>
+                            
+                            <div className="event-arrow">{attack.isOurAttack ? '→' : '←'}</div>
+                            
+                            <div className="event-result">
+                              <div className="result-stars">
+                                {'⭐'.repeat(attack.stars || 0)}
+                                {'☆'.repeat(3 - (attack.stars || 0))}
+                              </div>
+                              <div className="result-destruction">
+                                {(attack.destructionPercentage || attack.destruction || 0).toFixed(0)}%
+                              </div>
+                            </div>
+                            
+                            <div className="event-arrow">{attack.isOurAttack ? '→' : '←'}</div>
+                            
+                            <div className="event-defender">
+                              <div className="player-position">#{rightPlayer?.mapPosition || '?'}</div>
+                              <div className="player-info">
+                                <div className="player-name">{rightPlayer?.name || 'Unknown'}</div>
+                                <div className="player-th">TH{rightPlayer?.townHallLevel || '?'}</div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    <div className="no-events">No attacks have been made yet</div>
+                  )
+                })()}
+              </div>
+            )}
+
             {/* Our Clan Members - Show when ourClan is selected */}
             {getActiveView(idx) === 'ourClan' && ourClan?.members?.length > 0 && (
               <WarMembersTable
                 members={ourClan.members}
                 title="Our Clan Members"
                 opponentMembers={opponentClan?.members || []}
+                isAdmin={isAdmin}
               />
             )}
 
@@ -139,6 +263,7 @@ export const CWLWarDetails = ({
                 members={opponentClan.members}
                 title="Opponent Members"
                 opponentMembers={ourClan?.members || []}
+                isAdmin={isAdmin}
               />
             )}
           </div>

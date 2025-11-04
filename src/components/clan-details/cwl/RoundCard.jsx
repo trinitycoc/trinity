@@ -20,7 +20,8 @@ export const RoundCard = ({
     selectedDay,
     fetchedWarsForDay,
     fetchedWarsByRound,
-    loadingFetchedWars
+    loadingFetchedWars,
+    isAdmin = false
 }) => {
     // Find active war for countdown display (priority: inWar > preparation)
     const activeWar = roundWars.find(war =>
@@ -165,6 +166,7 @@ export const RoundCard = ({
                             : (fetchedWarsByRound[day] || [])
                     }
                     loadingFetchedWars={day === selectedDay ? loadingFetchedWars : false}
+                    isAdmin={isAdmin}
                 />
             )}
         </div>

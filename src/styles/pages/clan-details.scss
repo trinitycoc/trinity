@@ -958,6 +958,17 @@
                 color: #dc2626;
               }
             }
+
+            &.mirror-attack-row {
+              background: rgba(74, 222, 128, 0.15);
+              border-left: 4px solid rgba(74, 222, 128, 0.6);
+              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+              &:hover {
+                background: rgba(74, 222, 128, 0.25);
+                transform: scale(1.01);
+              }
+            }
           }
         }
 
@@ -1543,6 +1554,226 @@
 
         .cwl-table {
           min-width: 600px;
+        }
+      }
+
+      // CWL Members Summary Section
+      .cwl-members-summary-section {
+        padding: $spacing-lg;
+
+        .cwl-summary-title {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: $primary-color;
+          margin-bottom: $spacing-lg;
+          text-align: center;
+          padding-bottom: $spacing-md;
+          border-bottom: 2px solid rgba(102, 126, 234, 0.15);
+        }
+
+        .cwl-summary-table-wrapper {
+          overflow-x: auto;
+          margin: $spacing-md 0;
+          border-radius: $radius-md;
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+
+          .cwl-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: $radius-md;
+            overflow: hidden;
+            min-width: 800px;
+
+            thead {
+              background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(102, 126, 234, 0.1) 100%);
+              position: sticky;
+              top: 0;
+              z-index: 10;
+
+              th {
+                padding: $spacing-md $spacing-sm;
+                text-align: center;
+                font-weight: 700;
+                font-size: 0.85rem;
+                color: $primary-color;
+                border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+                border-right: 1px solid rgba(102, 126, 234, 0.1);
+
+                &:first-child {
+                  text-align: center;
+                  border-left: none;
+                  min-width: 60px;
+                  max-width: 60px;
+                  width: 60px;
+                }
+
+                &:nth-child(2) {
+                  text-align: left;
+                  min-width: 200px;
+                }
+
+                &:last-child {
+                  border-right: none;
+                  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(102, 126, 234, 0.15) 100%);
+                }
+
+                .cwl-summary-subheaders {
+                  display: flex;
+                  justify-content: center;
+                  gap: $spacing-md;
+                  margin-top: $spacing-xs;
+                  font-size: 0.75rem;
+                  font-weight: 600;
+                  color: $text-secondary;
+                }
+              }
+            }
+
+            tbody {
+              tr {
+                border-bottom: 1px solid rgba(102, 126, 234, 0.08);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                display: table-row; // Ensure table row display
+
+                &:hover {
+                  background: rgba(102, 126, 234, 0.08);
+                  transform: scale(1.01);
+                }
+
+                &:last-child {
+                  border-bottom: none;
+                }
+
+                &.mirror-attack-row {
+                  background: rgba(74, 222, 128, 0.15);
+                  border-left: 4px solid rgba(74, 222, 128, 0.6);
+                  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+                  &:hover {
+                    background: rgba(74, 222, 128, 0.25);
+                    transform: scale(1.01);
+                  }
+                }
+              }
+
+              td {
+                padding: $spacing-md $spacing-sm;
+                text-align: center;
+                font-size: 0.85rem;
+                border-right: 1px solid rgba(102, 126, 234, 0.08);
+                display: table-cell; // Ensure table cell display
+                vertical-align: middle;
+
+                &:first-child {
+                  text-align: center;
+                  border-left: none;
+                  font-weight: 600;
+                  color: $text-secondary;
+                  background: rgba(102, 126, 234, 0.03);
+                  min-width: 60px;
+                  max-width: 60px;
+                  width: 60px;
+                }
+
+                &:nth-child(2) {
+                  text-align: left;
+                }
+
+                &:last-child {
+                  border-right: none;
+                  font-weight: 700;
+                  background: rgba(102, 126, 234, 0.05);
+                }
+              }
+            }
+
+            .cwl-summary-member-cell {
+              .cwl-summary-member-info {
+                display: flex;
+                align-items: center;
+                gap: $spacing-sm;
+
+                .cwl-summary-th-image {
+                  width: 32px;
+                  height: 32px;
+                  object-fit: contain;
+                  flex-shrink: 0;
+                }
+
+                .cwl-summary-member-details {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 2px;
+
+                  .cwl-summary-member-name {
+                    font-weight: 600;
+                    color: $text-primary;
+                    font-size: 0.9rem;
+                  }
+
+                  .cwl-summary-member-tag {
+                    font-size: 0.75rem;
+                    color: $text-secondary;
+                  }
+                }
+              }
+            }
+
+            .cwl-summary-round-cell {
+              min-width: 80px;
+              text-align: center;
+
+              .cwl-summary-round-content {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                align-items: center;
+                justify-content: center;
+              }
+
+              .cwl-summary-stars {
+                font-weight: 600;
+                color: $primary-color;
+                font-size: 0.9rem;
+              }
+
+              .cwl-summary-destruction {
+                font-size: 0.8rem;
+                color: $text-secondary;
+              }
+
+              .cwl-summary-no-data {
+                color: rgba(0, 0, 0, 0.3);
+                font-style: italic;
+              }
+            }
+
+            .cwl-summary-total-cell {
+              min-width: 100px;
+              text-align: center;
+
+              .cwl-summary-total-content {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                align-items: center;
+                justify-content: center;
+              }
+
+              .cwl-summary-total-stars {
+                font-weight: 700;
+                color: $primary-color;
+                font-size: 1rem;
+              }
+
+              .cwl-summary-total-destruction {
+                font-weight: 600;
+                color: $text-secondary;
+                font-size: 0.9rem;
+              }
+            }
+          }
         }
       }
 
@@ -2671,6 +2902,109 @@
                     .cwl-attack-item {
                       font-size: 0.65rem;
                     }
+                  }
+                }
+              }
+            }
+          }
+
+          // CWL Members Summary Section - Mobile
+          .cwl-members-summary-section {
+            padding: $spacing-md;
+
+            .cwl-summary-title {
+              font-size: 1.2rem;
+              margin-bottom: $spacing-md;
+              padding-bottom: $spacing-sm;
+            }
+
+            .cwl-summary-table-wrapper {
+              .cwl-summary-table {
+                min-width: 700px;
+                font-size: 0.75rem;
+
+                thead {
+                  th {
+                    padding: $spacing-sm $spacing-xs;
+                    font-size: 0.7rem;
+
+                    &:first-child {
+                      min-width: 50px;
+                      max-width: 50px;
+                      width: 50px;
+                      font-size: 0.65rem;
+                    }
+
+                    .cwl-summary-subheaders {
+                      font-size: 0.65rem;
+                      gap: $spacing-sm;
+                    }
+                  }
+                }
+
+                tbody {
+                  td {
+                    padding: $spacing-sm $spacing-xs;
+                    font-size: 0.7rem;
+
+                    &:first-child {
+                      min-width: 50px;
+                      max-width: 50px;
+                      width: 50px;
+                      font-size: 0.65rem;
+                      font-weight: 600;
+                    }
+                  }
+                }
+
+                .cwl-summary-member-cell {
+                  .cwl-summary-member-info {
+                    .cwl-summary-th-image {
+                      width: 24px;
+                      height: 24px;
+                    }
+
+                    .cwl-summary-member-details {
+                      .cwl-summary-member-name {
+                        font-size: 0.8rem;
+                      }
+
+                      .cwl-summary-member-tag {
+                        font-size: 0.65rem;
+                      }
+                    }
+                  }
+                }
+
+                .cwl-summary-round-cell {
+                  min-width: 60px;
+
+                  .cwl-summary-round-content {
+                    gap: 2px;
+                  }
+
+                  .cwl-summary-stars {
+                    font-size: 0.75rem;
+                  }
+
+                  .cwl-summary-destruction {
+                    font-size: 0.7rem;
+                  }
+                }
+
+                .cwl-summary-total-cell {
+                  min-width: 70px;
+
+                  .cwl-summary-total-content {
+                    gap: 2px;
+                  }
+
+                  .cwl-summary-total-stars {
+                    font-size: 0.85rem;
+                  }
+
+                  .cwl-summary-total-destruction {
+                    font-size: 0.75rem;
                   }
                 }
               }

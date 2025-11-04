@@ -5,12 +5,15 @@ import { thImages } from '../../../constants/thImages'
 /**
  * Component to display war members table
  */
-export const WarMembersTable = ({ members, title, sortBy = 'position', opponentMembers = [] }) => {
+export const WarMembersTable = ({ members, title, sortBy = 'position', opponentMembers = [], isAdmin = false }) => {
   if (!members || members.length === 0) return null
 
   const sortedMembers = sortBy === 'position' 
     ? sortMembersByPosition(members)
     : members
+
+  // Sort opponent members by position to calculate sequential positions
+  const sortedOpponentMembers = sortMembersByPosition(opponentMembers)
 
   // Helper function to find defender by tag
   const findDefender = (defenderTag) => {
@@ -19,6 +22,12 @@ export const WarMembersTable = ({ members, title, sortBy = 'position', opponentM
       const normalizedMemberTag = m.tag?.replace('#', '').toUpperCase()
       return normalizedMemberTag === normalizedDefenderTag
     })
+  }
+
+  // Helper function to get sequential position (1-based) in sorted array
+  const getSequentialPosition = (member, sortedArray) => {
+    const index = sortedArray.findIndex(m => m.tag === member.tag)
+    return index >= 0 ? index + 1 : null
   }
 
   return (
@@ -38,8 +47,24 @@ export const WarMembersTable = ({ members, title, sortBy = 'position', opponentM
             {sortedMembers.map((member, idx) => {
               const attacks = member.attacks || []
               
+              // Check if any attack is a mirror attack (only in admin mode)
+              let hasMirrorAttack = false
+              if (isAdmin) {
+                const attackerSequentialPos = getSequentialPosition(member, sortedMembers)
+                hasMirrorAttack = attacks.some((attack) => {
+                  const defender = findDefender(attack.defenderTag)
+                  if (!defender || !attackerSequentialPos) return false
+                  
+                  // Get sequential position of defender (1-based position in sorted opponent array)
+                  const defenderSequentialPos = getSequentialPosition(defender, sortedOpponentMembers)
+                  
+                  // Mirror attack if sequential positions match
+                  return attackerSequentialPos === defenderSequentialPos
+                })
+              }
+              
               return (
-                <tr key={idx}>
+                <tr key={idx} className={hasMirrorAttack ? 'mirror-attack-row' : ''}>
                   <td className="cwl-table-value">{member.mapPosition}</td>
                   <td className="cwl-table-value">
                     <div className="cwl-attacker-info">

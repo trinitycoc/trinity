@@ -91,18 +91,26 @@ function CWL() {
     fetchClansData()
   }, [showAll])
 
-  // Keyboard shortcut to toggle admin view (Ctrl+Shift+A) - Desktop
+  // Keyboard shortcut to toggle admin view (Alt+Shift+A) - Desktop
   useEffect(() => {
     const handleKeyPress = (e) => {
-      // Ctrl+Shift+A to toggle admin view
-      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+      // Don't trigger if user is typing in an input, textarea, or contenteditable element
+      const target = e.target
+      const isInputElement = target.tagName === 'INPUT' || 
+                            target.tagName === 'TEXTAREA' || 
+                            target.isContentEditable ||
+                            target.closest('input, textarea, [contenteditable="true"]')
+      
+      // Alt+Shift+A to toggle admin view (won't conflict with browser shortcuts)
+      if (e.altKey && e.shiftKey && e.key === 'A' && !isInputElement) {
         e.preventDefault()
+        e.stopPropagation()
         toggleAdminView()
       }
     }
 
-    window.addEventListener('keydown', handleKeyPress)
-    return () => window.removeEventListener('keydown', handleKeyPress)
+    window.addEventListener('keydown', handleKeyPress, true) // Use capture phase
+    return () => window.removeEventListener('keydown', handleKeyPress, true)
   }, [toggleAdminView])
 
   // Triple tap on title to toggle admin view - Mobile

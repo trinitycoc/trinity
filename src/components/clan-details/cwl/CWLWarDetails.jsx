@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { getValidWarTags, filterWarsForDay, normalizeTag } from '../../../utils/cwlUtils'
-import { WarCountdown } from '../wars/WarCountdown'
 import { WarMembersTable } from '../wars/WarMembersTable'
 
 export const CWLWarDetails = ({
@@ -101,12 +100,10 @@ export const CWLWarDetails = ({
               {ourClan && opponentClan ? (
                 <div className="cwl-war-title-section">
                   <h4>{ourClan.name || 'Our Clan'} vs {opponentClan.name || 'Opponent Clan'}</h4>
-                  <WarCountdown war={war} />
                 </div>
               ) : (
                 <div className="cwl-war-title-section">
                   <h4>War {idx + 1}</h4>
-                  <WarCountdown war={war} />
                 </div>
               )}
             </div>

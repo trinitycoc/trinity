@@ -145,7 +145,7 @@ function CWL() {
   return (
     <section className="cwl-page">
       <div ref={titleRef} className="cwl-title-wrapper">
-        <SectionTitle>Clan War League (CWL)</SectionTitle>
+        <SectionTitle>Trinity Clan War League (CWL)</SectionTitle>
       </div>
       <p className="page-description">
         Our CWL clans are organized in satellite leagues, offering high-tier competitive play for Trinity players.

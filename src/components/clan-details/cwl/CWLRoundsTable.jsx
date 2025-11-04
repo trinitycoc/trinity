@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { getValidWarTags } from '../../../utils/cwlUtils'
 // import { calculateRoundStats, getRoundWars } from '../../../utils/roundStats' // Moved to backend
 import { CWLWarDetails } from './CWLWarDetails'
+import { RoundCard } from './RoundCard'
 
 export const CWLRoundsTable = ({
   cwlGroupData,
@@ -176,114 +177,27 @@ export const CWLRoundsTable = ({
               : null
 
             return (
-              <div
+              <RoundCard
                 key={day}
-                className={`current-war cwl-round-card ${isExpanded ? 'expanded' : ''} ${getRoundCardClass(stats.result, stats.status)}`}
-              >
-                {/* Round Header - Status and Result */}
-                <div className="cwl-round-card-header">
-                  <div className="cwl-round-badge-header">
-                    <div className="cwl-round-badge">R{day}</div>
-                    <div className="cwl-round-header-text">
-                      <div className="cwl-round-title">Round {day}</div>
-                      <div className="cwl-round-status">{stats.status}</div>
-                    </div>
-                  </div>
-                  <button
-                    className={`cwl-result-button ${getResultClass(stats.result)}`}
-                  >
-                    <span className="cwl-result-text">{getResultText(stats.result)}</span>
-                  </button>
-                </div>
-
-                {/* War Header - Clan vs Opponent */}
-                <div className="war-header">
-                  <div className="war-clan">
-                    {stats.ourClanBadge && (
-                      <img
-                        src={stats.ourClanBadge.medium || stats.ourClanBadge.small || stats.ourClanBadge.large}
-                        alt={stats.ourClanName}
-                        className="war-clan-badge"
-                      />
-                    )}
-                    <div>
-                      <h4>{stats.ourClanName}</h4>
-                      <p>{stats.ourClanTag || 'N/A'}</p>
-                    </div>
-                  </div>
-                  <div className="war-vs">VS</div>
-                  <div className="war-clan">
-                    {stats.opponentClanBadge && (
-                      <img
-                        src={stats.opponentClanBadge.medium || stats.opponentClanBadge.small || stats.opponentClanBadge.large}
-                        alt={stats.opponentClanName}
-                        className="war-clan-badge"
-                      />
-                    )}
-                    <div>
-                      <h4>{stats.opponentClanName}</h4>
-                      <p>{stats.opponentClanTag || 'N/A'}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* War Stats - 2x2 Grid */}
-                <div className="war-stats">
-                  <div className="war-stat-group">
-                    <div className="war-stat">
-                      <span className="stat-label">⭐ Stars</span>
-                      <span className="stat-value">{stats.ourStars} - {stats.opponentStars}</span>
-                    </div>
-                    <div className="war-stat">
-                      <span className="stat-label">💥 Destruction</span>
-                      <span className="stat-value">
-                        {stats.ourDestruction.toFixed(2)}% - {stats.opponentDestruction.toFixed(2)}%
-                      </span>
-                    </div>
-                    <div className="war-stat">
-                      <span className="stat-label">⚔️ Attacks Used</span>
-                      <span className="stat-value">
-                        {ourAttacks} / {maxAttacks} - {opponentAttacks} / {maxAttacks}
-                      </span>
-                    </div>
-                    <div className="war-stat">
-                      <span className="stat-label">🏢 Team Size</span>
-                      <span className="stat-value">{teamSize} vs {teamSize}</span>
-                    </div>
-                  </div>
-                  {/* {latestEndTime && (
-                    <div className="war-time">
-                      <span>⏰ Ends: {new Date(latestEndTime).toLocaleString()}</span>
-                    </div>
-                  )} */}
-                </div>
-                
-                {/* Show/Hide Attacks Button */}
-                <div className="cwl-attacks-toggle-container">
-                  <button
-                    className="cwl-show-attacks-btn"
-                    onClick={() => handleRoundClick(day)}
-                  >
-                    {isExpanded ? 'Hide Attacks' : 'Show Attacks'}
-                    <span className={`cwl-attacks-chevron ${isExpanded ? 'expanded' : ''}`}>▼</span>
-                  </button>
-                </div>
-                
-                {/* War Details - Show under this specific round card when expanded */}
-                {isExpanded && (
-                  <CWLWarDetails
-                    selectedDay={day}
-                    cwlGroupData={cwlGroupData}
-                    clanTag={clanTag}
-                    fetchedWarsForDay={
-                      day === selectedDay 
-                        ? fetchedWarsForDay 
-                        : (fetchedWarsByRound[day] || [])
-                    }
-                    loadingFetchedWars={day === selectedDay ? loadingFetchedWars : false}
-                  />
-                )}
-              </div>
+                day={day}
+                stats={stats}
+                roundWars={roundWars}
+                ourAttacks={ourAttacks}
+                opponentAttacks={opponentAttacks}
+                maxAttacks={maxAttacks}
+                teamSize={teamSize}
+                isExpanded={isExpanded}
+                onToggle={() => handleRoundClick(day)}
+                getResultText={getResultText}
+                getResultClass={getResultClass}
+                getRoundCardClass={getRoundCardClass}
+                cwlGroupData={cwlGroupData}
+                clanTag={clanTag}
+                selectedDay={selectedDay}
+                fetchedWarsForDay={fetchedWarsForDay}
+                fetchedWarsByRound={fetchedWarsByRound}
+                loadingFetchedWars={loadingFetchedWars}
+              />
             )
           })}
         </div>

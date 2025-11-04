@@ -222,19 +222,58 @@ export const getPromotionDemotionSlots = (leagueName) => {
     return { promotionCount: 3, demotionCount: 0 }
   }
   
-  // Bronze I & II: 3 promoted, 2 demoted
+  // Bronze I & II: 3 promoted, 1 demoted
   if (leagueNameUpper.includes('BRONZE') && (leagueNameUpper.includes('I') || leagueNameUpper.includes('II'))) {
-    return { promotionCount: 3, demotionCount: 2 }
+    // Check that it's not III (already handled above)
+    if (!leagueNameUpper.includes('III')) {
+      return { promotionCount: 3, demotionCount: 1 }
+    }
   }
   
-  // Champion I: 0 promoted, 2 demoted
+  // Silver III: 2 promoted, 1 demoted
+  if (leagueNameUpper.includes('SILVER') && leagueNameUpper.includes('III')) {
+    return { promotionCount: 2, demotionCount: 1 }
+  }
+  
+  // Silver I & II: 2 promoted, 2 demoted
+  if (leagueNameUpper.includes('SILVER') && (leagueNameUpper.includes('I') || leagueNameUpper.includes('II'))) {
+    if (!leagueNameUpper.includes('III')) {
+      return { promotionCount: 2, demotionCount: 2 }
+    }
+  }
+  
+  // Gold I, II, III: 2 promoted, 2 demoted
+  if (leagueNameUpper.includes('GOLD')) {
+    return { promotionCount: 2, demotionCount: 2 }
+  }
+  
+  // Crystal III & II: 2 promoted, 2 demoted
+  if (leagueNameUpper.includes('CRYSTAL') && (leagueNameUpper.includes('III') || leagueNameUpper.includes('II'))) {
+    return { promotionCount: 2, demotionCount: 2 }
+  }
+  
+  // Crystal I: 1 promoted, 2 demoted
+  if (leagueNameUpper.includes('CRYSTAL') && leagueNameUpper.includes('I') && !leagueNameUpper.includes('II') && !leagueNameUpper.includes('III')) {
+    return { promotionCount: 1, demotionCount: 2 }
+  }
+  
+  // Master I, II, III: 1 promoted, 2 demoted
+  if (leagueNameUpper.includes('MASTER')) {
+    return { promotionCount: 1, demotionCount: 2 }
+  }
+  
+  // Champion III & II: 1 promoted, 2 demoted
+  if (leagueNameUpper.includes('CHAMPION') && (leagueNameUpper.includes('III') || leagueNameUpper.includes('II'))) {
+    return { promotionCount: 1, demotionCount: 2 }
+  }
+  
+  // Champion I: 0 promoted, 3 demoted
   if (leagueNameUpper.includes('CHAMPION') && leagueNameUpper.includes('I') && !leagueNameUpper.includes('II') && !leagueNameUpper.includes('III')) {
-    return { promotionCount: 0, demotionCount: 2 }
+    return { promotionCount: 0, demotionCount: 3 }
   }
   
-  // Silver III to Champion II: 2 promoted, 2 demoted
-  // This includes: Silver I, II, III; Gold I, II, III; Crystal I, II, III; Master I, II, III; Champion II, III
-  return { promotionCount: 2, demotionCount: 2 }
+  // No match found: return 0 for both
+  return { promotionCount: 0, demotionCount: 0 }
 }
 
 /**

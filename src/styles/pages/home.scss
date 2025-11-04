@@ -50,6 +50,13 @@
     line-height: 1.6;
   }
 
+  &-search {
+    display: flex;
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
+    max-width: 500px;
+  }
+
   &-actions {
     display: flex;
     gap: $spacing-sm;
@@ -70,6 +77,57 @@
   border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
   animation: morphing 8s ease-in-out infinite;
   box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+}
+
+// Clan Search Input and Button
+.clan-search-input {
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  font-size: 1rem;
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  color: $text-primary;
+  transition: all 0.3s ease;
+  outline: none;
+
+  &:focus {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: rgba(255, 255, 255, 1);
+  }
+
+  &::placeholder {
+    color: $text-secondary;
+  }
+}
+
+.clan-search-button {
+  padding: $spacing-sm $spacing-lg;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: $primary-gradient;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 @keyframes morphing {
@@ -97,6 +155,21 @@
   .hero-subtitle {
     color: $text-dark-secondary;
   }
+
+  .clan-search-input {
+    background: rgba(30, 30, 30, 0.95);
+    color: $text-dark-primary;
+    border-color: rgba(102, 126, 234, 0.5);
+
+    &:focus {
+      background: rgba(30, 30, 30, 1);
+      border-color: $primary-color;
+    }
+
+    &::placeholder {
+      color: $text-dark-secondary;
+    }
+  }
 }
 
 // Responsive
@@ -121,5 +194,10 @@
   .geometric-shape {
     width: 280px;
     height: 280px;
+  }
+
+  .hero-search {
+    max-width: 100%;
+    flex-direction: column;
   }
 }

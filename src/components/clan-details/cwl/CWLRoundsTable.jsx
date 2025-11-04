@@ -147,34 +147,38 @@ export const CWLRoundsTable = ({
             
             const isExpanded = expandedRound === day
 
-            // Calculate attacks used and team size from round wars
-            const ourAttacks = roundWars.reduce((sum, war) => {
-              const normalizedOurTag = (clanTag || '').replace('#', '')
-              const normalizedWarClanTag = (war.clan?.tag || '').replace('#', '')
-              if (normalizedWarClanTag === normalizedOurTag) {
-                return sum + (war.clan?.attacks || 0)
-              } else {
-                return sum + (war.opponent?.attacks || 0)
-              }
-            }, 0)
+            // Use backend-provided values if available, otherwise calculate (backward compatibility)
+            const ourAttacks = stats.ourAttacks !== undefined 
+              ? stats.ourAttacks 
+              : roundWars.reduce((sum, war) => {
+                  const normalizedOurTag = (clanTag || '').replace('#', '')
+                  const normalizedWarClanTag = (war.clan?.tag || '').replace('#', '')
+                  if (normalizedWarClanTag === normalizedOurTag) {
+                    return sum + (war.clan?.attacks || 0)
+                  } else {
+                    return sum + (war.opponent?.attacks || 0)
+                  }
+                }, 0)
             
-            const opponentAttacks = roundWars.reduce((sum, war) => {
-              const normalizedOurTag = (clanTag || '').replace('#', '')
-              const normalizedWarClanTag = (war.clan?.tag || '').replace('#', '')
-              if (normalizedWarClanTag === normalizedOurTag) {
-                return sum + (war.opponent?.attacks || 0)
-              } else {
-                return sum + (war.clan?.attacks || 0)
-              }
-            }, 0)
+            const opponentAttacks = stats.opponentAttacks !== undefined 
+              ? stats.opponentAttacks 
+              : roundWars.reduce((sum, war) => {
+                  const normalizedOurTag = (clanTag || '').replace('#', '')
+                  const normalizedWarClanTag = (war.clan?.tag || '').replace('#', '')
+                  if (normalizedWarClanTag === normalizedOurTag) {
+                    return sum + (war.opponent?.attacks || 0)
+                  } else {
+                    return sum + (war.clan?.attacks || 0)
+                  }
+                }, 0)
             
-            const teamSize = roundWars.length > 0 ? (roundWars[0].teamSize || 0) : 0
-            const maxAttacks = teamSize * 1
+            const teamSize = stats.teamSize !== undefined 
+              ? stats.teamSize 
+              : (roundWars.length > 0 ? (roundWars[0].teamSize || 0) : 0)
             
-            // Get the latest end time from round wars
-            const latestEndTime = roundWars.length > 0 
-              ? roundWars.map(war => war.endTime).filter(Boolean).sort().pop()
-              : null
+            const maxAttacks = stats.maxAttacks !== undefined 
+              ? stats.maxAttacks 
+              : teamSize * 1
 
             return (
               <RoundCard

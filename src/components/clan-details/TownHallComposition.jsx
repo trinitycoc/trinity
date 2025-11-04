@@ -21,8 +21,10 @@ function TownHallComposition({ memberList, totalMembers, thComposition: backendT
       <h3>🏠 Town Hall Composition</h3>
       <div className="th-composition">
         {Object.keys(thComposition).sort((a, b) => b - a).map(th => {
-          const count = thComposition[th]
-          const percentage = (count / totalMembers) * 100
+          // Backend provides { count, percentage }, frontend fallback uses just count
+          const thData = typeof thComposition[th] === 'object' ? thComposition[th] : { count: thComposition[th] }
+          const count = thData.count || thComposition[th]
+          const percentage = thData.percentage !== undefined ? thData.percentage : (totalMembers > 0 ? (count / totalMembers) * 100 : 0)
           const thImage = thImages[th]
           
           return (

@@ -53,7 +53,7 @@ export const CWLLeaderboard = ({ cwlGroupData, expandedClans, setExpandedClans, 
               <th className="cwl-lb-stars">STARS</th>
               <th className="cwl-lb-destruction">DESTRUCTION</th>
               <th className="cwl-lb-record">RECORD</th>
-              <th className="cwl-lb-medals">MEDALS</th>
+              <th className="cwl-lb-medals">REWARDS</th>
             </tr>
           </thead>
           <tbody>
@@ -89,8 +89,10 @@ export const CWLLeaderboard = ({ cwlGroupData, expandedClans, setExpandedClans, 
                 ? group.isDemoted 
                 : isDemotionRank(group.rank, demotionCount)
 
-              // Parse wins from record (format: "wins-ties-losses")
-              const [wins, ties, losses] = group.record ? group.record.split('-').map(v => parseInt(v) || 0) : [0, 0, 0]
+              // Use backend-provided wins/ties/losses if available, otherwise parse from record string
+              const wins = group.wins !== undefined ? group.wins : (group.record ? parseInt(group.record.split('-')[0]) || 0 : 0)
+              const ties = group.ties !== undefined ? group.ties : (group.record ? parseInt(group.record.split('-')[1]) || 0 : 0)
+              const losses = group.losses !== undefined ? group.losses : (group.record ? parseInt(group.record.split('-')[2]) || 0 : 0)
               
               // Get medal information - use backend-provided values if available, otherwise calculate
               const medalsPerMember = group.medalsPerMember !== undefined && group.medalsPerMember !== null

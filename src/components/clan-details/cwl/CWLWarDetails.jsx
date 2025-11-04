@@ -17,8 +17,8 @@ export const CWLWarDetails = ({
   }
   
   const getActiveView = (warIdx) => {
-    // Default to 'ourClan' if not admin, 'warEvents' if admin
-    return activeViews[warIdx] || (isAdmin ? 'warEvents' : 'ourClan')
+    // Always default to 'ourClan' - don't auto-switch to warEvents when admin mode is enabled
+    return activeViews[warIdx] || 'ourClan'
   }
   
   const setActiveView = (warIdx, view) => {

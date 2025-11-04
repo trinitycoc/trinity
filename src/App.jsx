@@ -8,11 +8,13 @@ import ClanDetails from './pages/ClanDetails'
 import CWL from './pages/CWL'
 import FarmingBaseLayouts from './pages/FarmingBaseLayouts'
 import Contact from './pages/Contact'
+import { ScrollToTop } from './components/ScrollToTop'
 import './styles/main.scss'
 
 function App() {
   return (
     <HashRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />

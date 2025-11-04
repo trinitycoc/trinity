@@ -1,11 +1,31 @@
 import React, { useMemo } from 'react'
-import { getValidWarTags, filterWarsForDay, normalizeTag, sortMembersByPosition } from '../../../utils/cwlUtils'
+import { getValidWarTags, filterWarsForDay, normalizeTag, sortMembersByPosition, getCWLTotalBonuses } from '../../../utils/cwlUtils'
 import { thImages } from '../../../constants/thImages'
 
-export const CWLMembersSummary = ({ cwlGroupData, clanTag }) => {
+export const CWLMembersSummary = ({ cwlGroupData, clanTag, leagueName }) => {
   const summaryData = useMemo(() => {
     if (!cwlGroupData?.group?.rounds || !clanTag) {
       return []
+    }
+
+    // Get totalBonuses for the current clan from leaderboard
+    let totalBonuses = null
+    const normalizedOurTag = normalizeTag(clanTag) || clanTag
+    if (cwlGroupData.leaderboard && Array.isArray(cwlGroupData.leaderboard)) {
+      const clanLeaderboard = cwlGroupData.leaderboard.find(clan => {
+        const normalizedClanTag = normalizeTag(clan.tag) || clan.tag
+        return normalizedClanTag === normalizedOurTag || clan.tag === clanTag
+      })
+      if (clanLeaderboard) {
+        // Use backend-provided totalBonuses if available
+        if (clanLeaderboard.totalBonuses !== undefined && clanLeaderboard.totalBonuses !== null) {
+          totalBonuses = clanLeaderboard.totalBonuses
+        } else if (leagueName) {
+          // Fallback to calculating if not provided by backend
+          const wins = clanLeaderboard.wins !== undefined ? clanLeaderboard.wins : (clanLeaderboard.record ? parseInt(clanLeaderboard.record.split('-')[0]) || 0 : 0)
+          totalBonuses = getCWLTotalBonuses(leagueName, wins)
+        }
+      }
     }
 
     const memberStatsMap = new Map() // Map of member tag -> { member, rounds: { 1: {...}, 2: {...}, ... }, totals: {...}, mirrorBonusRuleByRound: { 1: true/false, 2: true/false, ... }, hasMirrorBonusRule: boolean }
@@ -198,13 +218,33 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag }) => {
     })
 
     // Convert map to array and sort by total stars (descending)
-    return Array.from(memberStatsMap.values()).sort((a, b) => {
+    const sortedMembers = Array.from(memberStatsMap.values()).sort((a, b) => {
       if (b.totals.stars !== a.totals.stars) {
         return b.totals.stars - a.totals.stars
       }
       return b.totals.destruction - a.totals.destruction
     })
-  }, [cwlGroupData, clanTag])
+
+    // Mark bonus-eligible members (top X members based on totalBonuses)
+    // IMPORTANT: Only members who followed the mirror bonus rule are eligible for bonuses
+    if (totalBonuses !== null && totalBonuses > 0) {
+      // Filter members who followed the mirror bonus rule
+      const mirrorBonusRuleMembers = sortedMembers.filter(member => member.hasMirrorBonusRule === true)
+      
+      // Take top X members from those who followed the mirror bonus rule
+      const bonusCount = Math.min(totalBonuses, mirrorBonusRuleMembers.length)
+      for (let i = 0; i < bonusCount; i++) {
+        const member = mirrorBonusRuleMembers[i]
+        // Find the member in the sortedMembers array and mark as bonus-eligible
+        const memberIndex = sortedMembers.findIndex(m => m.member.tag === member.member.tag)
+        if (memberIndex !== -1) {
+          sortedMembers[memberIndex].isBonusEligible = true
+        }
+      }
+    }
+
+    return sortedMembers
+  }, [cwlGroupData, clanTag, leagueName])
 
   if (summaryData.length === 0) {
     return null
@@ -240,24 +280,39 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag }) => {
             </tr>
           </thead>
           <tbody>
-            {summaryData.map((memberData, idx) => (
-              <tr key={memberData.member.tag || idx} className={memberData.hasMirrorBonusRule ? 'mirror-bonus-rule-row' : ''}>
-                <td className="cwl-summary-srno-cell">{idx + 1}</td>
-                <td className="cwl-summary-member-cell">
-                  <div className="cwl-summary-member-info">
-                    {thImages[memberData.member.townHallLevel] && (
-                      <img
-                        src={thImages[memberData.member.townHallLevel]}
-                        alt={`TH${memberData.member.townHallLevel}`}
-                        className="cwl-summary-th-image"
-                      />
-                    )}
-                    <div className="cwl-summary-member-details">
-                      <div className="cwl-summary-member-name">{memberData.member.name}</div>
-                      <div className="cwl-summary-member-tag">{memberData.member.tag}</div>
+            {summaryData.map((memberData, idx) => {
+              const rowClasses = []
+              if (memberData.hasMirrorBonusRule) {
+                rowClasses.push('mirror-bonus-rule-row')
+              }
+              if (memberData.isBonusEligible) {
+                rowClasses.push('bonus-eligible-row')
+              }
+              return (
+                <tr key={memberData.member.tag || idx} className={rowClasses.join(' ')}>
+                  <td className="cwl-summary-srno-cell">
+                    {idx + 1}
+                  </td>
+                  <td className="cwl-summary-member-cell">
+                    <div className="cwl-summary-member-info">
+                      {thImages[memberData.member.townHallLevel] && (
+                        <img
+                          src={thImages[memberData.member.townHallLevel]}
+                          alt={`TH${memberData.member.townHallLevel}`}
+                          className="cwl-summary-th-image"
+                        />
+                      )}
+                      <div className="cwl-summary-member-details">
+                        <div className="cwl-summary-member-name">
+                          {memberData.member.name}
+                          {memberData.isBonusEligible && (
+                            <span className="bonus-indicator" title="Bonus Eligible">🏅</span>
+                          )}
+                        </div>
+                        <div className="cwl-summary-member-tag">{memberData.member.tag}</div>
+                      </div>
                     </div>
-                  </div>
-                </td>
+                  </td>
                 {rounds.map(roundNum => {
                   const roundData = memberData.rounds[roundNum]
                   return (
@@ -280,7 +335,8 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag }) => {
                   </div>
                 </td>
               </tr>
-            ))}
+            )
+          })}
           </tbody>
         </table>
       </div>

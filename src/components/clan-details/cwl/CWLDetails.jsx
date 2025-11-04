@@ -124,6 +124,7 @@ function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName,
                         <CWLMembersSummary
                           cwlGroupData={cwlGroupData}
                           clanTag={clanTag}
+                          leagueName={leagueName}
                         />
                       </div>
                     </>

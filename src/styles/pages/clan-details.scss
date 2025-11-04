@@ -1655,6 +1655,29 @@
                     transform: scale(1.01);
                   }
                 }
+
+                &.bonus-eligible-row {
+                  background: rgba(251, 191, 36, 0.15);
+                  border-left: 4px solid rgba(251, 191, 36, 0.7);
+                  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+                  &:hover {
+                    background: rgba(251, 191, 36, 0.25);
+                    transform: scale(1.01);
+                  }
+                }
+
+                // If both classes are present, use a combination style
+                &.mirror-bonus-rule-row.bonus-eligible-row {
+                  background: linear-gradient(90deg, rgba(74, 222, 128, 0.15) 0%, rgba(251, 191, 36, 0.15) 100%);
+                  border-left: 4px solid rgba(251, 191, 36, 0.8);
+                  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
+
+                  &:hover {
+                    background: linear-gradient(90deg, rgba(74, 222, 128, 0.25) 0%, rgba(251, 191, 36, 0.25) 100%);
+                    transform: scale(1.01);
+                  }
+                }
               }
 
               td {
@@ -1674,6 +1697,13 @@
                   min-width: 60px;
                   max-width: 60px;
                   width: 60px;
+
+                  .bonus-badge {
+                    display: inline-block;
+                    margin-left: 4px;
+                    font-size: 0.85rem;
+                    animation: pulse 2s ease-in-out infinite;
+                  }
                 }
 
                 &:nth-child(2) {
@@ -1710,6 +1740,14 @@
                     font-weight: 600;
                     color: $text-primary;
                     font-size: 0.9rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+
+                    .bonus-indicator {
+                      font-size: 0.9rem;
+                      animation: pulse 2s ease-in-out infinite;
+                    }
                   }
 
                   .cwl-summary-member-tag {
@@ -4422,5 +4460,17 @@
     opacity: 1;
     transform: translateY(0);
     max-height: 5000px;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
   }
 }

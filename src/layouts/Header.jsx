@@ -16,6 +16,7 @@ function Header() {
           <li><Link to="/clans">Clans</Link></li>
           <li><Link to="/cwl">Cwl</Link></li>
           <li><Link to="/farming-base-layouts">Farming base layouts</Link></li>
+          <li><Link to="/features">Features</Link></li>
           <li><Link to="/contact">Contact</Link></li>
         </ul>
       </nav>

@@ -7,6 +7,7 @@ import Clans from './pages/Clans'
 import ClanDetails from './pages/ClanDetails'
 import CWL from './pages/CWL'
 import FarmingBaseLayouts from './pages/FarmingBaseLayouts'
+import Features from './pages/Features'
 import Contact from './pages/Contact'
 import { ScrollToTop } from './components/ScrollToTop'
 import './styles/main.scss'
@@ -23,6 +24,7 @@ function App() {
           <Route path="clans/:clanTag" element={<ClanDetails />} />
           <Route path="cwl" element={<CWL />} />
           <Route path="farming-base-layouts" element={<FarmingBaseLayouts />} />
+          <Route path="features" element={<Features />} />
           <Route path="contact" element={<Contact />} />
         </Route>
       </Routes>

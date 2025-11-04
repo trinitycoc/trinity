@@ -11,6 +11,10 @@ function Contact() {
           Have questions or want to join the Trinity family? Get in touch with us!
         </p>
 
+        <div className="contact-note">
+          <p>You can contact <span className="highlight-name">Admin | HellRaiser</span> or <span className="highlight-name">Staff | Thomas Shelby</span> on <strong>Band</strong> to join Trinity.</p>
+        </div>
+
         <div className="contact-methods">
           <div className="contact-card">
             <div className="contact-icon">💬</div>

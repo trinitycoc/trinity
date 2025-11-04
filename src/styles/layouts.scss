@@ -96,6 +96,64 @@
   text-align: center;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   color: $text-secondary;
+
+  .footer-note {
+    max-width: 800px;
+    margin: 0 auto $spacing-md;
+    padding: $spacing-md;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border-radius: $radius-md;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+
+    .footer-note-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: $spacing-xs;
+      color: $primary-color;
+    }
+
+    .footer-note-text {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin: 0;
+      color: $text-secondary;
+
+      strong {
+        color: $primary-color;
+        font-weight: 600;
+      }
+
+      .footer-link {
+        color: $primary-color;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+
+        &:hover {
+          text-decoration: underline;
+          color: $secondary-color;
+        }
+      }
+    }
+  }
+
+  .footer-copyright {
+    margin: 0;
+    font-size: 0.85rem;
+    color: $text-secondary;
+
+    a {
+      color: $primary-color;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+
+      &:hover {
+        text-decoration: underline;
+        color: $secondary-color;
+      }
+    }
+  }
 }
 
 // Dark Mode
@@ -112,6 +170,43 @@
   .footer {
     border-top-color: rgba(255, 255, 255, 0.1);
     color: $text-dark-secondary;
+
+    .footer-note {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+      border-color: rgba(102, 126, 234, 0.3);
+
+      .footer-note-title {
+        color: lighten($primary-color, 15%);
+      }
+
+      .footer-note-text {
+        color: $text-dark-secondary;
+
+        strong {
+          color: lighten($primary-color, 15%);
+        }
+
+        .footer-link {
+          color: lighten($primary-color, 15%);
+
+          &:hover {
+            color: lighten($secondary-color, 15%);
+          }
+        }
+      }
+    }
+
+    .footer-copyright {
+      color: $text-dark-secondary;
+
+      a {
+        color: lighten($primary-color, 15%);
+
+        &:hover {
+          color: lighten($secondary-color, 15%);
+        }
+      }
+    }
   }
 }
 
@@ -163,7 +258,23 @@
 
   .footer {
     padding: $spacing-md;
-    font-size: 0.9rem;
+
+    .footer-note {
+      padding: $spacing-sm;
+      margin-bottom: $spacing-sm;
+
+      .footer-note-title {
+        font-size: 0.9rem;
+      }
+
+      .footer-note-text {
+        font-size: 0.85rem;
+      }
+    }
+
+    .footer-copyright {
+      font-size: 0.8rem;
+    }
   }
 }
 

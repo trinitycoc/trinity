@@ -4024,10 +4024,13 @@
         }
 
         &.result-in-progress {
-          background: rgba(255, 255, 255, 0.15);
+          // Base gradient - will be overridden by inline styles for dynamic star-based gradient
+          // Uses CSS custom property for dynamic gradient stop position
+          --gradient-stop: 50%;
+          background: linear-gradient(90deg, rgba(34, 197, 94, 0.15) var(--gradient-stop), rgba(239, 68, 68, 0.15) var(--gradient-stop));
 
           &:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.2) var(--gradient-stop), rgba(239, 68, 68, 0.2) var(--gradient-stop));
           }
         }
 

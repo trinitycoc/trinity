@@ -50,9 +50,34 @@ export const RoundCard = ({
 
     const countdownMessage = getCountdownMessage()
 
+    // Calculate dynamic gradient for in-progress cards based on star comparison
+    const getInProgressGradient = () => {
+        const isInProgress = stats.status?.toLowerCase() === 'in progress' || stats.status?.toLowerCase().includes('progress')
+        if (!isInProgress) return null
+
+        const ourStars = stats.ourStars || 0
+        const opponentStars = stats.opponentStars || 0
+        const totalStars = ourStars + opponentStars
+
+        // Calculate green percentage based on our stars
+        // Clamp between 20% and 80% for visual effect (never fully green or red)
+        let greenPercentage = 50 // Default 50/50 split
+        if (totalStars > 0) {
+            greenPercentage = (ourStars / totalStars) * 100
+            greenPercentage = Math.max(20, Math.min(80, greenPercentage))
+        }
+
+        return {
+            '--gradient-stop': `${greenPercentage}%`
+        }
+    }
+
+    const inProgressStyle = getInProgressGradient()
+
     return (
         <div
             className={`current-war cwl-round-card ${isExpanded ? 'expanded' : ''} ${getRoundCardClass(stats.result, stats.status)}`}
+            style={inProgressStyle || {}}
         >
             {/* Round Header - 3 Column Layout */}
             <div className="cwl-round-card-header">

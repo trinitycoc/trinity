@@ -3992,6 +3992,7 @@
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         animation: fadeIn 0.5s ease-in-out;
+        position: relative;
 
         &.expanded {
           // Smooth transition when expanding
@@ -4007,30 +4008,86 @@
         }
 
         // Result-based background colors
+        // White background base like CWL members summary, with colored overlay
         &.result-defeat {
-          background: rgba(239, 68, 68, 0.15);
+          background: rgba(255, 255, 255, 0.95);
+          border-left: 4px solid rgba(239, 68, 68, 0.6);
+
+          &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(239, 68, 68, 0.3);
+            border-radius: $radius-lg;
+            pointer-events: none;
+            z-index: 0;
+          }
+
+          > * {
+            position: relative;
+            z-index: 1;
+          }
 
           &:hover {
-            background: rgba(239, 68, 68, 0.2);
+            background: rgba(255, 255, 255, 0.95);
+            border-left-color: rgba(239, 68, 68, 0.8);
+
+            &::before {
+              background: rgba(239, 68, 68, 0.5);
+            }
           }
         }
 
         &.result-win {
-          background: rgba(34, 197, 94, 0.15);
+          background: rgba(255, 255, 255, 0.95);
+          border-left: 4px solid rgba(74, 222, 128, 0.6);
+
+          &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(74, 222, 128, 0.3);
+            border-radius: $radius-lg;
+            pointer-events: none;
+            z-index: 0;
+          }
+
+          > * {
+            position: relative;
+            z-index: 1;
+          }
 
           &:hover {
-            background: rgba(34, 197, 94, 0.2);
+            background: rgba(255, 255, 255, 0.95);
+            border-left-color: rgba(74, 222, 128, 0.8);
+
+            &::before {
+              background: rgba(74, 222, 128, 0.5);
+            }
           }
         }
 
         &.result-in-progress {
-          // Base gradient - will be overridden by inline styles for dynamic star-based gradient
+          // White background base like CWL members summary, with gradient overlay
           // Uses CSS custom property for dynamic gradient stop position
+          // Using same colors as leaderboard (rgba(74, 222, 128) for green, rgba(239, 68, 68) for red)
           --gradient-stop: 50%;
-          background: linear-gradient(90deg, rgba(34, 197, 94, 0.15) var(--gradient-stop), rgba(239, 68, 68, 0.15) var(--gradient-stop));
+          background: 
+            linear-gradient(90deg, rgba(74, 222, 128, 0.3) var(--gradient-stop), rgba(239, 68, 68, 0.3) var(--gradient-stop)),
+            rgba(255, 255, 255, 0.95);
+          // Dynamic border color based on star comparison - will be set via inline style
+          border-left: 4px solid rgba(102, 126, 234, 0.3);
 
           &:hover {
-            background: linear-gradient(90deg, rgba(34, 197, 94, 0.2) var(--gradient-stop), rgba(239, 68, 68, 0.2) var(--gradient-stop));
+            background: 
+              linear-gradient(90deg, rgba(74, 222, 128, 0.5) var(--gradient-stop), rgba(239, 68, 68, 0.5) var(--gradient-stop)),
+              rgba(255, 255, 255, 0.95);
           }
         }
 

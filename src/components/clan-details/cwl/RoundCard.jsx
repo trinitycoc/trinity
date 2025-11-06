@@ -67,8 +67,20 @@ export const RoundCard = ({
             greenPercentage = Math.max(20, Math.min(80, greenPercentage))
         }
 
+        // Calculate border color based on star comparison
+        // More green if we're winning, more red if we're losing
+        let borderColor = 'rgba(102, 126, 234, 0.3)' // Default neutral
+        if (totalStars > 0) {
+            if (ourStars > opponentStars) {
+                borderColor = 'rgba(74, 222, 128, 0.6)' // Green when winning
+            } else if (ourStars < opponentStars) {
+                borderColor = 'rgba(239, 68, 68, 0.6)' // Red when losing
+            }
+        }
+
         return {
-            '--gradient-stop': `${greenPercentage}%`
+            '--gradient-stop': `${greenPercentage}%`,
+            'borderLeftColor': borderColor
         }
     }
 

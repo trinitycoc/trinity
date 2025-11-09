@@ -31,7 +31,7 @@
   .clan-details-header {
     display: flex;
     align-items: center;
-    gap: $spacing-lg;
+    gap: $spacing-md;
     margin-bottom: $spacing-xl;
     padding: $spacing-lg;
     background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
@@ -3994,10 +3994,10 @@
       .cwl-round-card {
         display: flex;
         flex-direction: column;
-        gap: $spacing-lg;
+        gap: $spacing-sm;
         background: transparent;
         border-radius: $radius-lg;
-        padding: $spacing-lg;
+        padding: $spacing-sm $spacing-lg;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         animation: fadeIn 0.5s ease-in-out;
@@ -4269,41 +4269,88 @@
           }
         }
 
-        // War Header styling within round card
-        .war-header {
-          .war-clan {
-            h4 {
-              color: rgba(0, 0, 0, 0.9);
-              font-weight: 700;
-            }
+        // War summary styling within round card
+        .war-summary-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr) minmax(0, 1fr);
+          gap: $spacing-md;
+          margin-top: $spacing-md;
 
-            p {
-              color: rgba(0, 0, 0, 0.7);
-            }
-          }
+          .war-summary-col {
+            background: transparent;
+            border: none;
+            border-radius: $radius-md;
+            padding: 0 $spacing-md;
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-sm;
+            height: 100%;
 
-          .war-vs {
-            color: rgba(0, 0, 0, 0.8);
-            font-weight: 900;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          }
-        }
+            &.clan-overview {
+              align-items: center;
+              text-align: center;
 
-        // War Stats styling within round card
-        .war-stats {
-          .war-stat-group {
-            .war-stat {
-              background: rgba(255, 255, 255, 0.8);
-              border: 1px solid rgba(0, 0, 0, 0.1);
-
-              .stat-label {
-                color: rgba(0, 0, 0, 0.7);
-                font-weight: 600;
+              .war-clan-badge {
+                width: 72px;
+                height: 72px;
+                object-fit: contain;
               }
 
-              .stat-value {
-                color: rgba(0, 0, 0, 0.9);
-                font-weight: 700;
+              .clan-overview-text {
+                h4 {
+                  color: rgba(0, 0, 0, 0.9);
+                  font-weight: 700;
+                  margin: 0;
+                }
+
+                p {
+                  margin: 0;
+                  color: rgba(0, 0, 0, 0.65);
+                  font-weight: 600;
+                  letter-spacing: 0.5px;
+                }
+              }
+            }
+
+            &.stats-comparison {
+              gap: $spacing-xs;
+
+              .stats-row {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+                align-items: center;
+                gap: $spacing-sm;
+                padding: 0.25rem 0;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+                &:last-child {
+                  border-bottom: none;
+                }
+
+                .stat-label {
+                  color: rgba(0, 0, 0, 0.7);
+                  font-weight: 600;
+                  text-align: center;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                }
+
+                .stat-value {
+                  color: rgba(0, 0, 0, 0.85);
+                  font-weight: 700;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+
+                  &.our-value {
+                    text-align: right;
+                  }
+
+                  &.opponent-value {
+                    text-align: left;
+                  }
+                }
               }
             }
           }
@@ -4329,9 +4376,9 @@
 
         // Show/Hide Attacks Button
         .cwl-attacks-toggle-container {
-          margin-top: $spacing-md;
-          padding-top: $spacing-md;
-          border-top: 2px solid rgba(102, 126, 234, 0.15);
+          margin-top: $spacing-sm;
+          padding-top: $spacing-xs;
+          border-top: 1px solid rgba(102, 126, 234, 0.15);
 
           .cwl-show-attacks-btn {
             width: 100%;
@@ -4339,7 +4386,7 @@
             align-items: center;
             justify-content: center;
             gap: $spacing-sm;
-            padding: $spacing-md $spacing-lg;
+            padding: 0.4rem $spacing-sm;
             background: linear-gradient(145deg, rgba(102, 126, 234, 0.15) 0%, rgba(102, 126, 234, 0.1) 100%);
             border: 2px solid rgba(102, 126, 234, 0.3);
             border-radius: $radius-md;
@@ -4421,7 +4468,7 @@
 
         .cwl-toggle-btn {
           flex: 1;
-          padding: $spacing-md $spacing-lg;
+          padding: $spacing-xs $spacing-sm;
           background: rgba(255, 255, 255, 0.8);
           border: 2px solid rgba(102, 126, 234, 0.2);
           border-radius: $radius-sm;

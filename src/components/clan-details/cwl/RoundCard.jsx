@@ -49,6 +49,52 @@ export const RoundCard = ({
     }
 
     const countdownMessage = getCountdownMessage()
+    const ourTeamSize = teamSize ?? stats.teamSize ?? stats.ourTeamSize ?? 'N/A'
+    const opponentTeamSize = stats.opponentTeamSize ?? teamSize ?? stats.teamSize ?? 'N/A'
+
+    const formatPercentage = value => {
+        if (typeof value === 'number') {
+            return `${value.toFixed(2)}%`
+        }
+        if (value === null || value === undefined || value === '') {
+            return 'N/A'
+        }
+        return value
+    }
+
+    const formatAttacks = value => {
+        if (value === null || value === undefined) {
+            return 'N/A'
+        }
+        return value
+    }
+
+    const statComparisons = [
+        {
+            key: 'stars',
+            label: 'Stars',
+            ourValue: stats.ourStars ?? 'N/A',
+            opponentValue: stats.opponentStars ?? 'N/A'
+        },
+        {
+            key: 'destruction',
+            label: 'Destruction',
+            ourValue: formatPercentage(stats.ourDestruction),
+            opponentValue: formatPercentage(stats.opponentDestruction)
+        },
+        {
+            key: 'attacks',
+            label: 'Attacks Used',
+            ourValue: `${formatAttacks(ourAttacks)}`,
+            opponentValue: `${formatAttacks(opponentAttacks)}`
+        },
+        {
+            key: 'team-size',
+            label: 'Team Size',
+            ourValue: ourTeamSize,
+            opponentValue: opponentTeamSize
+        }
+    ]
 
     // Calculate dynamic gradient for in-progress cards based on star comparison
     const getInProgressGradient = () => {
@@ -123,9 +169,9 @@ export const RoundCard = ({
                 </div>
             </div>
 
-            {/* War Header - Clan vs Opponent */}
-            <div className="war-header">
-                <div className="war-clan">
+            {/* War Summary - Comparison Layout */}
+            <div className="war-summary-grid">
+                <div className="war-summary-col clan-overview our-clan">
                     {stats.ourClanBadge && (
                         <img
                             src={stats.ourClanBadge.medium || stats.ourClanBadge.small || stats.ourClanBadge.large}
@@ -133,13 +179,21 @@ export const RoundCard = ({
                             className="war-clan-badge"
                         />
                     )}
-                    <div>
+                    <div className="clan-overview-text">
                         <h4>{stats.ourClanName}</h4>
                         <p>{stats.ourClanTag || 'N/A'}</p>
                     </div>
                 </div>
-                <div className="war-vs">VS</div>
-                <div className="war-clan">
+                <div className="war-summary-col stats-comparison">
+                    {statComparisons.map(item => (
+                        <div className="stats-row" key={`comparison-${item.key}`}>
+                            <span className="stat-value our-value">{item.ourValue}</span>
+                            <span className="stat-label">{item.label}</span>
+                            <span className="stat-value opponent-value">{item.opponentValue}</span>
+                        </div>
+                    ))}
+                </div>
+                <div className="war-summary-col clan-overview opponent-clan">
                     {stats.opponentClanBadge && (
                         <img
                             src={stats.opponentClanBadge.medium || stats.opponentClanBadge.small || stats.opponentClanBadge.large}
@@ -147,35 +201,9 @@ export const RoundCard = ({
                             className="war-clan-badge"
                         />
                     )}
-                    <div>
+                    <div className="clan-overview-text">
                         <h4>{stats.opponentClanName}</h4>
                         <p>{stats.opponentClanTag || 'N/A'}</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* War Stats - 2x2 Grid */}
-            <div className="war-stats">
-                <div className="war-stat-group">
-                    <div className="war-stat">
-                        <span className="stat-label">⭐ Stars</span>
-                        <span className="stat-value">{stats.ourStars} - {stats.opponentStars}</span>
-                    </div>
-                    <div className="war-stat">
-                        <span className="stat-label">💥 Destruction</span>
-                        <span className="stat-value">
-                            {stats.ourDestruction.toFixed(2)}% - {stats.opponentDestruction.toFixed(2)}%
-                        </span>
-                    </div>
-                    <div className="war-stat">
-                        <span className="stat-label">⚔️ Attacks Used</span>
-                        <span className="stat-value">
-                            {ourAttacks} / {maxAttacks} - {opponentAttacks} / {maxAttacks}
-                        </span>
-                    </div>
-                    <div className="war-stat">
-                        <span className="stat-label">🏢 Team Size</span>
-                        <span className="stat-value">{teamSize} vs {teamSize}</span>
                     </div>
                 </div>
             </div>

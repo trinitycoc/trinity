@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import SectionTitle from '../components/SectionTitle'
 import CWLClanCard from '../components/CWLClanCard'
+import LazyRender from '../components/LazyRender'
 import { checkServerHealth, fetchFilteredCWLClans } from '../services/api'
 
 function CWL() {
@@ -180,15 +181,19 @@ function CWL() {
         ) : clansData.length > 0 ? (
           // Show CWL clan cards with fetched data
           clansData.map((clan) => (
-            <CWLClanCard
+            <LazyRender
               key={clan.tag}
-              clan={clan}
-              isLoading={false}
-              error={false}
-              sheetData={clan.sheetData}
-              isVisibleToUsers={showAll ? filteredClanTags.has(clan.tag) : true}
-              isAdminMode={showAll}
-            />
+              placeholder={<CWLClanCard isLoading={true} />}
+            >
+              <CWLClanCard
+                clan={clan}
+                isLoading={false}
+                error={false}
+                sheetData={clan.sheetData}
+                isVisibleToUsers={showAll ? filteredClanTags.has(clan.tag) : true}
+                isAdminMode={showAll}
+              />
+            </LazyRender>
           ))
         ) : (
           <div className="no-data-message">

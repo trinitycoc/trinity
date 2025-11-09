@@ -40,6 +40,22 @@
     margin-bottom: 3rem;
   }
 
+  &-description {
+    max-width: 900px;
+    margin: 0 auto 3rem;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: $text-secondary;
+
+    p {
+      margin-bottom: 1.25rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
   &-card {
     background: $bg-light;
     border-radius: 16px;

@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback, Suspense, lazy } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { fetchClan, fetchClanWarLog, fetchClanWar /* fetchClanCapitalRaids */ } from '../services/api'
 import { useCWL } from '../contexts/CWLContext'
 import ClanHeader from '../components/clan-details/ClanHeader'
-import ClanDescription from '../components/clan-details/ClanDescription'
-import TownHallComposition from '../components/clan-details/TownHallComposition'
-import MembersList from '../components/clan-details/MembersList'
-import { CurrentWar, WarLog } from '../components/clan-details/wars'
+const ClanDescription = lazy(() => import('../components/clan-details/ClanDescription'))
+const TownHallComposition = lazy(() => import('../components/clan-details/TownHallComposition'))
+const MembersList = lazy(() => import('../components/clan-details/MembersList'))
+const CurrentWar = lazy(() => import('../components/clan-details/wars/CurrentWar'))
+const WarLog = lazy(() => import('../components/clan-details/wars/WarLog'))
 // import CapitalRaids from '../components/clan-details/CapitalRaids'
-import { CWLDetails } from '../components/clan-details/cwl'
+const CWLDetails = lazy(() => import('../components/clan-details/cwl/CWLDetails'))
 
 function ClanDetails() {
   const { clanTag } = useParams()
@@ -219,7 +220,7 @@ function ClanDetails() {
         {/* Show clan info sections only when war sections are not shown */}
         {/* TODO: Capital Raids not integrated yet - removed showCapitalRaids check */}
         {!showCurrentWar && !showWarLog && !showCWLDetails && (
-          <>
+          <Suspense fallback={<div className="section-loading">Loading clan overview...</div>}>
             <ClanDescription description={clan.description} />
             <TownHallComposition 
               memberList={clan.memberList} 
@@ -227,24 +228,34 @@ function ClanDetails() {
               thComposition={clan.thComposition} 
             />
             <MembersList memberList={clan.memberList} totalMembers={clan.members} />
-          </>
+          </Suspense>
         )}
 
         {/* Current War */}
-        {showCurrentWar && <CurrentWar currentWar={currentWar} />}
+        {showCurrentWar && (
+          <Suspense fallback={<div className="section-loading">Loading current war...</div>}>
+            <CurrentWar currentWar={currentWar} />
+          </Suspense>
+        )}
 
         {/* CWL Details - Only show for CWL clans */}
         {isCWLClan && showCWLDetails && (
-          <CWLDetails 
-            clanTag={clan.tag} 
-            showDetails={showCWLDetails}
-            leagueName={clan.warLeague?.name}
-            isAdmin={isAdmin}
-          />
+          <Suspense fallback={<div className="section-loading">Loading CWL details...</div>}>
+            <CWLDetails 
+              clanTag={clan.tag} 
+              showDetails={showCWLDetails}
+              leagueName={clan.warLeague?.name}
+              isAdmin={isAdmin}
+            />
+          </Suspense>
         )}
 
         {/* War Log */}
-        {showWarLog && <WarLog warLog={warLog} isWarLogPublic={clan.isWarLogPublic} />}
+        {showWarLog && (
+          <Suspense fallback={<div className="section-loading">Loading war log...</div>}>
+            <WarLog warLog={warLog} isWarLogPublic={clan.isWarLogPublic} />
+          </Suspense>
+        )}
 
         {/* Capital Raids */}
         {/* TODO: Capital Raids not integrated yet - commenting out to prevent unnecessary API calls */}

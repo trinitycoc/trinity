@@ -1,22 +1,64 @@
 // API client for making requests to the backend server
 
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://trinity-backend-6qzr.onrender.com/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://trinity-backend-6qzr.onrender.com/api'
+
+const FIVE_MINUTES = 5 * 60 * 1000
+const clanCache = new Map()
+const multipleClansCache = new Map()
+
+const getNow = () => Date.now()
+
+const normalizeClanTag = (tag) => {
+  if (!tag) return ''
+  return tag.toString().trim().toUpperCase().replace(/^#+/, '')
+}
+
+const getCachedData = (cache, key, ttl = FIVE_MINUTES) => {
+  const entry = cache.get(key)
+  if (!entry) return null
+
+  if (getNow() - entry.timestamp > ttl) {
+    cache.delete(key)
+    return null
+  }
+
+  return entry.data
+}
+
+const setCachedData = (cache, key, data) => {
+  cache.set(key, { data, timestamp: getNow() })
+}
 
 /**
  * Fetch a single clan by tag
  */
-export const fetchClan = async (clanTag) => {
+export const fetchClan = async (clanTag, options = {}) => {
   try {
+    const normalizedTag = normalizeClanTag(clanTag)
+    if (!normalizedTag) {
+      throw new Error('Clan tag is required')
+    }
+
+    const cacheKey = normalizedTag
+    if (!options.forceRefresh) {
+      const cached = getCachedData(clanCache, cacheKey)
+      if (cached) {
+        return cached
+      }
+    }
+
     // Remove # from tag for URL encoding
-    const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
+    const encodedTag = encodeURIComponent(normalizedTag)
     const response = await fetch(`${API_BASE_URL}/clans/${encodedTag}`)
     
     if (!response.ok) {
       throw new Error(`Failed to fetch clan: ${response.statusText}`)
     }
     
-    return await response.json()
+    const data = await response.json()
+    setCachedData(clanCache, cacheKey, data)
+    return data
   } catch (error) {
     console.error('Error fetching clan:', error)
     throw error
@@ -26,8 +68,22 @@ export const fetchClan = async (clanTag) => {
 /**
  * Fetch multiple clans by tags
  */
-export const fetchMultipleClans = async (clanTags) => {
+export const fetchMultipleClans = async (clanTags, options = {}) => {
   try {
+    if (!Array.isArray(clanTags) || clanTags.length === 0) {
+      throw new Error('Clan tags array is required')
+    }
+
+    const normalizedTags = clanTags.map(normalizeClanTag).filter(Boolean)
+    const cacheKey = normalizedTags.slice().sort().join(',')
+
+    if (!options.forceRefresh) {
+      const cached = getCachedData(multipleClansCache, cacheKey)
+      if (cached) {
+        return cached
+      }
+    }
+
     const response = await fetch(`${API_BASE_URL}/clans/multiple`, {
       method: 'POST',
       headers: {
@@ -40,11 +96,33 @@ export const fetchMultipleClans = async (clanTags) => {
       throw new Error(`Failed to fetch clans: ${response.statusText}`)
     }
     
-    return await response.json()
+    const data = await response.json()
+
+    // Cache the full response
+    setCachedData(multipleClansCache, cacheKey, data)
+
+    // Hydrate individual clan cache entries for quicker single lookups
+    if (Array.isArray(data)) {
+      data.forEach((clan) => {
+        if (clan?.tag) {
+          const tagKey = normalizeClanTag(clan.tag)
+          if (tagKey) {
+            setCachedData(clanCache, tagKey, clan)
+          }
+        }
+      })
+    }
+
+    return data
   } catch (error) {
     console.error('Error fetching multiple clans:', error)
     throw error
   }
+}
+
+export const clearClanCache = () => {
+  clanCache.clear()
+  multipleClansCache.clear()
 }
 
 /**
@@ -438,6 +516,32 @@ export const clearCache = async () => {
     return await response.json()
   } catch (error) {
     console.error('Error clearing cache:', error)
+    throw error
+  }
+}
+
+/**
+ * Submit contact form feedback
+ */
+export const submitContactForm = async ({ name, email, message }) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/contact`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, email, message })
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null)
+      const errorMessage = errorData?.message || 'Failed to send feedback.'
+      throw new Error(errorMessage)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error('Error submitting contact form:', error)
     throw error
   }
 }

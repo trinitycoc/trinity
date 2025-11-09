@@ -6,13 +6,16 @@ import cwlImage from '/cwl.webp'
 function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUsers = true, isAdminMode = false }) {
   const navigate = useNavigate()
 
+  const clanEligibleMembers = clan?.eligibleMembers
+  const memberList = clan?.memberList
+  const isDisplayPeriod = clan?.cwlStatus?.isDisplayPeriod
+
   // Use pre-calculated eligibleMembers from backend if available
   // Fallback to calculating if backend doesn't provide it (backward compatibility)
-  const thCount = clan.eligibleMembers !== undefined 
-    ? `${clan.eligibleMembers}`
+  const thCount = clanEligibleMembers !== undefined 
+    ? `${clanEligibleMembers}`
     : (() => {
-        // Fallback calculation (should not be needed with backend optimization)
-        if (!sheetData?.townHall || !clan?.memberList) return null
+        if (!sheetData?.townHall || !memberList) return null
 
         const thRequirement = sheetData.townHall.toLowerCase()
         const thNumbers = []
@@ -33,13 +36,13 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
 
         let count = 0
         if (isAndBelow) {
-          count = clan.memberList.filter(member => member.townHallLevel <= maxTH).length
+          count = memberList.filter(member => member.townHallLevel <= maxTH).length
           return `${count}`
         } else if (thNumbers.length === 1) {
-          count = clan.memberList.filter(member => member.townHallLevel === thNumbers[0]).length
+          count = memberList.filter(member => member.townHallLevel === thNumbers[0]).length
           return `${count}`
         } else {
-          count = clan.memberList.filter(member =>
+          count = memberList.filter(member =>
             member.townHallLevel >= minTH && member.townHallLevel <= maxTH
           ).length
           return `${count}`
@@ -83,7 +86,7 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
     if (isPreparation) {
       return `Battle starts in ${countdown}`
     } else if (isInWar) {
-      return roundNumber ? `Round (${roundNumber}) ends in ${countdown}` : `Battle ends in ${countdown}`
+      return roundNumber ? `Round: (${roundNumber}) ends in ${countdown}` : `Battle ends in ${countdown}`
     }
     return null
   }
@@ -133,7 +136,7 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
             {/* Show CWL started message only when state is "preparation" or "inWar" */}
             {showCWLStarted ? (
               <span className="cwl-banner-message">
-                CWL already started in this clan
+                {/* CWL already started in this clan */}
                 {countdownMessage && (
                   <span className="cwl-banner-countdown"> • {countdownMessage}</span>
                 )}
@@ -195,7 +198,7 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
       </div>
 
       {/* Show Google Sheets data for CWL clans */}
-      {sheetData && (
+      {sheetData && !isDisplayPeriod && (
         <div className="clan-sheet-info">
           {sheetData.format && (
             <div className="sheet-info-item">

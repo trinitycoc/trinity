@@ -1,8 +1,36 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import SectionTitle from '../components/SectionTitle'
 
 function Features() {
+  const [activeFeature, setActiveFeature] = useState(null)
+  useEffect(() => {
+    if (activeFeature) {
+      const previousOverflow = document.body.style.overflow
+      const previousPaddingRight = document.body.style.paddingRight
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth
+
+      document.body.style.overflow = 'hidden'
+      if (scrollBarWidth > 0) {
+        document.body.style.paddingRight = `${scrollBarWidth}px`
+      }
+
+      const handleKeyDown = (event) => {
+        if (event.key === 'Escape') {
+          setActiveFeature(null)
+        }
+      }
+
+      window.addEventListener('keydown', handleKeyDown)
+
+      return () => {
+        document.body.style.overflow = previousOverflow
+        document.body.style.paddingRight = previousPaddingRight
+        window.removeEventListener('keydown', handleKeyDown)
+      }
+    }
+  }, [activeFeature])
+
   const features = [
     {
       icon: '🏆',
@@ -104,17 +132,17 @@ function Features() {
         'Direct access to clan analytics'
       ],
     },
-    {
-      icon: '📱',
-      title: 'Responsive Design',
-      description: 'Fully responsive website that works on all devices.',
-      details: [
-        'Optimized for desktop, tablet, and mobile',
-        'Smooth navigation and user experience',
-        'Fast loading times',
-        'Modern and intuitive interface'
-      ]
-    },
+    // {
+    //   icon: '📱',
+    //   title: 'Responsive Design',
+    //   description: 'Fully responsive website that works on all devices.',
+    //   details: [
+    //     'Optimized for desktop, tablet, and mobile',
+    //     'Smooth navigation and user experience',
+    //     'Fast loading times',
+    //     'Modern and intuitive interface'
+    //   ]
+    // },
     {
       icon: '⚡',
       title: 'Real-Time Updates',
@@ -158,35 +186,42 @@ function Features() {
 
       <div className="features-grid">
         {features.map((feature, index) => (
-          <div key={index} className="feature-card">
+          <button
+            key={index}
+            className="feature-card"
+            onClick={() => setActiveFeature(feature)}
+            type="button"
+          >
             <div className="feature-icon">{feature.icon}</div>
             <h4 className="feature-title">{feature.title}</h4>
-            <p className="feature-description">{feature.description}</p>
-            
-            <div className="feature-details">
-              <h5>Key Features:</h5>
-              <ul>
-                {feature.details.map((detail, idx) => (
-                  <li key={idx}>{detail}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          </button>
         ))}
       </div>
 
-      <div className="features-cta">
-        <h3>Ready to Get Started?</h3>
-        <p>Start exploring Trinity's features and enhance your Clash of Clans experience.</p>
-        <div className="cta-buttons">
-          <Link to="/cwl" className="cta-button primary">
-            View CWL
-          </Link>
-          <Link to="/clans" className="cta-button secondary">
-            Browse Clans
-          </Link>
+      {activeFeature && (
+        <div className="feature-modal" role="dialog" aria-modal="true">
+          <div className="feature-modal-content">
+            <button
+              className="feature-modal-close"
+              onClick={() => setActiveFeature(null)}
+              aria-label="Close"
+              type="button"
+            >
+              ✕
+            </button>
+            <h3 className="feature-modal-title">{activeFeature.title}</h3>
+            <p className="feature-modal-description">{activeFeature.description}</p>
+            <h5>Key Features:</h5>
+            <ul>
+              {activeFeature.details.map((detail, idx) => (
+                <li key={idx}>{detail}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="feature-modal-backdrop" onClick={() => setActiveFeature(null)}></div>
         </div>
-      </div>
+      )}
+
     </section>
   )
 }

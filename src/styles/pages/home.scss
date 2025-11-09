@@ -13,22 +13,6 @@
   min-height: 500px;
   position: relative;
 
-  &-watermark {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 0;
-    pointer-events: none;
-    
-    img {
-      width: 600px;
-      height: auto;
-      opacity: 0.08;
-      filter: grayscale(20%);
-    }
-  }
-
   &-content {
     display: flex;
     flex-direction: column;
@@ -67,6 +51,18 @@
     @include flex-center;
     position: relative;
     z-index: 1;
+
+    .hero-bubble-logo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 55%;
+      max-width: 220px;
+      height: auto;
+      filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.25));
+      pointer-events: none;
+    }
   }
 }
 
@@ -77,6 +73,109 @@
   border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
   animation: morphing 8s ease-in-out infinite;
   box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+}
+
+.search-error {
+  margin-top: $spacing-xs;
+  color: #ef4444;
+  font-size: 0.95rem;
+}
+
+.home-about {
+  margin-top: $spacing-xxl;
+  padding-top: $spacing-xl;
+}
+
+.home-clans {
+  margin-top: $spacing-xxl;
+  @include page-wrapper;
+  margin-bottom: $spacing-xxl;
+
+  &-loading,
+  &-error {
+    text-align: center;
+    color: $text-secondary;
+    margin: $spacing-lg 0;
+  }
+
+  .home-clans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: $spacing-md;
+  }
+
+  .home-clan-card {
+    background: rgba(12, 18, 35, 0.75);
+    border-radius: 16px;
+    padding: $spacing-sm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-xs;
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(118, 75, 162, 0.35);
+    }
+  }
+
+  .home-clan-badge {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid rgba(102, 126, 234, 0.35);
+
+    img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+    }
+  }
+
+  .home-clan-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #fff;
+    text-align: center;
+    line-height: 1.2;
+  }
+}
+
+.home-section-footer {
+  margin-top: $spacing-lg;
+  display: flex;
+  justify-content: center;
+}
+
+.home-outline-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  background: rgba(15, 23, 42, 0.3);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all 0.3s ease;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.25);
+
+  &:hover {
+    border-color: rgba(102, 126, 234, 0.8);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.25) 0%, rgba(118, 75, 162, 0.25) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 30px rgba(102, 126, 234, 0.35);
+  }
 }
 
 // Clan Search Input and Button
@@ -196,8 +295,36 @@
     height: 280px;
   }
 
+  .hero-image .hero-bubble-logo {
+    width: 65%;
+    max-width: 180px;
+  }
+
   .hero-search {
     max-width: 100%;
     flex-direction: column;
+  }
+
+  .home-about {
+    margin-top: $spacing-xl;
+    padding-top: $spacing-lg;
+  }
+
+  .home-clans {
+    margin-top: $spacing-xl;
+    padding: 0;
+
+    .home-clans-grid {
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: $spacing-sm;
+    }
+
+    .home-clan-card {
+      padding: $spacing-sm;
+    }
+  }
+
+  .home-outline-button {
+    align-self: flex-start;
   }
 }

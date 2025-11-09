@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import SectionTitle from '../components/SectionTitle'
 import ClanCard from '../components/ClanCard'
+import LazyRender from '../components/LazyRender'
 import { fetchMultipleClans, checkServerHealth, fetchTrinityClansFromSheet } from '../services/api'
 
 function Clans() {
@@ -80,12 +81,16 @@ function Clans() {
         ) : clansData.length > 0 ? (
           // Show clan cards with fetched data
           clansData.map((clan) => (
-            <ClanCard
+            <LazyRender
               key={clan.tag}
-              clan={clan}
-              isLoading={false}
-              error={false}
-            />
+              placeholder={<ClanCard isLoading={true} />}
+            >
+              <ClanCard
+                clan={clan}
+                isLoading={false}
+                error={false}
+              />
+            </LazyRender>
           ))
         ) : (
           <div className="no-data-message">

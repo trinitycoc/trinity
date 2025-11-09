@@ -36,22 +36,22 @@ function ClanCard({ clan, isLoading, error }) {
 
   return (
     <div className="clan-card clan-card-detailed" onClick={handleClick}>
-      <img 
-        src={clan.badgeUrls?.medium || clan.badgeUrls?.small || clan.badgeUrls?.large} 
-        alt={`${clan.name} badge`} 
+      <img
+        src={clan.badgeUrls?.medium || clan.badgeUrls?.small || clan.badgeUrls?.large}
+        alt={`${clan.name} badge`}
         className="clan-badge"
       />
-      
+
       <h4 className="clan-name">{clan.name}</h4>
       <p className="clan-tag">{clan.tag}</p>
-      
+
       <div className="clan-info-row">
         {clan.members !== undefined && (
           <div className="clan-members-count">
             <span className="members-label">👥 {clan.members}/50</span>
           </div>
         )}
-        {clan.warLeague && (
+        {/* {clan.warLeague && (
           <div className="clan-league-mini">
             <img 
               src={cwlImage}
@@ -60,20 +60,20 @@ function ClanCard({ clan, isLoading, error }) {
             />
             <span className="league-name">{clan.warLeague.name}</span>
           </div>
-        )}
-        
-        <div className="clan-capital">
+        )} */}
+
+        {/* <div className="clan-capital">
           <img 
             src={capitalImage}
             alt="Capital badge" 
             className="capital-icon-img"
           />
           <span className="capital-level">Capital Level {clan.clanCapitalLevel ?? 0}</span>
-        </div>
+        </div> */}
       </div>
 
       {/* Visit In-Game Button */}
-      <a 
+      <a
         href={`https://link.clashofclans.com/en/?action=OpenClanProfile&tag=${clan.tag.replace('#', '%23')}`}
         target="_blank"
         rel="noopener noreferrer"

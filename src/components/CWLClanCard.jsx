@@ -61,7 +61,7 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
     return { required, eligible, available, isFull }
   }
 
-  const spaceInfo = calculateAvailableSpace()
+  const spaceInfo = clan?.spaceInfo || calculateAvailableSpace()
 
   // Check if CWL is in preparation or inWar state
   // Only show "CWL already started" when state is "preparation" or "inWar"

@@ -117,7 +117,7 @@ function ClanHeader({ clan, currentWar, warLog, showCurrentWar, showWarLog, show
               setShowCWLDetails(!showCWLDetails)
             }}
           >
-            {showCWLDetails ? '🏆 Hide CWL Data' : '🏆 Show CWL Data'}
+            {showCWLDetails ? '🏆 Hide CWL Stats' : '🏆 Show CWL Stats'}
           </button>
         )}
         {/* TODO: Capital Raids not integrated yet - commenting out to prevent unnecessary API calls */}

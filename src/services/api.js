@@ -1,7 +1,7 @@
 // API client for making requests to the backend server
 
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://trinity-backend-6qzr.onrender.com/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL
+
 
 const FIVE_MINUTES = 5 * 60 * 1000
 const clanCache = new Map()

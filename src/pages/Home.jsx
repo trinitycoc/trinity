@@ -15,7 +15,7 @@ function Home() {
     clans: homeClans,
     loading: loadingClans,
     error: clansError,
-  } = useTrinityClansPreview(3)
+  } = useTrinityClansPreview(4)
 
   const normalizeTag = (tag) => tag.trim().toUpperCase().replace(/^#+/, '')
 

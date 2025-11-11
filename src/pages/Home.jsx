@@ -1,45 +1,23 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import trinityLogo from '/Trinity_Logo.png'
 import SectionTitle from '../components/SectionTitle'
-import { fetchClan, fetchTrinityClansFromSheet, fetchMultipleClans } from '../services/api'
+import { fetchClan } from '../services/api'
+import useTrinityClansPreview from '../hooks/useTrinityClansPreview'
 
 function Home() {
   const [clanTag, setClanTag] = useState('')
   const [isSearching, setIsSearching] = useState(false)
   const [searchError, setSearchError] = useState(null)
-  const [clanCount, setClanCount] = useState(0)
-  const [homeClans, setHomeClans] = useState([])
-  const [loadingClans, setLoadingClans] = useState(true)
-  const [clansError, setClansError] = useState(null)
   const navigate = useNavigate()
+  const {
+    clanCount,
+    clans: homeClans,
+    loading: loadingClans,
+    error: clansError,
+  } = useTrinityClansPreview(3)
 
   const normalizeTag = (tag) => tag.trim().toUpperCase().replace(/^#+/, '')
-
-  useEffect(() => {
-    const loadClanCount = async () => {
-      try {
-        const clanTags = await fetchTrinityClansFromSheet()
-        setClanCount(clanTags.length)
-
-        if (Array.isArray(clanTags) && clanTags.length > 0) {
-          try {
-            const clansData = await fetchMultipleClans(clanTags.slice(0, 12))
-            setHomeClans(clansData)
-          } catch (err) {
-            console.error('Error fetching home clans:', err)
-            setClansError('Unable to load clan list right now.')
-          }
-        }
-      } catch (error) {
-        console.error('Error loading clan count:', error)
-      } finally {
-        setLoadingClans(false)
-      }
-    }
-
-    loadClanCount()
-  }, [])
 
   const handleSearch = async () => {
     if (!clanTag.trim() || isSearching) return

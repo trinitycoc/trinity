@@ -44,7 +44,6 @@ function Header() {
           <li><Link to="/cwl" onClick={handleLinkClick}>Cwl</Link></li>
           <li><Link to="/farming-base-layouts" onClick={handleLinkClick}>Farming base layouts</Link></li>
           <li><Link to="/features" onClick={handleLinkClick}>Features</Link></li>
-          <li><Link to="/contact" onClick={handleLinkClick}>Contact</Link></li>
         </ul>
       </nav>
     </header>

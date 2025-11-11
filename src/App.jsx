@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react'
-import { HashRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { ScrollToTop } from './components/ScrollToTop'
 import './styles/main.scss'
 
@@ -11,7 +11,6 @@ const ClanDetails = lazy(() => import('./pages/ClanDetails'))
 const CWL = lazy(() => import('./pages/CWL'))
 const FarmingBaseLayouts = lazy(() => import('./pages/FarmingBaseLayouts'))
 const Features = lazy(() => import('./pages/Features'))
-const Contact = lazy(() => import('./pages/Contact'))
 
 function App() {
   return (
@@ -27,7 +26,7 @@ function App() {
             <Route path="cwl" element={<CWL />} />
             <Route path="farming-base-layouts" element={<FarmingBaseLayouts />} />
             <Route path="features" element={<Features />} />
-            <Route path="contact" element={<Contact />} />
+            <Route path="contact" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
       </Suspense>

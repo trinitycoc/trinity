@@ -100,18 +100,18 @@
 
   .home-clans-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: $spacing-md;
   }
 
   .home-clan-card {
     background: rgba(12, 18, 35, 0.75);
     border-radius: 16px;
-    padding: $spacing-sm;
+    padding: $spacing-lg;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: $spacing-xs;
+    gap: $spacing-sm;
     border: 1px solid rgba(102, 126, 234, 0.3);
     box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -123,8 +123,8 @@
   }
 
   .home-clan-badge {
-    width: 60px;
-    height: 60px;
+    width: 96px;
+    height: 96px;
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.1);
     display: flex;
@@ -134,15 +134,15 @@
     border: 1px solid rgba(102, 126, 234, 0.35);
 
     img {
-      width: 44px;
-      height: 44px;
+      width: 72px;
+      height: 72px;
       object-fit: contain;
     }
   }
 
   .home-clan-name {
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     color: #fff;
     text-align: center;
     line-height: 1.2;
@@ -315,12 +315,26 @@
     padding: 0;
 
     .home-clans-grid {
-      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: $spacing-sm;
     }
 
     .home-clan-card {
-      padding: $spacing-sm;
+      padding: $spacing-md;
+    }
+
+    .home-clan-badge {
+      width: 80px;
+      height: 80px;
+
+      img {
+        width: 60px;
+        height: 60px;
+      }
+    }
+
+    .home-clan-name {
+      font-size: 1rem;
     }
   }
 

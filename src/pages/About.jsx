@@ -1,8 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import SectionTitle from '../components/SectionTitle'
+import useTrinityClansPreview from '../hooks/useTrinityClansPreview'
 
 function About() {
+  const { clanCount, loading } = useTrinityClansPreview(0)
+  const clanCountLabel = loading ? '...' : clanCount
+
   return (
     <section className="about">
       <SectionTitle>About Trinity</SectionTitle>
@@ -11,7 +15,7 @@ function About() {
         <div className="about-intro">
           {/* <h3>Trinity Family of Clans</h3> */}
           <p>
-            Led by Hell Raiser, Trinity is a thriving community of 9 Clans united by passion,
+            Led by Hell Raiser, Trinity is a thriving community of {clanCountLabel} clans united by passion,
             strategy, and excellence.
           </p>
         </div>

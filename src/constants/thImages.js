@@ -15,6 +15,7 @@ import th14Image from '/th-14.png'
 import th15Image from '/th-15.png'
 import th16Image from '/th-16.png'
 import th17Image from '/th-17.png'
+import th18Image from '/th-18.png'
 
 export const thImages = {
   1: th1Image,
@@ -33,6 +34,7 @@ export const thImages = {
   14: th14Image,
   15: th15Image,
   16: th16Image,
-  17: th17Image
+  17: th17Image,
+  18: th18Image
 }
 

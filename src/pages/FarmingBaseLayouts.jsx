@@ -1,13 +1,37 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import SectionTitle from '../components/SectionTitle'
-import th17Image from '/th-17.png'
-import th16Image from '/th-16.png'
-import th15Image from '/th-15.png'
-import th14Image from '/th-14.png'
-import th13Image from '/th-13.png'
-import th12Image from '/th-12.png'
+import { fetchBaseLayouts } from '../services/api'
 
 function FarmingBaseLayouts() {
+  const [baseLayouts, setBaseLayouts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const loadBaseLayouts = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const layouts = await fetchBaseLayouts()
+        // Sort by townHallLevel descending (highest first)
+        const sortedLayouts = layouts.sort((a, b) => b.townHallLevel - a.townHallLevel)
+        setBaseLayouts(sortedLayouts)
+      } catch (err) {
+        console.error('Error loading base layouts:', err)
+        setError(err.message || 'Failed to load base layouts')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadBaseLayouts()
+  }, [])
+
+  const getImageForTH = (layout) => {
+    // Images are stored in public folder as /th-{level}.png (e.g., /th-17.png, /th-18.png)
+    return `/th-${layout.townHallLevel}.png`
+  }
+
   return (
     <section className="farming-page">
       <SectionTitle>Farming Base Layout Rules</SectionTitle>
@@ -90,67 +114,47 @@ function FarmingBaseLayouts() {
             The links below allow you to directly copy a farm war layout for any TH level!
           </p>
           
-          <div className="base-links-grid">
-            <a 
-              href="https://link.clashofclans.com/en?action=OpenLayout&id=TH17%3AWB%3AAAAASQAAAAH7Ro8xiCMQ04FOKPXoE4Bu"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="base-link-card"
-            >
-              <img src={th17Image} alt="TH17" className="base-link-image" />
-              <span className="base-link-th">TH17</span>
-            </a>
-
-            <a 
-              href="https://link.clashofclans.com/en?action=OpenLayout&id=TH16%3AWB%3AAAAAFAAAAAKVSF59rsHsGIF4LfJeXhCS"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="base-link-card"
-            >
-              <img src={th16Image} alt="TH16" className="base-link-image" />
-              <span className="base-link-th">TH16</span>
-            </a>
-
-            <a 
-              href="https://link.clashofclans.com/en?action=OpenLayout&id=TH15%3AWB%3AAAAACAAAAALIH4f53xM6pggJHTwWvF5_"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="base-link-card"
-            >
-              <img src={th15Image} alt="TH15" className="base-link-image" />
-              <span className="base-link-th">TH15</span>
-            </a>
-
-            <a 
-              href="https://link.clashofclans.com/en?action=OpenLayout&id=TH14%3AWB%3AAAAAXQAAAAG1_9Za4FikUiFTsiZAoYew"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="base-link-card"
-            >
-              <img src={th14Image} alt="TH14" className="base-link-image" />
-              <span className="base-link-th">TH14</span>
-            </a>
-
-            <a 
-              href="https://link.clashofclans.com/en?action=OpenLayout&id=TH13%3AWB%3AAAAAFAAAAAKOTjVupZ084j5rcN4mi6qz"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="base-link-card"
-            >
-              <img src={th13Image} alt="TH13" className="base-link-image" />
-              <span className="base-link-th">TH13</span>
-            </a>
-
-            <a 
-              href="https://link.clashofclans.com/en?action=OpenLayout&id=TH12%3AWB%3AAAAAUQAAAAHVDfJe2UzXU9dHXBoRIdzj"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="base-link-card"
-            >
-              <img src={th12Image} alt="TH12" className="base-link-image" />
-              <span className="base-link-th">TH12</span>
-            </a>
-          </div>
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '2rem' }}>
+              <p>Loading base layouts...</p>
+            </div>
+          ) : error ? (
+            <div style={{ textAlign: 'center', padding: '2rem', color: '#fca5a5' }}>
+              <p>Error: {error}</p>
+            </div>
+          ) : baseLayouts.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '2rem' }}>
+              <p>No base layouts available. Please add layouts from the Dashboard.</p>
+            </div>
+          ) : (
+            <div className="base-links-grid">
+              {baseLayouts.map((layout) => {
+                const imageSrc = getImageForTH(layout)
+                return (
+                  <a
+                    key={layout.townHallLevel}
+                    href={layout.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="base-link-card"
+                  >
+                    {imageSrc && (
+                      <img 
+                        src={imageSrc} 
+                        alt={`TH${layout.townHallLevel}`} 
+                        className="base-link-image"
+                        onError={(e) => {
+                          // Fallback if image fails to load
+                          e.target.style.display = 'none'
+                        }}
+                      />
+                    )}
+                    <span className="base-link-th">TH{layout.townHallLevel}</span>
+                  </a>
+                )
+              })}
+            </div>
+          )}
         </div>
 
       </div>

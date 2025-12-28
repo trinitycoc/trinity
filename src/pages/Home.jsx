@@ -153,6 +153,28 @@ function Home() {
           </Link>
         </div>
       </section>
+
+      <section className="home-partner">
+        <div className="partner-banner">
+          <div className="partner-content">
+            <div className="partner-icon">🗺️</div>
+            <div className="partner-text">
+              <h3 className="partner-title">Explore the Clash of Clans World</h3>
+              <p className="partner-description">
+                Discover ClashAtlas - Your comprehensive guide to Clash of Clans
+              </p>
+            </div>
+            <a
+              href="https://clashatlas.vercel.app/"
+              className="partner-button"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Visit ClashAtlas
+            </a>
+          </div>
+        </div>
+      </section>
     </>
   )
 }

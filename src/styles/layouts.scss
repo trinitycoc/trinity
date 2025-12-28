@@ -151,6 +151,7 @@
   display: flex;
   gap: $spacing-lg;
   list-style: none;
+  align-items: center;
 
   &.open {
     display: flex;
@@ -161,9 +162,79 @@
     color: inherit;
     font-weight: 500;
     transition: opacity 0.3s;
+    position: relative;
 
     &:hover {
       opacity: 0.7;
+    }
+
+    &.active {
+      text-decoration: underline;
+      text-decoration-color: $primary-color;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+    }
+  }
+}
+
+.nav-link-dashboard {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.3s;
+  background: transparent;
+  border: none;
+  position: relative;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  &.active {
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.9);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+
+  .nav-user-name {
+    color: $primary-color;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+}
+
+.nav-button {
+  padding: $spacing-xs $spacing-md;
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  border-radius: $radius-sm;
+  background: rgba(102, 126, 234, 0.1);
+  color: $primary-color;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(102, 126, 234, 0.2);
+    border-color: rgba(102, 126, 234, 0.6);
+    transform: translateY(-1px);
+  }
+
+  &--logout {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.6);
     }
   }
 }
@@ -309,6 +380,12 @@
 
   .footer-social--whatsapp {
     background: radial-gradient(circle at 30% 30%, #7ef3b0, #1b8f3c 70%);
+  }
+
+  .footer-social--clashatlas {
+    background: radial-gradient(circle at 30% 30%, #f59e0b, #d97706 70%);
+    font-size: 1.25rem;
+    line-height: 1;
   }
 
   .footer-copy {
@@ -478,11 +555,35 @@
       background: rgba(255, 255, 255, 0.02);
       color: #f8fafc;
       transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+      position: relative;
 
       &:hover {
         background: rgba(255, 255, 255, 0.12);
         color: white;
         transform: translateX(4px);
+      }
+
+      &.active {
+        text-decoration: underline;
+        text-decoration-color: white;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+      }
+    }
+
+    .nav-button {
+      width: 100%;
+      text-align: center;
+      padding: $spacing-sm $spacing-md;
+      display: block;
+    }
+
+    .nav-user {
+      width: 100%;
+      padding: $spacing-sm $spacing-md;
+      
+      .nav-user-name {
+        color: #f8fafc;
       }
     }
   }

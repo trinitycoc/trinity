@@ -16,12 +16,12 @@ function Clans() {
         setLoading(true)
         setError(null)
 
-        // First, fetch clan tags from Google Sheets
+        // First, fetch clan tags from database
         const tagsFromSheet = await fetchTrinityClansFromSheet()
 
         if (tagsFromSheet.length === 0) {
           setLoading(false)
-          setError('No clan tags found in Google Sheets. Please check your configuration.')
+          setError('No clan tags found. Please check your configuration.')
           return
         }
 
@@ -38,9 +38,9 @@ function Clans() {
         // Fetch all clan data using the backend API
         const fetchedClans = await fetchMultipleClans(tagsFromSheet)
         
-        if (fetchedClans.length === 0) {
+        if (!Array.isArray(fetchedClans) || fetchedClans.length === 0) {
           setLoading(false)
-          setError('No clan data available. Please check your configuration.')
+          setError(`No clan data available. Attempted to fetch ${tagsFromSheet.length} clans but received ${Array.isArray(fetchedClans) ? 'empty' : 'invalid'} response. Check backend logs for API errors.`)
           return
         }
 

@@ -10,58 +10,11 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
   const memberList = clan?.memberList
   const isDisplayPeriod = clan?.cwlStatus?.isDisplayPeriod
 
-  // Use pre-calculated eligibleMembers from backend if available
-  // Fallback to calculating if backend doesn't provide it (backward compatibility)
-  const thCount = clanEligibleMembers !== undefined 
-    ? `${clanEligibleMembers}`
-    : (() => {
-        if (!sheetData?.townHall || !memberList) return null
+  // Use pre-calculated eligibleMembers from backend (backend always provides this)
+  const thCount = clanEligibleMembers !== undefined ? `${clanEligibleMembers}` : null
 
-        const thRequirement = sheetData.townHall.toLowerCase()
-        const thNumbers = []
-        const matches = thRequirement.match(/th\s*(\d+)/gi)
-
-        if (matches) {
-          matches.forEach(match => {
-            const num = parseInt(match.replace(/th\s*/i, ''))
-            if (!isNaN(num)) thNumbers.push(num)
-          })
-        }
-
-        if (thNumbers.length === 0) return null
-
-        const isAndBelow = thRequirement.includes('and below') || thRequirement.includes('below')
-        const minTH = Math.min(...thNumbers)
-        const maxTH = Math.max(...thNumbers)
-
-        let count = 0
-        if (isAndBelow) {
-          count = memberList.filter(member => member.townHallLevel <= maxTH).length
-          return `${count}`
-        } else if (thNumbers.length === 1) {
-          count = memberList.filter(member => member.townHallLevel === thNumbers[0]).length
-          return `${count}`
-        } else {
-          count = memberList.filter(member =>
-            member.townHallLevel >= minTH && member.townHallLevel <= maxTH
-          ).length
-          return `${count}`
-        }
-      })()
-
-  // Calculate available space for the banner
-  const calculateAvailableSpace = () => {
-    if (!sheetData?.members || !thCount) return null
-
-    const required = parseInt(sheetData.members) || 0
-    const eligible = parseInt(thCount) || 0
-    const available = Math.max(0, required - eligible)
-    const isFull = eligible >= required
-
-    return { required, eligible, available, isFull }
-  }
-
-  const spaceInfo = clan?.spaceInfo || calculateAvailableSpace()
+  // Use pre-calculated spaceInfo from backend (backend always provides this)
+  const spaceInfo = clan?.spaceInfo || null
 
   // Check if CWL is in preparation or inWar state
   // Only show "CWL already started" when state is "preparation" or "inWar"
@@ -197,7 +150,7 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
         </div>
       </div>
 
-      {/* Show Google Sheets data for CWL clans */}
+      {/* Show database data for CWL clans */}
       {sheetData && !isDisplayPeriod && (
         <div className="clan-sheet-info">
           {sheetData.format && (

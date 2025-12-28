@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import trinityLogo from '/Trinity_Logo.png'
 
 function Header() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { isAuthenticated, user, logout, isRoot, isAdmin } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const isActive = (path) => {
+    if (path === '/') {
+      return location.pathname === '/' || location.pathname === ''
+    }
+    return location.pathname.startsWith(path)
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -18,6 +29,12 @@ function Header() {
 
   const handleToggleMenu = () => setIsMenuOpen((prev) => !prev)
   const handleLinkClick = () => setIsMenuOpen(false)
+
+  const handleLogout = () => {
+    logout()
+    setIsMenuOpen(false)
+    navigate('/')
+  }
 
   return (
     <header className="header">
@@ -38,12 +55,37 @@ function Header() {
           <span className="hamburger-bar" />
         </button>
         <ul className={`nav-links${isMenuOpen ? ' open' : ''}`}>
-          <li><Link to="/" onClick={handleLinkClick}>Home</Link></li>
-          <li><Link to="/about" onClick={handleLinkClick}>About</Link></li>
-          <li><Link to="/clans" onClick={handleLinkClick}>Clans</Link></li>
-          <li><Link to="/cwl" onClick={handleLinkClick}>Cwl</Link></li>
-          <li><Link to="/farming-base-layouts" onClick={handleLinkClick}>Farming base layouts</Link></li>
-          <li><Link to="/features" onClick={handleLinkClick}>Features</Link></li>
+          <li><Link to="/" onClick={handleLinkClick} className={isActive('/') ? 'active' : ''}>Home</Link></li>
+          <li><Link to="/about" onClick={handleLinkClick} className={isActive('/about') ? 'active' : ''}>About</Link></li>
+          <li><Link to="/clans" onClick={handleLinkClick} className={isActive('/clans') ? 'active' : ''}>Clans</Link></li>
+          <li><Link to="/cwl" onClick={handleLinkClick} className={isActive('/cwl') ? 'active' : ''}>Cwl</Link></li>
+          <li><Link to="/farming-base-layouts" onClick={handleLinkClick} className={isActive('/farming-base-layouts') ? 'active' : ''}>Farming base layouts</Link></li>
+          <li><Link to="/features" onClick={handleLinkClick} className={isActive('/features') ? 'active' : ''}>Features</Link></li>
+          {isAuthenticated ? (
+            <>
+              {isAdmin && (
+                <li>
+                  <Link to="/dashboard" onClick={handleLinkClick} className={`nav-link-dashboard ${isActive('/dashboard') ? 'active' : ''}`}>
+                    Dashboard
+                  </Link>
+                </li>
+              )}
+              <li className="nav-user">
+                <span className="nav-user-name">{user?.username || user?.email}</span>
+              </li>
+              <li>
+                <button onClick={handleLogout} className="nav-button nav-button--logout">
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : (
+            <li>
+              <Link to="/login" onClick={handleLinkClick} className="nav-button nav-button--login">
+                Login
+              </Link>
+            </li>
+          )}
         </ul>
       </nav>
     </header>

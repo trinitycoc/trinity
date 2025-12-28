@@ -178,6 +178,83 @@
   }
 }
 
+// Partner Banner Section
+.home-partner {
+  @include page-wrapper;
+  margin-top: $spacing-xxl;
+  margin-bottom: $spacing-xxl;
+}
+
+.partner-banner {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 20px;
+  padding: $spacing-xl;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px rgba(102, 126, 234, 0.3);
+  }
+}
+
+.partner-content {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+}
+
+.partner-icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.partner-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.partner-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.partner-description {
+  font-size: 1rem;
+  color: rgba(203, 213, 225, 0.9);
+  margin: 0;
+}
+
+.partner-button {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: 12px;
+  background: $primary-gradient;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  white-space: nowrap;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
 // Clan Search Input and Button
 .clan-search-input {
   flex: 1;
@@ -340,5 +417,28 @@
 
   .home-outline-button {
     align-self: flex-start;
+  }
+
+  .partner-banner {
+    padding: $spacing-md $spacing-sm;
+  }
+
+  .partner-content {
+    flex-direction: column;
+    text-align: center;
+    gap: $spacing-md;
+  }
+
+  .partner-text {
+    gap: $spacing-xs;
+  }
+
+  .partner-title {
+    font-size: 1.25rem;
+  }
+
+  .partner-button {
+    width: 100%;
+    justify-content: center;
   }
 }

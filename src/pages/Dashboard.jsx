@@ -53,14 +53,11 @@ function Dashboard() {
     townHall: [],
     weight: '',
     league: '',
-    name: ''
+    name: '',
+    status: 'Active'
   })
   const [editingCwl, setEditingCwl] = useState(null)
   const [fetchingClanName, setFetchingClanName] = useState(false)
-
-  // League options (for parsing API data)
-  const leagueTiers = ['Champion', 'Master', 'Crystal', 'Gold', 'Silver', 'Bronze', 'Unranked']
-  const leagueLevels = ['1', '2', '3']
 
   // Format and members options
   const formatOptions = ['lazy', 'competitive']
@@ -286,7 +283,8 @@ function Dashboard() {
         townHall: [],
         weight: '',
         league: '',
-        name: ''
+        name: '',
+        status: 'Active'
       })
       setEditingCwl(null)
       await loadData()
@@ -326,7 +324,9 @@ function Dashboard() {
       members: clan.members || '',
       townHall: townHallArray,
       weight: weightValue,
-      league: clan.league || ''
+      league: clan.league || '',
+      name: clan.name || '',
+      status: clan.status || 'Active'
     })
   }
 
@@ -723,6 +723,16 @@ function Dashboard() {
                   />
                 </div>
               </div>
+              <div className="dashboard-form-group">
+                <label>Status</label>
+                <select
+                  value={cwlForm.status}
+                  onChange={(e) => setCwlForm({ ...cwlForm, status: e.target.value })}
+                >
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+              </div>
               <div className="dashboard-form-actions">
                 <button type="submit" disabled={loading}>
                   {editingCwl ? 'Update' : 'Create'}
@@ -739,7 +749,9 @@ function Dashboard() {
                         members: '',
                         townHall: [],
                         weight: '',
-                        league: ''
+                        league: '',
+                        name: '',
+                        status: 'Active'
                       })
                     }}
                   >
@@ -759,6 +771,7 @@ function Dashboard() {
                     <th>In Use</th>
                     <th>Tag</th>
                     <th>Name</th>
+                    <th>Status</th>
                     <th>League</th>
                     <th>Format</th>
                     <th>Members</th>
@@ -773,6 +786,7 @@ function Dashboard() {
                       <td>{clan.inUse}</td>
                       <td>{clan.tag}</td>
                       <td>{clan.name || '-'}</td>
+                      <td>{clan.status || 'Active'}</td>
                       <td>{clan.league || '-'}</td>
                       <td>{clan.format || '-'}</td>
                       <td>{clan.members || '-'}</td>

@@ -2,19 +2,8 @@ import React from 'react'
 import { thImages } from '../../constants/thImages'
 
 function TownHallComposition({ memberList, totalMembers, thComposition: backendThComposition }) {
-  // Use pre-calculated TH composition from backend if available
-  // Fallback to calculating if backend doesn't provide it (backward compatibility)
-  const thComposition = backendThComposition || (() => {
-    if (!memberList) return {}
-
-    const composition = {}
-    memberList.forEach(member => {
-      const th = member.townHallLevel
-      composition[th] = (composition[th] || 0) + 1
-    })
-
-    return composition
-  })()
+  // Backend always provides thComposition - use it directly
+  const thComposition = backendThComposition || {}
 
   return (
     <div className="detail-section">

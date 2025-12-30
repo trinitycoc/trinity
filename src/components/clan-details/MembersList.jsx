@@ -35,9 +35,9 @@ function MembersList({ memberList, totalMembers }) {
             <div className="member-trophies">Trophies</div>
             <div className="member-donations">Donations</div>
           </div>
-          {memberList?.map((member) => (
+          {memberList?.map((member, index) => (
             <div key={member.tag} className="member-row">
-              <div className="member-rank">{member.clanRank}</div>
+              <div className="member-rank">{index + 1}</div>
               <div className="member-name">
                 {getRoleIcon(member.role)} {member.name}
               </div>

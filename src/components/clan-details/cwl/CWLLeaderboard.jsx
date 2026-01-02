@@ -139,7 +139,19 @@ export const CWLLeaderboard = ({ cwlGroupData, expandedClans, setExpandedClans, 
                       </div>
                     </div>
                   </td>
-                  <td className="cwl-lb-stars">{group.totalStars}</td>
+                  <td className="cwl-lb-stars">
+                    {group.earnedStars !== undefined && group.winRewardStars !== undefined ? (
+                      <span className="cwl-stars-breakdown">
+                        <span className="cwl-stars-total">{group.totalStars}</span>
+                        <span className="cwl-stars-separator"> = </span>
+                        <span className="cwl-stars-earned">{group.earnedStars}</span>
+                        <span className="cwl-stars-plus"> + </span>
+                        <span className="cwl-stars-reward">{group.winRewardStars}</span>
+                      </span>
+                    ) : (
+                      <span>{group.totalStars}</span>
+                    )}
+                  </td>
                   <td className="cwl-lb-destruction">
                     {Math.round(group.totalDestruction).toLocaleString()}
                   </td>

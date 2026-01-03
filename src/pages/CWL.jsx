@@ -24,8 +24,9 @@ function CWL() {
     if (showAll) {
       return false
     }
-    return displayPeriodInfo.isDisplayPeriod
-  }, [showAll, displayPeriodInfo])
+    // Only show notice if it's display period AND there are no clans to show
+    return displayPeriodInfo.isDisplayPeriod && clansData.length === 0
+  }, [showAll, displayPeriodInfo, clansData.length])
 
   useEffect(() => {
     const fetchClansData = async () => {
@@ -78,14 +79,10 @@ function CWL() {
             setDisplayPeriodInfo({ isDisplayPeriod: response.isDisplayPeriod, monthName: response.monthName })
           }
           
-          // If in display period, don't show clans (show notice instead)
-          if (response.isDisplayPeriod) {
-            setClansData([])
-            setFilteredClanTags(new Set())
-          } else {
-            setClansData(response.clans)
-            setFilteredClanTags(new Set())
-          }
+          // Always show clans if available, regardless of display period
+          // Notice will only show if display period is active AND no clans are available
+          setClansData(response.clans || [])
+          setFilteredClanTags(new Set())
         }
         
         setLoading(false)

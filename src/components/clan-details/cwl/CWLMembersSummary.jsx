@@ -149,17 +149,8 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag, leagueName }) => {
             roundStats.hasAttacks = true
 
             // Check if any attack is a mirror bonus attack
-            const attackerSequentialPos = getSequentialPosition(member, sortedOurMembers)
-            const hasMirrorBonusInThisWar = attackerSequentialPos && attacks.some((attack) => {
-              const defender = findDefender(attack.defenderTag)
-              if (!defender || !attackerSequentialPos) return false
-              
-              // Get sequential position of defender (1-based position in sorted opponent array)
-              const defenderSequentialPos = getSequentialPosition(defender, sortedOpponentMembers)
-              
-              // Mirror bonus attack if sequential positions match
-              return attackerSequentialPos === defenderSequentialPos
-            })
+            // Backend now calculates isMirrorAttack flag, so we just check it
+            const hasMirrorBonusInThisWar = attacks.some(attack => attack.isMirrorAttack === true)
 
             // Update mirror bonus rule status for this round
             if (hasMirrorBonusInThisWar) {

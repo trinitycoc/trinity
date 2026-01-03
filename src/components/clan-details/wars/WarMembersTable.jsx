@@ -48,19 +48,10 @@ export const WarMembersTable = ({ members, title, sortBy = 'position', opponentM
               const attacks = member.attacks || []
               
               // Check if any attack is a mirror bonus attack (only in admin mode)
+              // Backend now calculates isMirrorAttack flag, so we just check it
               let hasMirrorBonusRule = false
               if (isAdmin) {
-                const attackerSequentialPos = getSequentialPosition(member, sortedMembers)
-                hasMirrorBonusRule = attacks.some((attack) => {
-                  const defender = findDefender(attack.defenderTag)
-                  if (!defender || !attackerSequentialPos) return false
-                  
-                  // Get sequential position of defender (1-based position in sorted opponent array)
-                  const defenderSequentialPos = getSequentialPosition(defender, sortedOpponentMembers)
-                  
-                  // Mirror bonus attack if sequential positions match
-                  return attackerSequentialPos === defenderSequentialPos
-                })
+                hasMirrorBonusRule = attacks.some(attack => attack.isMirrorAttack === true)
               }
               
               return (

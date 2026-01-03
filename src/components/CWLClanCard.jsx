@@ -159,7 +159,8 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
               <span className="info-value">{sheetData.format}</span>
             </div>
           )}
-          {sheetData.hasOwnProperty('members') && (
+          {/* Hide Allowed Members and Eligible Members when CWL is active */}
+          {!showCWLStarted && sheetData.hasOwnProperty('members') && (
             <div className="sheet-info-item">
               <span className="info-label">Allowed Members:</span>
               <span className="info-value">{sheetData.members || '0'}</span>
@@ -171,7 +172,8 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
               <span className="info-value">{sheetData.townHall || 'N/A'}</span>
             </div>
           )}
-          {thCount !== null && thCount !== undefined && (
+          {/* Hide Eligible Members when CWL is active */}
+          {!showCWLStarted && thCount !== null && thCount !== undefined && (
             <div className="sheet-info-item">
               <span className="info-label">Eligible Members:</span>
               <span className="info-value">{thCount}</span>

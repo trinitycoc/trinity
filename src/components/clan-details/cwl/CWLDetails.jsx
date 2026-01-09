@@ -10,7 +10,8 @@ import { WarStatsTable } from '../wars/WarStatsTable'
 import { WarMembersTable } from '../wars/WarMembersTable'
 
 function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName, isAdmin = false }) {
-  const [showAllDetails, setShowAllDetails] = useState(false)
+  // Start with showAllDetails = true if showDetailsProp is true, to avoid unnecessary fetches
+  const [showAllDetails, setShowAllDetails] = useState(showDetailsProp)
   const [showDetails, setShowDetails] = useState(showDetailsProp)
   const [selectedDay, setSelectedDay] = useState(null)
   const [selectedWarTag, setSelectedWarTag] = useState(null)
@@ -21,7 +22,8 @@ function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName,
 
   // Use custom hooks for data fetching
   const { cwlStatus, loading: loadingStatus } = useCWLStatus(clanTag)
-  const { cwlGroupData, loading: loadingGroup } = useCWLGroup(clanTag, showAllDetails, leagueName)
+  // Pass showAllDetails as includeAllWars: use /current endpoint when false, /all when true
+  const { cwlGroupData, loading: loadingGroup } = useCWLGroup(clanTag, true, leagueName, showAllDetails)
   const { fetchedWarsForDay, fetchedWarsByRound, loading: loadingFetchedWars } = useCWLDailyWars(
     selectedDay,
     cwlGroupData,
@@ -38,28 +40,70 @@ function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName,
   }, [showDetailsProp])
 
   // Fetch war details when war tag is selected
+  // First try to find war in already loaded data from /all endpoint
   useEffect(() => {
     if (selectedWarTag && clanTag) {
-      const fetchWarDetails = async () => {
-        setLoadingWar(true)
-        setWarError(null)
-        try {
-          const war = await fetchCWLWarByTag(selectedWarTag, clanTag)
-          setWarDetails(war)
-        } catch (err) {
-          console.error('Error fetching war details:', err)
-          setWarError(err.message)
-          setWarDetails(null)
-        } finally {
-          setLoadingWar(false)
+      // Check if we already have this war in loaded data
+      let foundWar = null
+      
+      // Check allWars array
+      if (cwlGroupData?.allWars && cwlGroupData.allWars.length > 0) {
+        foundWar = cwlGroupData.allWars.find(war => 
+          (war.warTag || war.tag || '').replace('#', '').toUpperCase() === selectedWarTag.replace('#', '').toUpperCase()
+        )
+      }
+      
+      // Check warsByRound
+      if (!foundWar && cwlGroupData?.warsByRound) {
+        for (const roundNum in cwlGroupData.warsByRound) {
+          const roundWars = cwlGroupData.warsByRound[roundNum]
+          foundWar = roundWars.find(war => 
+            (war.warTag || war.tag || '').replace('#', '').toUpperCase() === selectedWarTag.replace('#', '').toUpperCase()
+          )
+          if (foundWar) break
         }
       }
-      fetchWarDetails()
+      
+      // Check fetchedWarsByRound
+      if (!foundWar && fetchedWarsByRound) {
+        for (const roundNum in fetchedWarsByRound) {
+          const roundWars = fetchedWarsByRound[roundNum]
+          foundWar = roundWars.find(war => 
+            (war.warTag || war.tag || '').replace('#', '').toUpperCase() === selectedWarTag.replace('#', '').toUpperCase()
+          )
+          if (foundWar) break
+        }
+      }
+      
+      if (foundWar) {
+        // Use war from loaded data
+        setWarDetails(foundWar)
+        setWarError(null)
+        setLoadingWar(false)
+      } else {
+        // Only fetch if not found in loaded data
+        const fetchWarDetails = async () => {
+          setLoadingWar(true)
+          setWarError(null)
+          try {
+            const war = await fetchCWLWarByTag(selectedWarTag, clanTag)
+            setWarDetails(war)
+          } catch (err) {
+            console.error('Error fetching war details:', err)
+            setWarError(err.message)
+            setWarDetails(null)
+          } finally {
+            setLoadingWar(false)
+          }
+        }
+        fetchWarDetails()
+      }
     } else {
       setWarDetails(null)
       setWarError(null)
+      setLoadingWar(false)
     }
-  }, [selectedWarTag, clanTag])
+  }, [selectedWarTag, clanTag, cwlGroupData, fetchedWarsByRound])
 
   if (loadingStatus) {
     return (

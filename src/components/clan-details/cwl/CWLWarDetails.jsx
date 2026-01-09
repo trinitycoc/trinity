@@ -11,16 +11,16 @@ export const CWLWarDetails = ({
   isAdmin = false
 }) => {
   const [activeViews, setActiveViews] = useState({}) // Track view state per war index
-  
+
   if (!selectedDay || !cwlGroupData?.group?.rounds) {
     return null
   }
-  
+
   const getActiveView = (warIdx) => {
     // Always default to 'ourClan' - don't auto-switch to warEvents when admin mode is enabled
     return activeViews[warIdx] || 'ourClan'
   }
-  
+
   const setActiveView = (warIdx, view) => {
     setActiveViews(prev => ({
       ...prev,
@@ -38,21 +38,32 @@ export const CWLWarDetails = ({
     return <div className="cwl-no-wars">No wars found for Day {selectedDay}</div>
   }
 
-  // Find wars from allWars that match these war tags
-  let warsForDay = filterWarsForDay(
-    cwlGroupData.allWars || [],
-    selectedRound.warTags
-  )
+  // Find wars from loaded data
+  // Priority: 1. warsByRound (from /all endpoint), 2. allWars, 3. currentWars, 4. fetchedWarsForDay
+  let warsForDay = []
+
+  // First check warsByRound - this is populated when using /all endpoint
+  if (cwlGroupData.warsByRound && cwlGroupData.warsByRound[selectedDay]) {
+    warsForDay = cwlGroupData.warsByRound[selectedDay]
+  }
+
+  // If not found, check allWars (flat array)
+  if (warsForDay.length === 0 && cwlGroupData.allWars && cwlGroupData.allWars.length > 0) {
+    warsForDay = filterWarsForDay(
+      cwlGroupData.allWars,
+      selectedRound.warTags
+    )
+  }
 
   // If no wars found in allWars, try currentWars as fallback
-  if (warsForDay.length === 0 && cwlGroupData.currentWars) {
+  if (warsForDay.length === 0 && cwlGroupData.currentWars && cwlGroupData.currentWars.length > 0) {
     warsForDay = filterWarsForDay(
       cwlGroupData.currentWars,
       selectedRound.warTags
     )
   }
 
-  // If still no wars found, use automatically fetched wars
+  // If still no wars found, use automatically fetched wars (shouldn't happen if /all endpoint was used)
   if (warsForDay.length === 0) {
     if (loadingFetchedWars) {
       return (
@@ -78,10 +89,10 @@ export const CWLWarDetails = ({
     if (!war.clan || !war.opponent || !clanTag) {
       return { ourClan: war.clan, opponentClan: war.opponent }
     }
-    
+
     const normalizedOurTag = normalizeTag(clanTag) || clanTag
     const normalizedWarClanTag = normalizeTag(war.clan.tag) || war.clan.tag
-    
+
     // If war.clan.tag matches our clanTag, then war.clan is our clan
     if (normalizedWarClanTag === normalizedOurTag) {
       return { ourClan: war.clan, opponentClan: war.opponent }
@@ -95,7 +106,7 @@ export const CWLWarDetails = ({
     <div className="cwl-day-wars">
       {warsForDay.map((war, idx) => {
         const { ourClan, opponentClan } = getOurClanAndOpponent(war)
-        
+
         return (
           <div key={idx} className="cwl-war-section">
             <div className="cwl-war-header">
@@ -115,23 +126,23 @@ export const CWLWarDetails = ({
               <button
                 className={`cwl-toggle-btn ${getActiveView(idx) === 'ourClan' ? 'active' : ''}`}
                 onClick={() => setActiveView(idx, 'ourClan')}
-                >
+              >
                 Our Attacks
               </button>
               <button
                 className={`cwl-toggle-btn ${getActiveView(idx) === 'opponent' ? 'active' : ''}`}
                 onClick={() => setActiveView(idx, 'opponent')}
-                >
+              >
                 Opponent Attacks
               </button>
-                {isAdmin && (
-                  <button
-                    className={`cwl-toggle-btn ${getActiveView(idx) === 'warEvents' ? 'active' : ''}`}
-                    onClick={() => setActiveView(idx, 'warEvents')}
-                  >
-                    📜 War Events
-                  </button>
-                )}
+              {isAdmin && (
+                <button
+                  className={`cwl-toggle-btn ${getActiveView(idx) === 'warEvents' ? 'active' : ''}`}
+                  onClick={() => setActiveView(idx, 'warEvents')}
+                >
+                  📜 War Events
+                </button>
+              )}
             </div>
 
             {/* War Events Timeline - Show when warEvents is selected (admin only) */}
@@ -152,7 +163,7 @@ export const CWLWarDetails = ({
                 {(() => {
                   // Collect all attacks from both clans
                   const allAttacks = []
-                  
+
                   // Add our clan's attacks
                   ourClan?.members?.forEach(member => {
                     member.attacks?.forEach(attack => {
@@ -172,7 +183,7 @@ export const CWLWarDetails = ({
                       })
                     })
                   })
-                  
+
                   // Add opponent's attacks
                   opponentClan?.members?.forEach(member => {
                     member.attacks?.forEach(attack => {
@@ -192,31 +203,31 @@ export const CWLWarDetails = ({
                       })
                     })
                   })
-                  
+
                   // Sort by attack order (descending - newest first)
                   allAttacks.sort((a, b) => (b.order || 0) - (a.order || 0))
-                  
+
                   return allAttacks.length > 0 ? (
                     <div className="events-list">
                       {allAttacks.map((attack, index) => {
                         // For defenses, swap attacker and defender positions
                         const leftPlayer = attack.isOurAttack ? attack.attacker : attack.defender
                         const rightPlayer = attack.isOurAttack ? attack.defender : attack.attacker
-                        
+
                         return (
                           <div key={index} className={`event-item ${attack.isOurAttack ? 'our-attack' : 'our-defense'}`}>
                             <div className="event-order">#{attack.order}</div>
-                            
+
                             <div className="event-attacker">
                               <div className="player-position">#{leftPlayer?.mapPosition || '?'}</div>
                               <div className="player-info">
                                 <div className="player-name">{leftPlayer?.name || 'Unknown'}</div>
-                                <div className="player-th">TH{leftPlayer?.townHallLevel || '?'}</div>
+                                <div className="player-th">TH{leftPlayer?.townHallLevel || leftPlayer?.townhallLevel || '?'}</div>
                               </div>
                             </div>
-                            
+
                             <div className="event-arrow">{attack.isOurAttack ? '→' : '←'}</div>
-                            
+
                             <div className="event-result">
                               <div className="result-stars">
                                 {'⭐'.repeat(attack.stars || 0)}
@@ -226,14 +237,14 @@ export const CWLWarDetails = ({
                                 {(attack.destructionPercentage || attack.destruction || 0).toFixed(0)}%
                               </div>
                             </div>
-                            
+
                             <div className="event-arrow">{attack.isOurAttack ? '→' : '←'}</div>
-                            
+
                             <div className="event-defender">
                               <div className="player-position">#{rightPlayer?.mapPosition || '?'}</div>
                               <div className="player-info">
                                 <div className="player-name">{rightPlayer?.name || 'Unknown'}</div>
-                                <div className="player-th">TH{rightPlayer?.townHallLevel || '?'}</div>
+                                <div className="player-th">TH{rightPlayer?.townHallLevel || rightPlayer?.townhallLevel || '?'}</div>
                               </div>
                             </div>
                           </div>

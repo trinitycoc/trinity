@@ -36,18 +36,20 @@ export const useCWLStatus = (clanTag) => {
  * @param {string} clanTag - Clan tag
  * @param {boolean} shouldFetch - Whether to fetch the data
  * @param {string} leagueName - League name for medal calculations (optional)
+ * @param {boolean} includeAllWars - Whether to fetch all war details (default: false, uses /current endpoint)
  */
-export const useCWLGroup = (clanTag, shouldFetch, leagueName = null) => {
+export const useCWLGroup = (clanTag, shouldFetch, leagueName = null, includeAllWars = false) => {
   const [cwlGroupData, setCwlGroupData] = useState(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!shouldFetch || !clanTag || cwlGroupData || loading) return
+    if (!shouldFetch || !clanTag) return
 
     const fetchGroupData = async () => {
       setLoading(true)
       try {
-        const data = await fetchCWLGroup(clanTag, true, leagueName)
+        // Use /current endpoint if includeAllWars is false, /all endpoint if true
+        const data = await fetchCWLGroup(clanTag, includeAllWars, leagueName)
         setCwlGroupData(data)
       } catch (err) {
         console.error('Error fetching CWL group data:', err)
@@ -58,7 +60,7 @@ export const useCWLGroup = (clanTag, shouldFetch, leagueName = null) => {
     }
 
     fetchGroupData()
-  }, [shouldFetch, clanTag, leagueName, cwlGroupData, loading])
+  }, [shouldFetch, clanTag, leagueName, includeAllWars])
 
   return { cwlGroupData, loading }
 }
@@ -89,20 +91,68 @@ export const useCWLDailyWars = (selectedDay, cwlGroupData, clanTag) => {
       return
     }
 
-    // Check if we already have wars in loaded data
-    let warsForDay = filterWarsForDay(
-      cwlGroupData.allWars || [],
-      selectedRound.warTags
-    )
-
-    if (warsForDay.length === 0 && cwlGroupData.currentWars) {
+    // Check if we have data from /all endpoint FIRST
+    // If we have warsByRound or allWars populated, we should have all the data from /all endpoint
+    const hasDataFromAllEndpoint = (cwlGroupData.warsByRound && Object.keys(cwlGroupData.warsByRound).length > 0) || 
+                                   (cwlGroupData.allWars && cwlGroupData.allWars.length > 0)
+    
+    // If we have data from /all endpoint, NEVER fetch individually
+    // The data is already available, even if we haven't found it yet for this specific day
+    if (hasDataFromAllEndpoint) {
+      // Try to find wars for this day, but don't fetch if not found
+      let warsForDay = []
+      
+      // First check warsByRound - this is populated when using /all endpoint
+      // Try both string and number keys
+      if (cwlGroupData.warsByRound) {
+        warsForDay = cwlGroupData.warsByRound[selectedDay] || 
+                     cwlGroupData.warsByRound[String(selectedDay)] ||
+                     cwlGroupData.warsByRound[Number(selectedDay)] ||
+                     []
+      }
+      
+      // If not found, check allWars (flat array)
+      if (warsForDay.length === 0 && cwlGroupData.allWars && cwlGroupData.allWars.length > 0) {
+        warsForDay = filterWarsForDay(
+          cwlGroupData.allWars,
+          selectedRound.warTags
+        )
+      }
+      
+      // Don't fetch - we already have all the data from /all endpoint
+      // If warsForDay is empty, it means the data structure doesn't match, but we still shouldn't fetch
+      setFetchedWarsForDay([])
+      return
+    }
+    
+    // Only if we DON'T have data from /all endpoint, try to find wars and fetch if needed
+    let warsForDay = []
+    
+    // First check warsByRound
+    if (cwlGroupData.warsByRound) {
+      warsForDay = cwlGroupData.warsByRound[selectedDay] || 
+                   cwlGroupData.warsByRound[String(selectedDay)] ||
+                   cwlGroupData.warsByRound[Number(selectedDay)] ||
+                   []
+    }
+    
+    // If not found, check allWars (flat array)
+    if (warsForDay.length === 0 && cwlGroupData.allWars && cwlGroupData.allWars.length > 0) {
+      warsForDay = filterWarsForDay(
+        cwlGroupData.allWars,
+        selectedRound.warTags
+      )
+    }
+    
+    // Fallback to currentWars
+    if (warsForDay.length === 0 && cwlGroupData.currentWars && cwlGroupData.currentWars.length > 0) {
       warsForDay = filterWarsForDay(
         cwlGroupData.currentWars,
         selectedRound.warTags
       )
     }
-
-    // If no wars found in loaded data, automatically fetch them
+    
+    // Only fetch individually if we truly don't have the data
     if (warsForDay.length === 0 && validWarTags.length > 0) {
       const fetchAllWars = async () => {
         setLoading(true)

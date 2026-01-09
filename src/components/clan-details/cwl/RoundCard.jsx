@@ -174,7 +174,7 @@ export const RoundCard = ({
                 <div className="war-summary-col clan-overview our-clan">
                     {stats.ourClanBadge && (
                         <img
-                            src={stats.ourClanBadge.medium || stats.ourClanBadge.small || stats.ourClanBadge.large}
+                            src={stats.ourClanBadge.medium || stats.ourClanBadge.small || stats.ourClanBadge.large || stats.ourClanBadge.url}
                             alt={stats.ourClanName}
                             className="war-clan-badge"
                         />
@@ -196,7 +196,7 @@ export const RoundCard = ({
                 <div className="war-summary-col clan-overview opponent-clan">
                     {stats.opponentClanBadge && (
                         <img
-                            src={stats.opponentClanBadge.medium || stats.opponentClanBadge.small || stats.opponentClanBadge.large}
+                            src={stats.opponentClanBadge.medium || stats.opponentClanBadge.small || stats.opponentClanBadge.large || stats.opponentClanBadge.url}
                             alt={stats.opponentClanName}
                             className="war-clan-badge"
                         />

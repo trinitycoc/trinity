@@ -15,6 +15,10 @@ export const useCWLWarNames = (cwlGroupData, clanTag, loadingGroup) => {
       const names = {}
       const promises = []
 
+      // Check if we have data from /all endpoint - if so, we should have all war data
+      const hasDataFromAllEndpoint = (cwlGroupData.warsByRound && Object.keys(cwlGroupData.warsByRound).length > 0) || 
+                                     (cwlGroupData.allWars && cwlGroupData.allWars.length > 0)
+
       // Process all rounds
       for (const round of cwlGroupData.group.rounds) {
         if (!round.warTags || round.warTags.length === 0) continue
@@ -23,20 +27,28 @@ export const useCWLWarNames = (cwlGroupData, clanTag, loadingGroup) => {
         if (validWarTags.length === 0) continue
 
         // Check if we already have war data for this round
-        const existingWars = filterWarsForDay(
-          cwlGroupData.allWars || [],
-          round.warTags
-        )
+        // Priority: 1. warsByRound (from /all endpoint), 2. allWars, 3. currentWars
+        let existingWars = []
+        
+        // First check warsByRound - this is populated when using /all endpoint
+        if (cwlGroupData.warsByRound && cwlGroupData.warsByRound[round.round]) {
+          existingWars = cwlGroupData.warsByRound[round.round]
+        }
+        
+        // If not found, check allWars (flat array)
+        if (existingWars.length === 0 && cwlGroupData.allWars && cwlGroupData.allWars.length > 0) {
+          existingWars = filterWarsForDay(
+            cwlGroupData.allWars,
+            round.warTags
+          )
+        }
 
         // Also check currentWars
-        if (existingWars.length === 0 && cwlGroupData.currentWars) {
-          const currentWarsForDay = filterWarsForDay(
+        if (existingWars.length === 0 && cwlGroupData.currentWars && cwlGroupData.currentWars.length > 0) {
+          existingWars = filterWarsForDay(
             cwlGroupData.currentWars,
             round.warTags
           )
-          if (currentWarsForDay.length > 0) {
-            existingWars.push(...currentWarsForDay)
-          }
         }
 
         // If we have war data with clan names, use it
@@ -45,7 +57,8 @@ export const useCWLWarNames = (cwlGroupData, clanTag, loadingGroup) => {
           if (existingWars.length > 1) {
             names[round.round] += ` (${existingWars.length} wars)`
           }
-        } else if (validWarTags.length > 0) {
+        } else if (validWarTags.length > 0 && !hasDataFromAllEndpoint) {
+          // Only fetch if we don't have data from /all endpoint
           // Fetch the first war to get clan names
           const firstWarTag = validWarTags[0]
           promises.push(

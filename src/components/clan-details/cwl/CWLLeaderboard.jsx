@@ -216,7 +216,8 @@ export const CWLLeaderboard = ({ cwlGroupData, expandedClans, setExpandedClans, 
                 </div>
                 <div className="cwl-members-cards-grid">
                   {sortMembersByTH(cwlClan.members).map((member, mIdx) => {
-                    const thImage = thImages[member.townHallLevel]
+                    const thLevel = member.townHallLevel || member.townhallLevel || 0
+                    const thImage = thImages[thLevel]
                     return (
                       <div key={mIdx} className="cwl-member-card">
                         <div className="cwl-member-card-number">#{mIdx + 1}</div>
@@ -227,11 +228,11 @@ export const CWLLeaderboard = ({ cwlGroupData, expandedClans, setExpandedClans, 
                             {thImage && (
                               <img
                                 src={thImage}
-                                alt={`TH${member.townHallLevel}`}
+                                alt={`TH${thLevel}`}
                                 className="cwl-member-th-image"
                               />
                             )}
-                            <span className="cwl-member-th-value">{member.townHallLevel}</span>
+                            <span className="cwl-member-th-value">{thLevel}</span>
                           </div>
                         </div>
                       </div>

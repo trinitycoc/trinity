@@ -59,10 +59,10 @@ export const WarMembersTable = ({ members, title, sortBy = 'position', opponentM
                   <td className="cwl-table-value">{member.mapPosition}</td>
                   <td className="cwl-table-value">
                     <div className="cwl-attacker-info">
-                      {thImages[member.townHallLevel] && (
+                      {thImages[member.townHallLevel || member.townhallLevel] && (
                         <img
-                          src={thImages[member.townHallLevel]}
-                          alt={`TH${member.townHallLevel}`}
+                          src={thImages[member.townHallLevel || member.townhallLevel]}
+                          alt={`TH${member.townHallLevel || member.townhallLevel}`}
                           className="cwl-attacker-th-image"
                         />
                       )}
@@ -111,10 +111,10 @@ export const WarMembersTable = ({ members, title, sortBy = 'position', opponentM
                               {defender ? (
                                 <div className="cwl-target-info">
                                   <span className="cwl-target-position">#{defender.mapPosition}</span>
-                                  {thImages[defender.townHallLevel] && (
+                                  {thImages[defender.townHallLevel || defender.townhallLevel] && (
                                     <img
-                                      src={thImages[defender.townHallLevel]}
-                                      alt={`TH${defender.townHallLevel}`}
+                                      src={thImages[defender.townHallLevel || defender.townhallLevel]}
+                                      alt={`TH${defender.townHallLevel || defender.townhallLevel}`}
                                       className="cwl-target-th-image"
                                     />
                                   )}

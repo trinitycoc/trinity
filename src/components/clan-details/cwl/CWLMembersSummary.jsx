@@ -111,7 +111,7 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag, leagueName }) => {
               member: {
                 name: member.name,
                 tag: member.tag,
-                townHallLevel: member.townHallLevel
+                townHallLevel: member.townHallLevel || member.townhallLevel || 0
               },
               rounds: {},
               totals: {
@@ -286,10 +286,10 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag, leagueName }) => {
                   </td>
                   <td className="cwl-summary-member-cell">
                     <div className="cwl-summary-member-info">
-                      {thImages[memberData.member.townHallLevel] && (
+                      {thImages[memberData.member.townHallLevel || memberData.member.townhallLevel] && (
                         <img
-                          src={thImages[memberData.member.townHallLevel]}
-                          alt={`TH${memberData.member.townHallLevel}`}
+                          src={thImages[memberData.member.townHallLevel || memberData.member.townhallLevel]}
+                          alt={`TH${memberData.member.townHallLevel || memberData.member.townhallLevel}`}
                           className="cwl-summary-th-image"
                         />
                       )}

@@ -645,24 +645,23 @@ export const fetchCWLStatus = async (clanTag) => {
 }
 
 /**
- * Get full CWL group data for a specific clan (all available details)
- * Now includes pre-calculated leaderboard, roundStats, and warsByRound from backend
+ * Get current CWL group data for a specific clan
+ * Uses the new simplified endpoint: /api/cwl/:clanTag/current
  * @param {string} clanTag - Clan tag (with or without #)
- * @param {boolean} includeAllWars - If true, includes all wars from all rounds
- * @param {string} leagueName - League name for medal calculations (optional)
+ * @param {boolean} includeAllWars - If true, uses /all endpoint instead
+ * @param {string} leagueName - League name (not used in new endpoint, kept for compatibility)
  */
 export const fetchCWLGroup = async (clanTag, includeAllWars = false, leagueName = null) => {
   try {
     // Remove # from tag for URL encoding
     const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
-    let url = includeAllWars 
-      ? `${API_BASE_URL}/cwl/clans/${encodedTag}/group?allWars=true`
-      : `${API_BASE_URL}/cwl/clans/${encodedTag}/group`
     
-    // Add leagueName as query parameter if provided
-    if (leagueName) {
-      const separator = url.includes('?') ? '&' : '?'
-      url += `${separator}leagueName=${encodeURIComponent(leagueName)}`
+    // Use /all endpoint if includeAllWars is true, otherwise use /current
+    let url
+    if (includeAllWars) {
+      url = `${API_BASE_URL}/cwl/${encodedTag}/all`
+    } else {
+      url = `${API_BASE_URL}/cwl/${encodedTag}/current`
     }
     
     const response = await fetch(url)
@@ -671,7 +670,89 @@ export const fetchCWLGroup = async (clanTag, includeAllWars = false, leagueName 
       throw new Error(`Failed to fetch CWL group: ${response.statusText}`)
     }
     
-    return await response.json()
+    const data = await response.json()
+    
+    // Transform response to match expected structure
+    if (includeAllWars) {
+      // /all endpoint returns: { state, season, clans, rounds: [{ round, wars }] }
+      // Extract all wars from rounds and create flat arrays
+      const allWars = []
+      const warsByRound = {}
+      
+      data.rounds.forEach(round => {
+        if (round.wars && round.wars.length > 0) {
+          const transformedWars = []
+          // Extract full war objects from round.wars
+          round.wars.forEach(war => {
+            // Transform war structure to match expected format
+            // Backend returns ourClan/opponent, frontend expects clan/opponent
+            const warObj = {
+              warTag: war.warTag,
+              state: war.state,
+              teamSize: war.teamSize,
+              startTime: war.startTime,
+              endTime: war.endTime,
+              preparationStartTime: war.preparationStartTime,
+              clan: war.ourClan ? {
+                name: war.ourClan.name,
+                tag: war.ourClan.tag,
+                badgeUrls: war.ourClan.badgeUrls,
+                clanLevel: war.ourClan.clanLevel,
+                stars: war.ourClan.stars,
+                destructionPercentage: war.ourClan.destructionPercentage,
+                attacks: war.ourClan.attacks,
+                members: war.ourClan.members || [] // Include full member details with attacks
+              } : null,
+              opponent: war.opponent ? {
+                name: war.opponent.name,
+                tag: war.opponent.tag,
+                badgeUrls: war.opponent.badgeUrls,
+                clanLevel: war.opponent.clanLevel,
+                stars: war.opponent.stars,
+                destructionPercentage: war.opponent.destructionPercentage,
+                attacks: war.opponent.attacks,
+                members: war.opponent.members || [] // Include full member details with attacks
+              } : null,
+              result: war.result // win/loss/draw
+            }
+            allWars.push(warObj)
+            transformedWars.push(warObj)
+          })
+          // Store transformed wars (with 'clan' instead of 'ourClan') in warsByRound
+          warsByRound[round.round] = transformedWars
+        }
+      })
+      
+      return {
+        group: {
+          state: data.state,
+          season: data.season,
+          clans: data.clans,
+          rounds: data.rounds.map(r => ({
+            round: r.round,
+            warTags: r.wars?.map(w => w.warTag).filter(Boolean) || []
+          }))
+        },
+        rounds: data.rounds,
+        allWars: allWars,
+        warsByRound: warsByRound,
+        currentWars: [], // Will be populated by fetching individual wars if needed
+        ...data
+      }
+    } else {
+      // /current endpoint returns: { state, season, clans, rounds, cached }
+      return {
+        group: {
+          state: data.state,
+          season: data.season,
+          clans: data.clans,
+          rounds: data.rounds
+        },
+        allWars: [], // Not included in /current endpoint
+        currentWars: [], // Not included in /current endpoint
+        ...data
+      }
+    }
   } catch (error) {
     console.error('Error fetching CWL group:', error)
     throw error
@@ -701,19 +782,17 @@ export const fetchCWLLeaderboard = async (clanTag) => {
 
 /**
  * Get CWL war details by war tag
+ * Uses the new simplified endpoint: /api/cwl/war/:warTag
  * @param {string} warTag - War tag (with or without #)
- * @param {string} clanTag - Clan tag (required to get CWL group)
+ * @param {string} clanTag - Clan tag (kept for compatibility, not required in new endpoint)
  */
-export const fetchCWLWarByTag = async (warTag, clanTag) => {
+export const fetchCWLWarByTag = async (warTag, clanTag = null) => {
   try {
-    if (!clanTag) {
-      throw new Error('Clan tag is required to fetch war details')
-    }
-    
-    // Remove # from tags for URL encoding
+    // Remove # from war tag for URL encoding
     const encodedWarTag = encodeURIComponent(warTag.replace('#', ''))
-    const encodedClanTag = encodeURIComponent(clanTag.replace('#', ''))
-    const response = await fetch(`${API_BASE_URL}/cwl/wars/${encodedWarTag}?clanTag=${encodedClanTag}`)
+    
+    // New endpoint doesn't require clanTag query parameter
+    const response = await fetch(`${API_BASE_URL}/cwl/war/${encodedWarTag}`)
     
     if (!response.ok) {
       // Handle 404 (war not found) more gracefully

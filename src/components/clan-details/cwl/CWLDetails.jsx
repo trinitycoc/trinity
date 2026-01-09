@@ -27,9 +27,10 @@ function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName,
   const { fetchedWarsForDay, fetchedWarsByRound, loading: loadingFetchedWars } = useCWLDailyWars(
     selectedDay,
     cwlGroupData,
-    clanTag
+    clanTag,
+    showAllDetails // Pass showAllDetails to prevent individual fetches when using /all endpoint
   )
-  const dayWarNames = useCWLWarNames(cwlGroupData, clanTag, loadingGroup)
+  const dayWarNames = useCWLWarNames(cwlGroupData, clanTag, loadingGroup, showAllDetails)
 
   // Update showDetails when prop changes
   useEffect(() => {

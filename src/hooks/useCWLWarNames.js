@@ -4,8 +4,12 @@ import { getValidWarTags, filterWarsForDay } from '../utils/cwlUtils'
 
 /**
  * Hook for fetching and caching war names for each round
+ * @param {object} cwlGroupData - CWL group data from useCWLGroup
+ * @param {string} clanTag - Clan tag
+ * @param {boolean} loadingGroup - Whether group data is loading
+ * @param {boolean} includeAllWars - Whether we're using /all endpoint (if true, never fetch individually)
  */
-export const useCWLWarNames = (cwlGroupData, clanTag, loadingGroup) => {
+export const useCWLWarNames = (cwlGroupData, clanTag, loadingGroup, includeAllWars = false) => {
   const [dayWarNames, setDayWarNames] = useState({})
 
   useEffect(() => {
@@ -16,7 +20,9 @@ export const useCWLWarNames = (cwlGroupData, clanTag, loadingGroup) => {
       const promises = []
 
       // Check if we have data from /all endpoint - if so, we should have all war data
-      const hasDataFromAllEndpoint = (cwlGroupData.warsByRound && Object.keys(cwlGroupData.warsByRound).length > 0) || 
+      // If includeAllWars is true, we're using /all endpoint, so never fetch individually
+      const hasDataFromAllEndpoint = includeAllWars ||
+                                     (cwlGroupData.warsByRound && Object.keys(cwlGroupData.warsByRound).length > 0) || 
                                      (cwlGroupData.allWars && cwlGroupData.allWars.length > 0)
 
       // Process all rounds

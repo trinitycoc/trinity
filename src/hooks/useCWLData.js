@@ -67,8 +67,12 @@ export const useCWLGroup = (clanTag, shouldFetch, leagueName = null, includeAllW
 
 /**
  * Hook for fetching wars for a selected day/round
+ * @param {number} selectedDay - Selected day/round number
+ * @param {object} cwlGroupData - CWL group data from useCWLGroup
+ * @param {string} clanTag - Clan tag
+ * @param {boolean} includeAllWars - Whether we're using /all endpoint (if true, never fetch individually)
  */
-export const useCWLDailyWars = (selectedDay, cwlGroupData, clanTag) => {
+export const useCWLDailyWars = (selectedDay, cwlGroupData, clanTag, includeAllWars = false) => {
   const [fetchedWarsForDay, setFetchedWarsForDay] = useState([])
   const [fetchedWarsByRound, setFetchedWarsByRound] = useState({})
   const [loading, setLoading] = useState(false)
@@ -92,8 +96,9 @@ export const useCWLDailyWars = (selectedDay, cwlGroupData, clanTag) => {
     }
 
     // Check if we have data from /all endpoint FIRST
-    // If we have warsByRound or allWars populated, we should have all the data from /all endpoint
-    const hasDataFromAllEndpoint = (cwlGroupData.warsByRound && Object.keys(cwlGroupData.warsByRound).length > 0) || 
+    // If includeAllWars is true OR we have warsByRound/allWars populated, we should have all the data from /all endpoint
+    const hasDataFromAllEndpoint = includeAllWars || 
+                                   (cwlGroupData.warsByRound && Object.keys(cwlGroupData.warsByRound).length > 0) || 
                                    (cwlGroupData.allWars && cwlGroupData.allWars.length > 0)
     
     // If we have data from /all endpoint, NEVER fetch individually

@@ -586,6 +586,29 @@
         color: #f8fafc;
       }
     }
+
+    .nav-install {
+      width: 100%;
+
+      .install-pwa-button {
+        width: 100%;
+        text-align: center;
+        padding: $spacing-sm $spacing-md;
+        display: block;
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: white;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+          border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        span {
+          display: inline; // Show text in mobile menu
+        }
+      }
+    }
   }
 
   .footer {

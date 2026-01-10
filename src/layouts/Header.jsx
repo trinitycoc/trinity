@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import InstallPWA from '../components/InstallPWA'
 import trinityLogo from '/Trinity_Logo.png'
 
 function Header() {
@@ -86,6 +87,9 @@ function Header() {
               </Link>
             </li>
           )}
+          <li className="nav-install">
+            <InstallPWA />
+          </li>
         </ul>
       </nav>
     </header>

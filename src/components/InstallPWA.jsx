@@ -15,17 +15,9 @@ function InstallPWA() {
     // Detect mobile devices
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 
+    // Don't show install button on desktop - only show on mobile
     if (!isMobile) {
-      // Desktop - only show if beforeinstallprompt event fires
-      const handleBeforeInstallPrompt = (e) => {
-        e.preventDefault()
-        setDeferredPrompt(e)
-        setShowInstallButton(true)
-      }
-      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-      return () => {
-        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-      }
+      return
     }
 
     // Mobile - always show install button (even if beforeinstallprompt doesn't fire)

@@ -20,12 +20,14 @@ function InstallPWA() {
       return
     }
 
-    // Listen for beforeinstallprompt event (Android Chrome)
-    // Only show button when native install prompt is available
+    // Mobile - always show install button (even if beforeinstallprompt doesn't fire)
+    // This helps when user already dismissed the prompt or site doesn't meet all criteria
+    setShowInstallButton(true)
+
+    // Also listen for beforeinstallprompt event (Android Chrome)
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault()
       setDeferredPrompt(e)
-      setShowInstallButton(true) // Only show button when native prompt is available
     }
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
@@ -36,31 +38,63 @@ function InstallPWA() {
   }, [])
 
   const handleInstallClick = async () => {
-    // Only proceed if we have the deferred prompt (native install available)
-    if (!deferredPrompt) {
-      console.log('Native install prompt not available')
+    // If we have the deferred prompt, use it (Android Chrome)
+    if (deferredPrompt) {
+      try {
+        // Show the install prompt
+        deferredPrompt.prompt()
+
+        // Wait for the user to respond
+        const { outcome } = await deferredPrompt.userChoice
+
+        if (outcome === 'accepted') {
+          console.log('User accepted the install prompt')
+          setShowInstallButton(false)
+          setIsInstalled(true)
+        } else {
+          console.log('User dismissed the install prompt')
+        }
+      } catch (error) {
+        console.error('Error showing install prompt:', error)
+        // Fall through to manual instructions
+      } finally {
+        // Clear the deferred prompt
+        setDeferredPrompt(null)
+      }
       return
     }
 
-    try {
-      // Show the native browser install prompt
-      deferredPrompt.prompt()
+    // Manual instructions (iOS or Android without prompt)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    const isAndroid = /Android/.test(navigator.userAgent)
 
-      // Wait for the user to respond
-      const { outcome } = await deferredPrompt.userChoice
-
-      if (outcome === 'accepted') {
-        console.log('User accepted the install prompt')
-        setShowInstallButton(false)
-        setIsInstalled(true)
-      } else {
-        console.log('User dismissed the install prompt')
-      }
-    } catch (error) {
-      console.error('Error showing install prompt:', error)
-    } finally {
-      // Clear the deferred prompt
-      setDeferredPrompt(null)
+    if (isIOS) {
+      // iOS instructions
+      alert(
+        '📱 Install Trinity App on iOS:\n\n' +
+        '1. Tap the Share button (□ with ↑)\n' +
+        '2. Scroll down and tap "Add to Home Screen"\n' +
+        '3. Tap "Add" in the top right\n\n' +
+        'The app icon will appear on your home screen!'
+      )
+    } else if (isAndroid) {
+      // Android instructions
+      alert(
+        '📱 Install Trinity App on Android:\n\n' +
+        '1. Tap the menu (⋮) in your browser\n' +
+        '2. Look for "Install App" or "Add to Home Screen"\n' +
+        '3. Tap it and confirm installation\n\n' +
+        'If you don\'t see "Install App", tap "Add to Home Screen" instead.'
+      )
+    } else {
+      // Desktop/Other
+      alert(
+        '📱 To install this app:\n\n' +
+        'Look for the install icon in your browser\'s address bar, or:\n\n' +
+        'Chrome/Edge: Menu → Install App\n' +
+        'Firefox: Menu → Install\n' +
+        'Safari: Not supported'
+      )
     }
   }
 
@@ -255,29 +289,46 @@ export function InstallPWABanner() {
   }, [isInstalled, showBanner, scheduleNextBanner, checkIfInstalled])
 
   const handleInstallClick = async () => {
-    // Only proceed if we have the deferred prompt (native install available)
-    if (!deferredPrompt) {
-      console.log('Native install prompt not available')
+    if (deferredPrompt) {
+      try {
+        deferredPrompt.prompt()
+        const { outcome } = await deferredPrompt.userChoice
+        if (outcome === 'accepted') {
+          setShowBanner(false)
+          setIsInstalled(true)
+          // Clear timer since app is now installed
+          if (timerRef.current) {
+            clearTimeout(timerRef.current)
+            timerRef.current = null
+          }
+        }
+      } catch (error) {
+        console.error('Error showing install prompt:', error)
+      } finally {
+        setDeferredPrompt(null)
+      }
       return
     }
 
-    try {
-      // Show the native browser install prompt
-      deferredPrompt.prompt()
-      const { outcome } = await deferredPrompt.userChoice
-      if (outcome === 'accepted') {
-        setShowBanner(false)
-        setIsInstalled(true)
-        // Clear timer since app is now installed
-        if (timerRef.current) {
-          clearTimeout(timerRef.current)
-          timerRef.current = null
-        }
-      }
-    } catch (error) {
-      console.error('Error showing install prompt:', error)
-    } finally {
-      setDeferredPrompt(null)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    const isAndroid = /Android/.test(navigator.userAgent)
+
+    if (isIOS) {
+      alert(
+        '📱 Install Trinity App on iOS:\n\n' +
+        '1. Tap the Share button (□ with ↑)\n' +
+        '2. Scroll down and tap "Add to Home Screen"\n' +
+        '3. Tap "Add" in the top right\n\n' +
+        'The app icon will appear on your home screen!'
+      )
+    } else if (isAndroid) {
+      alert(
+        '📱 Install Trinity App on Android:\n\n' +
+        '1. Tap the menu (⋮) in your browser\n' +
+        '2. Look for "Install App" or "Add to Home Screen"\n' +
+        '3. Tap it and confirm installation\n\n' +
+        'If you don\'t see "Install App", tap "Add to Home Screen" instead.'
+      )
     }
   }
 

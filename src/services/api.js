@@ -674,69 +674,37 @@ export const fetchCWLGroup = async (clanTag, includeAllWars = false, leagueName 
     
     // Transform response to match expected structure
     if (includeAllWars) {
-      // /all endpoint returns: { state, season, clans, rounds: [{ round, wars }] }
-      // Extract all wars from rounds and create flat arrays
+      // /all endpoint returns: { state, season, clans, rounds: [{ round, wars }], memberSummary, ... }
+      // Backend now returns clan/opponent structure (not ourClan/opponent), so minimal transformation needed
+      // Extract all wars from rounds and create flat arrays for backward compatibility
       const allWars = []
       const warsByRound = {}
       
-      data.rounds.forEach(round => {
-        if (round.wars && round.wars.length > 0) {
-          const transformedWars = []
-          // Extract full war objects from round.wars
-          round.wars.forEach(war => {
-            // Transform war structure to match expected format
-            // Backend returns ourClan/opponent, frontend expects clan/opponent
-            const warObj = {
-              warTag: war.warTag,
-              state: war.state,
-              teamSize: war.teamSize,
-              startTime: war.startTime,
-              endTime: war.endTime,
-              preparationStartTime: war.preparationStartTime,
-              clan: war.ourClan ? {
-                name: war.ourClan.name,
-                tag: war.ourClan.tag,
-                badgeUrls: war.ourClan.badgeUrls,
-                clanLevel: war.ourClan.clanLevel,
-                stars: war.ourClan.stars,
-                destructionPercentage: war.ourClan.destructionPercentage,
-                attacks: war.ourClan.attacks,
-                members: war.ourClan.members || [] // Include full member details with attacks
-              } : null,
-              opponent: war.opponent ? {
-                name: war.opponent.name,
-                tag: war.opponent.tag,
-                badgeUrls: war.opponent.badgeUrls,
-                clanLevel: war.opponent.clanLevel,
-                stars: war.opponent.stars,
-                destructionPercentage: war.opponent.destructionPercentage,
-                attacks: war.opponent.attacks,
-                members: war.opponent.members || [] // Include full member details with attacks
-              } : null,
-              result: war.result // win/loss/draw
-            }
-            allWars.push(warObj)
-            transformedWars.push(warObj)
-          })
-          // Store transformed wars (with 'clan' instead of 'ourClan') in warsByRound
-          warsByRound[round.round] = transformedWars
-        }
-      })
+      if (data.rounds && Array.isArray(data.rounds)) {
+        data.rounds.forEach(round => {
+          if (round.wars && round.wars.length > 0) {
+            // Backend already returns clan/opponent structure, so use directly
+            warsByRound[round.round] = round.wars
+            allWars.push(...round.wars)
+          }
+        })
+      }
       
       return {
         group: {
           state: data.state,
           season: data.season,
           clans: data.clans,
-          rounds: data.rounds.map(r => ({
+          rounds: data.rounds?.map(r => ({
             round: r.round,
             warTags: r.wars?.map(w => w.warTag).filter(Boolean) || []
-          }))
+          })) || []
         },
         rounds: data.rounds,
         allWars: allWars,
         warsByRound: warsByRound,
         currentWars: [], // Will be populated by fetching individual wars if needed
+        memberSummary: data.memberSummary || [], // Pre-calculated member summary from backend
         ...data
       }
     } else {
@@ -750,6 +718,7 @@ export const fetchCWLGroup = async (clanTag, includeAllWars = false, leagueName 
         },
         allWars: [], // Not included in /current endpoint
         currentWars: [], // Not included in /current endpoint
+        memberSummary: [], // Not included in /current endpoint
         ...data
       }
     }

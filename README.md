@@ -2,6 +2,8 @@
 
 A modern, professional React website for the Trinity Clash of Clans family, built with Vite, React Router, and SCSS.
 
+Version 2.1.0 - Optimized with Backend Calculations & Performance Improvements
+
 ## 🌟 Features
 
 - ⚡ **Lightning Fast** - Built with Vite for optimal performance
@@ -15,6 +17,9 @@ A modern, professional React website for the Trinity Clash of Clans family, buil
 - 🚀 **Automated Deploys** - GitHub Actions build + deploy to GitHub Pages
 - 🔐 **Authentication** - User login, registration, and role-based access
 - 📊 **Admin Dashboard** - Manage clans, base layouts, and users (admin/root only)
+- 🧮 **Backend Calculations** - CWL leaderboard and member statistics calculated on backend
+- 📉 **Optimized Performance** - Reduced client-side calculations, smaller bundle size
+- 🎯 **Simplified API** - Clean, focused endpoints for better performance
 
 ## 📁 Project Structure
 
@@ -127,6 +132,10 @@ More details: `../Trinity_Backend/README.md`
 - **About** - Trinity information and features
 - **Clans** - Live clan data grid with stats
 - **CWL** - Clan War League information with filtered clans
+  - CWL leaderboard (calculated on backend)
+  - Member summary statistics (calculated on backend)
+  - Round-by-round war details
+  - Promotion/demotion indicators
 - **Farming Base Layouts** - Base layout resources by Town Hall level
 - **Clan Details** - Detailed view for individual clans (wars, members, stats)
 - **Login** - User authentication
@@ -216,6 +225,7 @@ The frontend reads `VITE_API_BASE_URL` in `src/services/api.js`. This should poi
 - Frontend uses in-memory caching for clan data (2-minute TTL)
 - Cache is cleared after create/update/delete operations
 - Reduces unnecessary API calls
+- Backend provides pre-calculated data (leaderboard, member summary) for instant rendering
 
 ### Error Handling
 
@@ -233,8 +243,11 @@ The frontend reads `VITE_API_BASE_URL` in `src/services/api.js`. This should poi
 
 - Code splitting with React.lazy
 - Image optimization
-- Minimal bundle size
+- Minimal bundle size (~200 lines of calculation code moved to backend)
 - Efficient re-renders with React hooks
+- Backend-calculated statistics (leaderboard, member summary) reduce client-side processing
+- Optimized CWL data fetching (uses simplified endpoints)
+- Reduced API calls (single `/all` endpoint provides complete data)
 
 ## 🐛 Troubleshooting
 

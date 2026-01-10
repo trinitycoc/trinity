@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { getValidWarTags } from '../../../utils/cwlUtils'
-// import { calculateRoundStats, getRoundWars } from '../../../utils/roundStats' // Moved to backend
 import { CWLWarDetails } from './CWLWarDetails'
 import { RoundCard } from './RoundCard'
 

@@ -192,28 +192,6 @@ export const fetchClanWarLog = async (clanTag) => {
 }
 
 /**
- * Get capital raid seasons for a clan
- * TODO: Capital Raids not integrated yet - commenting out to prevent unnecessary API calls
- */
-/*
-export const fetchClanCapitalRaids = async (clanTag) => {
-  try {
-    const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
-    const response = await fetch(`${API_BASE_URL}/clans/${encodedTag}/capitalraids`)
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch capital raids: ${response.statusText}`)
-    }
-    
-    return await response.json()
-  } catch (error) {
-    console.error('Error fetching capital raids:', error)
-    throw error
-  }
-}
-*/
-
-/**
  * Check if backend server is running
  */
 export const checkServerHealth = async () => {

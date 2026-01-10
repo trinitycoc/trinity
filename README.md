@@ -15,6 +15,7 @@ Version 2.1.0 - Optimized with Backend Calculations & Performance Improvements
 - 🎮 **Live Clan Data** - Real-time data from the Trinity backend
 - ⏱️ **Smart CWL Window** - Regular users see a CWL highlight banner between the 11th and 29th (1:30 PM IST)
 - 🚀 **Automated Deploys** - GitHub Actions build + deploy to GitHub Pages
+- 📱 **PWA Support** - Installable Progressive Web App with offline support
 - 🔐 **Authentication** - User login, registration, and role-based access
 - 📊 **Admin Dashboard** - Manage clans, base layouts, and users (admin/root only)
 - 🧮 **Backend Calculations** - CWL leaderboard and member statistics calculated on backend

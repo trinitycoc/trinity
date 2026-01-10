@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react'
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { ScrollToTop } from './components/ScrollToTop'
 import ProtectedRoute from './components/ProtectedRoute'
+import { InstallPWABanner } from './components/InstallPWA'
 import './styles/main.scss'
 
 const MainLayout = lazy(() => import('./layouts/MainLayout'))
@@ -44,6 +45,7 @@ function App() {
           </Route>
         </Routes>
       </Suspense>
+      <InstallPWABanner />
     </HashRouter>
   )
 }

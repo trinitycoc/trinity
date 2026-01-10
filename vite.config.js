@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['Trinity_Logo.png', 'trinity-bg.jpeg'],
+      includeAssets: ['Trinity_Logo.png', 'app.png', 'trinity-bg.jpeg'],
       manifest: {
         name: 'Trinity - Clan War League',
         short_name: 'Trinity',
@@ -22,13 +22,13 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: '/Trinity_Logo.png',
+            src: '/app.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: '/Trinity_Logo.png',
+            src: '/app.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'

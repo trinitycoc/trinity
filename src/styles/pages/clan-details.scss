@@ -198,14 +198,56 @@
       border: none;
       border-radius: 0;
 
-      // When section only contains a loading element, center it on screen
-      &:has(> .cwl-details-loading:only-child) {
+      // When section contains a loading element (directly or through fragments), center it
+      &:has(.cwl-details-loading),
+      &:has(.cwl-loading-center) {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 80vh;
+        margin-top: 0;
+      }
+
+      // Ensure loading elements are properly centered when parent is flex
+      &:has(.cwl-details-loading)>* {
+        width: 100%;
+      }
+
+      // Direct child loading element - ensure it's centered
+      .cwl-details-loading {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 80vh;
-        height: 80vh;
-        margin-top: 0;
+        padding: $spacing-lg;
+        text-align: center;
+        color: $text-secondary;
+        font-size: 0.9rem;
+        gap: $spacing-md;
+        min-height: 60vh;
+        width: 100%;
+        margin: 0 auto;
+
+        .spinner {
+          margin: 0;
+        }
+
+        p {
+          margin: 0;
+          font-style: italic;
+        }
+      }
+
+      // Explicitly center the loading component
+      .cwl-loading-center {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 60vh;
+        width: 100%;
+        margin: 0 auto;
+        text-align: center;
       }
 
       // Card containers for separate sections
@@ -538,7 +580,7 @@
 
                   &.promotion-zone {
                     background: rgba(74, 222, 128, 0.1);
-                    
+
                     &:hover {
                       background: rgba(74, 222, 128, 0.15);
                     }
@@ -546,7 +588,7 @@
 
                   &.demotion-zone {
                     background: rgba(239, 68, 68, 0.1);
-                    
+
                     &:hover {
                       background: rgba(239, 68, 68, 0.15);
                     }
@@ -2055,13 +2097,7 @@
       .member-row {
         display: grid;
         grid-template-columns:
-          minmax(32px, 0.35fr)
-          minmax(0, 2fr)
-          minmax(0, 1.1fr)
-          minmax(0, 1.1fr)
-          minmax(44px, 0.6fr)
-          minmax(0, 1.1fr)
-          minmax(0, 1.4fr);
+          minmax(32px, 0.35fr) minmax(0, 2fr) minmax(0, 1.1fr) minmax(0, 1.1fr) minmax(44px, 0.6fr) minmax(0, 1.1fr) minmax(0, 1.4fr);
         gap: $spacing-sm;
         padding: $spacing-sm $spacing-md;
         align-items: flex-start;
@@ -4064,10 +4100,10 @@
         &.expanded {
           // Smooth transition when expanding
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          
+
           // Add wrapper for expanded content transitions
-          > .cwl-day-wars,
-          > div:has(.cwl-day-wars) {
+          >.cwl-day-wars,
+          >div:has(.cwl-day-wars) {
             animation: slideDown 0.3s ease-out;
             opacity: 1;
             transform: translateY(0);
@@ -4093,7 +4129,7 @@
             z-index: 0;
           }
 
-          > * {
+          >* {
             position: relative;
             z-index: 1;
           }
@@ -4125,7 +4161,7 @@
             z-index: 0;
           }
 
-          > * {
+          >* {
             position: relative;
             z-index: 1;
           }
@@ -4145,14 +4181,14 @@
           // Uses CSS custom property for dynamic gradient stop position
           // Using same colors as leaderboard (rgba(74, 222, 128) for green, rgba(239, 68, 68) for red)
           --gradient-stop: 50%;
-          background: 
+          background:
             linear-gradient(90deg, rgba(74, 222, 128, 0.3) var(--gradient-stop), rgba(239, 68, 68, 0.3) var(--gradient-stop)),
             rgba(255, 255, 255, 0.95);
           // Dynamic border color based on star comparison - will be set via inline style
           border-left: 4px solid rgba(102, 126, 234, 0.3);
 
           &:hover {
-            background: 
+            background:
               linear-gradient(90deg, rgba(74, 222, 128, 0.5) var(--gradient-stop), rgba(239, 68, 68, 0.5) var(--gradient-stop)),
               rgba(255, 255, 255, 0.95);
           }
@@ -4501,7 +4537,7 @@
       box-shadow: none;
     }
 
-      .cwl-war-section {
+    .cwl-war-section {
       margin: $spacing-md 0;
       padding: $spacing-lg;
       background: linear-gradient(145deg, rgba(255, 255, 255, 0.6) 0%, rgba(249, 250, 251, 0.6) 100%);
@@ -4604,7 +4640,9 @@
 }
 
 @keyframes arrowBounceUp {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
 
@@ -4614,7 +4652,9 @@
 }
 
 @keyframes arrowBounceDown {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
 
@@ -4638,7 +4678,9 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }

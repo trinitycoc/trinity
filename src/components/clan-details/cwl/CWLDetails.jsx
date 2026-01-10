@@ -46,36 +46,36 @@ function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName,
     if (selectedWarTag && clanTag) {
       // Check if we already have this war in loaded data
       let foundWar = null
-      
+
       // Check allWars array
       if (cwlGroupData?.allWars && cwlGroupData.allWars.length > 0) {
-        foundWar = cwlGroupData.allWars.find(war => 
+        foundWar = cwlGroupData.allWars.find(war =>
           (war.warTag || war.tag || '').replace('#', '').toUpperCase() === selectedWarTag.replace('#', '').toUpperCase()
         )
       }
-      
+
       // Check warsByRound
       if (!foundWar && cwlGroupData?.warsByRound) {
         for (const roundNum in cwlGroupData.warsByRound) {
           const roundWars = cwlGroupData.warsByRound[roundNum]
-          foundWar = roundWars.find(war => 
+          foundWar = roundWars.find(war =>
             (war.warTag || war.tag || '').replace('#', '').toUpperCase() === selectedWarTag.replace('#', '').toUpperCase()
           )
           if (foundWar) break
         }
       }
-      
+
       // Check fetchedWarsByRound
       if (!foundWar && fetchedWarsByRound) {
         for (const roundNum in fetchedWarsByRound) {
           const roundWars = fetchedWarsByRound[roundNum]
-          foundWar = roundWars.find(war => 
+          foundWar = roundWars.find(war =>
             (war.warTag || war.tag || '').replace('#', '').toUpperCase() === selectedWarTag.replace('#', '').toUpperCase()
           )
           if (foundWar) break
         }
       }
-      
+
       if (foundWar) {
         // Use war from loaded data
         setWarDetails(foundWar)
@@ -109,7 +109,7 @@ function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName,
   if (loadingStatus) {
     return (
       <div className="cwl-details-section">
-        <div className="cwl-details-loading">
+        <div className="cwl-details-loading cwl-loading-center">
           <div className="spinner"></div>
           <p>Loading CWL status...</p>
         </div>
@@ -129,9 +129,9 @@ function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName,
           {showAllDetails && (
             <>
               {loadingGroup ? (
-                <div className="cwl-details-loading">
+                <div className="cwl-details-loading cwl-loading-center">
                   <div className="spinner"></div>
-                  <p>Loading...</p>
+                  <p>Calculating CWL Stats...</p>
                 </div>
               ) : cwlGroupData?.error ? (
                 <div className="cwl-details-error">Error: {cwlGroupData.error}</div>

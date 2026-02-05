@@ -1661,14 +1661,61 @@
       .cwl-members-summary-section {
         padding: $spacing-lg;
 
-        .cwl-summary-title {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: $primary-color;
+        .cwl-summary-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
           margin-bottom: $spacing-lg;
-          text-align: center;
           padding-bottom: $spacing-md;
           border-bottom: 2px solid rgba(102, 126, 234, 0.15);
+          flex-wrap: wrap;
+          gap: $spacing-md;
+
+          .cwl-summary-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: $primary-color;
+            margin: 0;
+            text-align: left;
+            flex: 1;
+            min-width: 200px;
+          }
+
+          .cwl-summary-sort-control {
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm;
+            font-size: 0.9rem;
+            color: $text-primary;
+
+            label {
+              font-weight: 600;
+              color: $text-secondary;
+            }
+
+            .cwl-summary-sort-select {
+              padding: $spacing-xs $spacing-sm;
+              border: 1px solid rgba(102, 126, 234, 0.3);
+              border-radius: $radius-sm;
+              background: white;
+              color: $text-primary;
+              font-size: 0.9rem;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              min-width: 180px;
+
+              &:hover {
+                border-color: rgba(102, 126, 234, 0.5);
+                box-shadow: 0 2px 4px rgba(102, 126, 234, 0.1);
+              }
+
+              &:focus {
+                outline: none;
+                border-color: $primary-color;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+              }
+            }
+          }
         }
 
         .cwl-summary-table-wrapper {
@@ -3053,10 +3100,28 @@
           .cwl-members-summary-section {
             padding: $spacing-md;
 
-            .cwl-summary-title {
-              font-size: 1.2rem;
-              margin-bottom: $spacing-md;
-              padding-bottom: $spacing-sm;
+            .cwl-summary-header {
+              flex-direction: column;
+              align-items: stretch;
+              gap: $spacing-sm;
+
+              .cwl-summary-title {
+                font-size: 1.2rem;
+                margin: 0;
+                margin-bottom: $spacing-sm;
+                padding-bottom: $spacing-sm;
+                text-align: center;
+              }
+
+              .cwl-summary-sort-control {
+                justify-content: center;
+                font-size: 0.85rem;
+
+                .cwl-summary-sort-select {
+                  min-width: 160px;
+                  font-size: 0.85rem;
+                }
+              }
             }
 
             .cwl-summary-table-wrapper {

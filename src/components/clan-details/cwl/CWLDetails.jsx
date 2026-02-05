@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { fetchCWLWarByTag } from '../../../services/api'
 import { useCWLStatus, useCWLGroup, useCWLDailyWars } from '../../../hooks/useCWLData'
 import { useCWLWarNames } from '../../../hooks/useCWLWarNames'
@@ -20,10 +20,19 @@ function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName,
   const [warError, setWarError] = useState(null)
   const [expandedClans, setExpandedClans] = useState(new Set())
 
+  // State for member summary sorting
+  const [memberSummarySortBy, setMemberSummarySortBy] = useState('total')
+  
+  // Memoize sort change handler to prevent unnecessary re-renders
+  const handleSortChange = useCallback((newSortBy) => {
+    setMemberSummarySortBy(newSortBy)
+  }, [])
+
   // Use custom hooks for data fetching
   const { cwlStatus, loading: loadingStatus } = useCWLStatus(clanTag)
   // Pass showAllDetails as includeAllWars: use /current endpoint when false, /all when true
-  const { cwlGroupData, loading: loadingGroup } = useCWLGroup(clanTag, true, leagueName, showAllDetails)
+  // Always fetch with 'total' sort - client-side sorting handles the rest to avoid refetch and scroll jump
+  const { cwlGroupData, loading: loadingGroup } = useCWLGroup(clanTag, true, leagueName, showAllDetails, 'total')
   const { fetchedWarsForDay, fetchedWarsByRound, loading: loadingFetchedWars } = useCWLDailyWars(
     selectedDay,
     cwlGroupData,
@@ -170,6 +179,8 @@ function CWLDetails({ clanTag, showDetails: showDetailsProp = false, leagueName,
                           cwlGroupData={cwlGroupData}
                           clanTag={clanTag}
                           leagueName={leagueName}
+                          sortBy={memberSummarySortBy}
+                          onSortChange={handleSortChange}
                         />
                       </div>
                     </>

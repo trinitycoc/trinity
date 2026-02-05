@@ -628,8 +628,9 @@ export const fetchCWLStatus = async (clanTag) => {
  * @param {string} clanTag - Clan tag (with or without #)
  * @param {boolean} includeAllWars - If true, uses /all endpoint instead
  * @param {string} leagueName - League name (not used in new endpoint, kept for compatibility)
+ * @param {string} sortBy - Sort option for member summary: 'total' or round number (1-7) as string
  */
-export const fetchCWLGroup = async (clanTag, includeAllWars = false, leagueName = null) => {
+export const fetchCWLGroup = async (clanTag, includeAllWars = false, leagueName = null, sortBy = 'total') => {
   try {
     // Remove # from tag for URL encoding
     const encodedTag = encodeURIComponent(clanTag.replace('#', ''))
@@ -637,7 +638,13 @@ export const fetchCWLGroup = async (clanTag, includeAllWars = false, leagueName 
     // Use /all endpoint if includeAllWars is true, otherwise use /current
     let url
     if (includeAllWars) {
-      url = `${API_BASE_URL}/cwl/${encodedTag}/all`
+      // Add sortBy as query parameter
+      const params = new URLSearchParams()
+      if (sortBy && sortBy !== 'total') {
+        params.append('sortBy', sortBy)
+      }
+      const queryString = params.toString()
+      url = `${API_BASE_URL}/cwl/${encodedTag}/all${queryString ? `?${queryString}` : ''}`
     } else {
       url = `${API_BASE_URL}/cwl/${encodedTag}/current`
     }

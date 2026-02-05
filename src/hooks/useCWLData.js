@@ -37,8 +37,9 @@ export const useCWLStatus = (clanTag) => {
  * @param {boolean} shouldFetch - Whether to fetch the data
  * @param {string} leagueName - League name for medal calculations (optional)
  * @param {boolean} includeAllWars - Whether to fetch all war details (default: false, uses /current endpoint)
+ * @param {string} sortBy - Sort option for member summary: 'total' or round number (1-7) as string
  */
-export const useCWLGroup = (clanTag, shouldFetch, leagueName = null, includeAllWars = false) => {
+export const useCWLGroup = (clanTag, shouldFetch, leagueName = null, includeAllWars = false, sortBy = 'total') => {
   const [cwlGroupData, setCwlGroupData] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -49,7 +50,7 @@ export const useCWLGroup = (clanTag, shouldFetch, leagueName = null, includeAllW
       setLoading(true)
       try {
         // Use /current endpoint if includeAllWars is false, /all endpoint if true
-        const data = await fetchCWLGroup(clanTag, includeAllWars, leagueName)
+        const data = await fetchCWLGroup(clanTag, includeAllWars, leagueName, sortBy)
         setCwlGroupData(data)
       } catch (err) {
         console.error('Error fetching CWL group data:', err)
@@ -60,7 +61,7 @@ export const useCWLGroup = (clanTag, shouldFetch, leagueName = null, includeAllW
     }
 
     fetchGroupData()
-  }, [shouldFetch, clanTag, leagueName, includeAllWars])
+  }, [shouldFetch, clanTag, leagueName, includeAllWars, sortBy])
 
   return { cwlGroupData, loading }
 }

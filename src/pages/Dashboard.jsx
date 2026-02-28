@@ -61,7 +61,7 @@ function Dashboard() {
 
   // Format and members options
   const formatOptions = ['lazy', 'competitive']
-  const membersOptions = ['15', '30']
+  const membersOptions = ['5', '15', '30']
 
   // Town Hall levels (TH1 to TH18)
   const townHallLevels = Array.from({ length: 18 }, (_, i) => i + 1)
@@ -676,12 +676,12 @@ function Dashboard() {
                   </select>
                 </div>
                 <div className="dashboard-form-group">
-                  <label>Members</label>
+                  <label>Allowed Members</label>
                   <select
                     value={cwlForm.members}
                     onChange={(e) => setCwlForm({ ...cwlForm, members: e.target.value })}
                   >
-                    <option value="">Select Members</option>
+                    <option value="">Select Allowed Members</option>
                     {membersOptions.map(members => (
                       <option key={members} value={members}>{members}</option>
                     ))}
@@ -774,7 +774,7 @@ function Dashboard() {
                     <th>Status</th>
                     <th>League</th>
                     <th>Format</th>
-                    <th>Members</th>
+                    <th>Allowed Members</th>
                     <th>Town Hall</th>
                     <th>Weight</th>
                     {isRoot && <th>Actions</th>}

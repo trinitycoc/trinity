@@ -131,7 +131,7 @@ export const calculateCWLLeaderboard = (clans, wars) => {
     const opponentStats = clanStatsMap.get(opponentTag)
 
     // Get team size for calculating actual destruction points
-    // Max destruction per round = teamSize * 100 (15v15 = 1500, 30v30 = 3000)
+    // Max destruction per round = teamSize * 100 (5v5 = 500, 15v15 = 1500, 30v30 = 3000)
     const teamSize = war.teamSize || 0
 
     if (clanStats) {

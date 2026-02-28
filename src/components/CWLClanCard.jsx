@@ -149,7 +149,7 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
       </div>
 
       {/* Show database data for CWL clans */}
-      {sheetData && !isDisplayPeriod && (
+      {sheetData && (
         <div className="clan-sheet-info">
           {sheetData.format && (
             <div className="sheet-info-item">

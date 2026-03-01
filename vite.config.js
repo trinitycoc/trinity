@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     VitePWA({
@@ -72,10 +72,20 @@ export default defineConfig({
     assetsDir: 'assets',
     emptyOutDir: true,
     sourcemap: false,
+    rollupOptions: {
+      output: {
+        compact: true,
+      },
+    },
+  },
+  esbuild: {
+    // Production build: remove console.* and debugger so they don't show in browser Inspect
+    drop: mode === 'production' ? ['console', 'debugger'] : [],
   },
   server: {
     host: '0.0.0.0',
     port: 5174,
+    allowedHosts: ['test.trinitycoc.fun'],
   },
-})
+}))
 

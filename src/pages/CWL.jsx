@@ -19,6 +19,17 @@ function CWL() {
 
   // Store display period info from backend
   const [displayPeriodInfo, setDisplayPeriodInfo] = useState({ isDisplayPeriod: false, monthName: '' })
+
+  // Family filter: show only clans matching selected family (frontend filter)
+  const [familyFilter, setFamilyFilter] = useState('Trinity')
+
+  const clansToShow = useMemo(() => {
+    if (!clansData.length) return []
+    return clansData.filter((clan) => {
+      const family = clan.family || clan.sheetData?.family || ''
+      return family === familyFilter
+    })
+  }, [clansData, familyFilter])
   
   const shouldHoldRegularView = useMemo(() => {
     if (showAll) {
@@ -104,6 +115,21 @@ function CWL() {
         <SectionTitle>Trinity Clan War League (CWL)</SectionTitle>
       </div>
 
+      {!loading && !error && clansData.length > 0 && showAll && (
+        <div className="cwl-family-filter">
+          <label htmlFor="cwl-family-filter" className="cwl-family-filter__label">Family</label>
+          <select
+            id="cwl-family-filter"
+            className="cwl-family-filter__select"
+            value={familyFilter}
+            onChange={(e) => setFamilyFilter(e.target.value)}
+          >
+            <option value="Trinity">Trinity</option>
+            <option value="Indian Glory">Indian Glory</option>
+          </select>
+        </div>
+      )}
+
       <div className="clans-grid">
         {loading ? (
           // Show loading state
@@ -133,9 +159,13 @@ function CWL() {
               </p>
             </div>
           </div>
-        ) : clansData.length > 0 ? (
-          // Show CWL clan cards with fetched data
-          clansData.map((clan) => (
+        ) : clansToShow.length === 0 ? (
+          <div className="no-data-message">
+            <p>No clans in family &quot;{familyFilter}&quot;.</p>
+          </div>
+        ) : (
+          // Show CWL clan cards with fetched data (filtered by family)
+          clansToShow.map((clan) => (
             <LazyRender
               key={clan.tag}
               placeholder={<CWLClanCard isLoading={true} />}
@@ -150,10 +180,6 @@ function CWL() {
               />
             </LazyRender>
           ))
-        ) : (
-          <div className="no-data-message">
-            <p>No CWL clan data available. Please check your configuration.</p>
-          </div>
         )}
       </div>
     </section>

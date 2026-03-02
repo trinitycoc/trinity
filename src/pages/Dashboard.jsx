@@ -48,6 +48,7 @@ function Dashboard() {
   const [cwlForm, setCwlForm] = useState({
     tag: '',
     inUse: '',
+    family: '',
     format: '',
     members: '',
     townHall: [],
@@ -278,6 +279,7 @@ function Dashboard() {
       setCwlForm({
         tag: '',
         inUse: '',
+        family: '',
         format: '',
         members: '',
         townHall: [],
@@ -320,6 +322,7 @@ function Dashboard() {
     setCwlForm({
       tag: clan.tag,
       inUse: clan.inUse.toString(),
+      family: clan.family || '',
       format: clan.format || '',
       members: clan.members || '',
       townHall: townHallArray,
@@ -664,6 +667,19 @@ function Dashboard() {
               </div>
               <div className="dashboard-form-row">
                 <div className="dashboard-form-group">
+                  <label>Family</label>
+                  <select
+                    value={cwlForm.family || ''}
+                    onChange={(e) => setCwlForm({ ...cwlForm, family: e.target.value })}
+                  >
+                    <option value="">Select Family</option>
+                    <option value="Trinity">Trinity</option>
+                    <option value="Indian Glory">Indian Glory</option>
+                  </select>
+                </div>
+              </div>
+              <div className="dashboard-form-row">
+                <div className="dashboard-form-group">
                   <label>Format</label>
                   <select
                     value={cwlForm.format}
@@ -745,6 +761,7 @@ function Dashboard() {
                       setCwlForm({
                         tag: '',
                         inUse: '',
+                        family: '',
                         format: '',
                         members: '',
                         townHall: [],
@@ -771,6 +788,7 @@ function Dashboard() {
                     <th>In Use</th>
                     <th>Tag</th>
                     <th>Name</th>
+                    <th>Family</th>
                     <th>Status</th>
                     <th>League</th>
                     <th>Format</th>
@@ -786,6 +804,7 @@ function Dashboard() {
                       <td>{clan.inUse}</td>
                       <td>{clan.tag}</td>
                       <td>{clan.name || '-'}</td>
+                      <td>{clan.family || '-'}</td>
                       <td>{clan.status || 'Active'}</td>
                       <td>{clan.league || '-'}</td>
                       <td>{clan.format || '-'}</td>

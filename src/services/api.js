@@ -194,9 +194,9 @@ export const fetchClanWarLog = async (clanTag) => {
 /**
  * Check if backend server is running
  */
-export const checkServerHealth = async () => {
+export const checkServerHealth = async (signal = null) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/health`)
+    const response = await fetch(`${API_BASE_URL}/health`, signal ? { signal } : {})
     
     if (!response.ok) {
       return false
@@ -279,17 +279,18 @@ export const fetchCWLClansDetailsFromSheet = async () => {
  * @param {boolean} showAll - If true, returns all clans without filtering
  * @param {boolean} includeFilteredInfo - If true and showAll is true, also returns filtered clan tags
  */
-export const fetchFilteredCWLClans = async (showAll = false, includeFilteredInfo = false) => {
+export const fetchFilteredCWLClans = async (showAll = false, includeFilteredInfo = false, family = null, signal = null) => {
   try {
-    let url = showAll 
-      ? `${API_BASE_URL}/cwl/clans?all=true`
-      : `${API_BASE_URL}/cwl/clans`
-    
-    if (showAll && includeFilteredInfo) {
-      url += '&includeFilteredInfo=true'
+    const params = new URLSearchParams()
+    if (showAll) params.set('all', 'true')
+    if (showAll && includeFilteredInfo) params.set('includeFilteredInfo', 'true')
+    if (family && (family === 'Trinity' || family === 'Indian Glory')) {
+      params.set('family', family)
     }
+    const query = params.toString()
+    const url = `${API_BASE_URL}/cwl/clans${query ? `?${query}` : ''}`
     
-    const response = await fetch(url)
+    const response = await fetch(url, signal ? { signal } : {})
     
     if (!response.ok) {
       throw new Error(`Failed to fetch filtered CWL clans: ${response.statusText}`)

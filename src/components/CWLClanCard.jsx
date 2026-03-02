@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useCountdown } from '../hooks/useCountdown'
 import cwlImage from '/cwl.webp'
 
-function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUsers = true, isAdminMode = false }) {
+const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUsers = true, isAdminMode = false }) {
   const navigate = useNavigate()
 
   const clanEligibleMembers = clan?.eligibleMembers
@@ -212,7 +212,7 @@ function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUser
       </a>
     </div>
   )
-}
+})
 
 export default CWLClanCard
 

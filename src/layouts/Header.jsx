@@ -58,7 +58,10 @@ function Header() {
           <li><Link to="/" onClick={handleLinkClick} className={isActive('/') ? 'active' : ''}>Home</Link></li>
           <li><Link to="/about" onClick={handleLinkClick} className={isActive('/about') ? 'active' : ''}>About</Link></li>
           <li><Link to="/clans" onClick={handleLinkClick} className={isActive('/clans') ? 'active' : ''}>Clans</Link></li>
-          <li><Link to="/cwl" onClick={handleLinkClick} className={isActive('/cwl') ? 'active' : ''}>Cwl</Link></li>
+          <li><Link to="/cwl" onClick={handleLinkClick} className={location.pathname === '/cwl' || location.pathname === '/cwl/' ? 'active' : ''}>Trinity CWL</Link></li>
+          {(isAdmin || isRoot) && (
+            <li><Link to="/cwl/indian-glory" onClick={handleLinkClick} className={isActive('/cwl/indian-glory') ? 'active' : ''}>Indian Glory CWL</Link></li>
+          )}
           <li><Link to="/farming-base-layouts" onClick={handleLinkClick} className={isActive('/farming-base-layouts') ? 'active' : ''}>Farming base layouts</Link></li>
           <li><Link to="/features" onClick={handleLinkClick} className={isActive('/features') ? 'active' : ''}>Features</Link></li>
           {isAuthenticated ? (

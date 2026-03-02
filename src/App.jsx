@@ -29,6 +29,14 @@ function App() {
             <Route path="clans" element={<Clans />} />
             <Route path="clans/:clanTag" element={<ClanDetails />} />
             <Route path="cwl" element={<CWL />} />
+            <Route
+              path="cwl/indian-glory"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <CWL family="Indian Glory" />
+                </ProtectedRoute>
+              }
+            />
             <Route path="farming-base-layouts" element={<FarmingBaseLayouts />} />
           <Route path="features" element={<Features />} />
           <Route path="contact" element={<Navigate to="/" replace />} />

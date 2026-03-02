@@ -6,7 +6,7 @@ import LazyRender from '../components/LazyRender'
 import { checkServerHealth, fetchFilteredCWLClans } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
 
-function CWL() {
+function CWL({ family = 'Trinity' }) {
   const { isAdmin, isRoot } = useAuth()
   const [clansData, setClansData] = useState([])
   const [filteredClanTags, setFilteredClanTags] = useState(new Set()) // Track which clans are visible to regular users
@@ -19,17 +19,6 @@ function CWL() {
 
   // Store display period info from backend
   const [displayPeriodInfo, setDisplayPeriodInfo] = useState({ isDisplayPeriod: false, monthName: '' })
-
-  // Family filter: show only clans matching selected family (frontend filter)
-  const [familyFilter, setFamilyFilter] = useState('Trinity')
-
-  const clansToShow = useMemo(() => {
-    if (!clansData.length) return []
-    return clansData.filter((clan) => {
-      const family = clan.family || clan.sheetData?.family || ''
-      return family === familyFilter
-    })
-  }, [clansData, familyFilter])
   
   const shouldHoldRegularView = useMemo(() => {
     if (showAll) {
@@ -40,13 +29,16 @@ function CWL() {
   }, [showAll, displayPeriodInfo, clansData.length])
 
   useEffect(() => {
+    const ac = new AbortController()
+    const signal = ac.signal
+
     const fetchClansData = async () => {
       try {
         setLoading(true)
         setError(null)
 
-        // Check if backend server is running
-        const isOnline = await checkServerHealth()
+        const isOnline = await checkServerHealth(signal)
+        if (signal.aborted) return
         setServerOnline(isOnline)
 
         if (!isOnline) {
@@ -55,11 +47,9 @@ function CWL() {
           return
         }
 
-        // Fetch CWL clans from backend with capacity-based filtering
         if (showAll) {
-          // In admin mode: fetch all clans with filtered info in a single call
-          const response = await fetchFilteredCWLClans(true, true) // showAll=true, includeFilteredInfo=true
-          
+          const response = await fetchFilteredCWLClans(true, true, family, signal)
+          if (signal.aborted) return
           if (!response.clans || response.clans.length === 0) {
             setLoading(false)
             setError('No CWL clan data available. Please check your configuration.')
@@ -71,14 +61,11 @@ function CWL() {
             setDisplayPeriodInfo({ isDisplayPeriod: response.isDisplayPeriod, monthName: response.monthName })
           }
           
-          // Create a set of clan tags that are visible to regular users
-          const visibleTags = new Set(response.filteredClanTags || [])
-          setFilteredClanTags(visibleTags)
+          setFilteredClanTags(new Set(response.filteredClanTags || []))
           setClansData(response.clans)
         } else {
-          // Regular user mode: fetch only filtered clans
-          const response = await fetchFilteredCWLClans(false)
-          
+          const response = await fetchFilteredCWLClans(false, false, family, signal)
+          if (signal.aborted) return
           if (!response.clans || response.clans.length === 0) {
             setLoading(false)
             setError('No CWL clan data available. Please check your configuration.')
@@ -90,15 +77,12 @@ function CWL() {
             setDisplayPeriodInfo({ isDisplayPeriod: response.isDisplayPeriod, monthName: response.monthName })
           }
           
-          // Always show clans if available, regardless of display period
-          // Notice will only show if display period is active AND no clans are available
           setClansData(response.clans || [])
           setFilteredClanTags(new Set())
         }
-        
         setLoading(false)
       } catch (err) {
-        // Catch all errors (API_BASE_URL undefined, network errors, etc.)
+        if (err.name === 'AbortError') return
         console.error('Error loading CWL clans:', err)
         setLoading(false)
         setError(err.message || 'Failed to load CWL clans. Please check your connection and try again.')
@@ -107,28 +91,16 @@ function CWL() {
     }
 
     fetchClansData()
-  }, [showAll])
+    return () => ac.abort()
+  }, [showAll, family])
+
+  const pageTitle = family === 'Indian Glory' ? 'Indian Glory Clan War League (CWL)' : 'Trinity Clan War League (CWL)'
 
   return (
     <section className="cwl-page">
       <div className="cwl-title-wrapper">
-        <SectionTitle>Trinity Clan War League (CWL)</SectionTitle>
+        <SectionTitle>{pageTitle}</SectionTitle>
       </div>
-
-      {!loading && !error && clansData.length > 0 && showAll && (
-        <div className="cwl-family-filter">
-          <label htmlFor="cwl-family-filter" className="cwl-family-filter__label">Family</label>
-          <select
-            id="cwl-family-filter"
-            className="cwl-family-filter__select"
-            value={familyFilter}
-            onChange={(e) => setFamilyFilter(e.target.value)}
-          >
-            <option value="Trinity">Trinity</option>
-            <option value="Indian Glory">Indian Glory</option>
-          </select>
-        </div>
-      )}
 
       <div className="clans-grid">
         {loading ? (
@@ -159,13 +131,12 @@ function CWL() {
               </p>
             </div>
           </div>
-        ) : clansToShow.length === 0 ? (
+        ) : clansData.length === 0 ? (
           <div className="no-data-message">
-            <p>No clans in family &quot;{familyFilter}&quot;.</p>
+            <p>No clans in family &quot;{family}&quot;.</p>
           </div>
         ) : (
-          // Show CWL clan cards with fetched data (filtered by family)
-          clansToShow.map((clan) => (
+          clansData.map((clan) => (
             <LazyRender
               key={clan.tag}
               placeholder={<CWLClanCard isLoading={true} />}

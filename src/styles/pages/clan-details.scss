@@ -1917,6 +1917,12 @@
                 justify-content: center;
               }
 
+              .cwl-summary-attacked-bases {
+                font-size: 0.7rem;
+                color: $text-secondary;
+                font-weight: 500;
+              }
+
               .cwl-summary-stars {
                 font-weight: 600;
                 color: $primary-color;
@@ -1956,6 +1962,31 @@
                 font-weight: 600;
                 color: $text-secondary;
                 font-size: 0.9rem;
+              }
+            }
+
+            .cwl-summary-average-cell {
+              min-width: 90px;
+              text-align: center;
+
+              .cwl-summary-average-content {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                align-items: center;
+                justify-content: center;
+              }
+
+              .cwl-summary-average-stars {
+                font-weight: 600;
+                color: $primary-color;
+                font-size: 0.95rem;
+              }
+
+              .cwl-summary-average-destruction {
+                font-weight: 500;
+                color: $text-secondary;
+                font-size: 0.85rem;
               }
             }
           }

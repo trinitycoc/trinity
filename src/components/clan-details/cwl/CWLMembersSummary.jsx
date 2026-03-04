@@ -23,8 +23,8 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag, leagueName, sortBy = 
       return []
     }
 
-    // If sorting by total, use data as-is (already sorted by total from backend)
-    if (sortBy === 'total') {
+    // If sorting by total or average, use data as-is (backend returns pre-sorted)
+    if (sortBy === 'total' || sortBy === 'average') {
       return baseSummaryData
     }
 
@@ -121,6 +121,13 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag, leagueName, sortBy = 
   // Only re-render if member data, index, or rounds array reference changes
   const MemberRow = memo(({ memberData, idx, rounds: roundNumbers }) => {
     const rowClasses = []
+    const roundKeys = Object.keys(memberData.rounds || {})
+    const avgStars = memberData.totals.averageStars != null
+      ? memberData.totals.averageStars
+      : (roundKeys.length ? Math.round((memberData.totals.stars / roundKeys.length) * 10) / 10 : 0)
+    const avgDestruction = memberData.totals.averageDestruction != null
+      ? memberData.totals.averageDestruction
+      : (roundKeys.length ? Math.round((memberData.totals.destruction / roundKeys.length) * 10) / 10 : 0)
     if (memberData.hasMirrorBonusRule) {
       rowClasses.push('mirror-bonus-rule-row')
     }
@@ -155,10 +162,19 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag, leagueName, sortBy = 
         </td>
         {roundNumbers.map(roundNum => {
           const roundData = memberData.rounds[roundNum]
+          const attackedBases = roundData?.attackedBases
+          const basesLabel = attackedBases?.length
+            ? attackedBases.map(b => `Base ${b}`).join(' & ')
+            : null
           return (
             <td key={roundNum} className="cwl-summary-round-cell">
               {roundData ? (
                 <div className="cwl-summary-round-content">
+                  {basesLabel && (
+                    <div className="cwl-summary-attacked-bases" title={`Attacked: ${basesLabel}`}>
+                      {basesLabel}
+                    </div>
+                  )}
                   <div className="cwl-summary-stars">{roundData.stars}⭐</div>
                   <div className="cwl-summary-destruction">{roundData.destruction.toFixed(1)}%</div>
                 </div>
@@ -172,6 +188,12 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag, leagueName, sortBy = 
           <div className="cwl-summary-total-content">
             <div className="cwl-summary-total-stars">{memberData.totals.stars}⭐</div>
             <div className="cwl-summary-total-destruction">{memberData.totals.destruction.toFixed(1)}%</div>
+          </div>
+        </td>
+        <td className="cwl-summary-average-cell">
+          <div className="cwl-summary-average-content">
+            <div className="cwl-summary-average-stars">{avgStars}⭐</div>
+            <div className="cwl-summary-average-destruction">{avgDestruction.toFixed(1)}%</div>
           </div>
         </td>
       </tr>
@@ -193,6 +215,7 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag, leagueName, sortBy = 
             className="cwl-summary-sort-select"
           >
             <option value="total">Total (Stars & Destruction)</option>
+            <option value="average">Average (Stars & Destruction)</option>
             {rounds.map(roundNum => (
               <option key={roundNum} value={roundNum.toString()}>
                 Round {roundNum}
@@ -218,6 +241,13 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag, leagueName, sortBy = 
               ))}
               <th className="cwl-summary-col-total">
                 <div>Total</div>
+                <div className="cwl-summary-subheaders">
+                  <span>⭐</span>
+                  <span>💥</span>
+                </div>
+              </th>
+              <th className="cwl-summary-col-average">
+                <div>Average</div>
                 <div className="cwl-summary-subheaders">
                   <span>⭐</span>
                   <span>💥</span>

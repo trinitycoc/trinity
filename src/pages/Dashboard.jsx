@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import SectionTitle from '../components/SectionTitle'
 import { useAuth } from '../contexts/AuthContext'
 import {
@@ -59,13 +59,38 @@ function Dashboard() {
   })
   const [editingCwl, setEditingCwl] = useState(null)
   const [fetchingClanName, setFetchingClanName] = useState(false)
+  /** Which CWL family table to show: one at a time */
+  const [cwlFamilyView, setCwlFamilyView] = useState('trinity')
+
+  const cwlClansByFamily = useMemo(() => {
+    const groups = {
+      Trinity: [],
+      'Indian Glory': [],
+      Other: []
+    }
+    cwlClans.forEach((clan) => {
+      const f = clan.family
+      if (f === 'Trinity') groups.Trinity.push(clan)
+      else if (f === 'Indian Glory') groups['Indian Glory'].push(clan)
+      else groups.Other.push(clan)
+    })
+    return groups
+  }, [cwlClans])
+
+  useEffect(() => {
+    if (cwlFamilyView === 'other' && cwlClansByFamily.Other.length === 0) {
+      setCwlFamilyView('trinity')
+    }
+  }, [cwlFamilyView, cwlClansByFamily.Other.length])
 
   // Format and members options
   const formatOptions = ['lazy', 'competitive']
   const membersOptions = ['5', '15', '30']
 
-  // Town Hall levels (TH1 to TH18)
-  const townHallLevels = Array.from({ length: 18 }, (_, i) => i + 1)
+  // TH1–TH17, then TH18 and Rushed TH18; form uses a token for Rushed; DB stores "Rushed TH18" in the comma string for display
+  const townHallLevelsLow = Array.from({ length: 17 }, (_, i) => i + 1)
+  const TH18 = 18
+  const RUSHED_TH18_KEY = 'rushed_th18'
 
   // Base layouts state
   const [baseLayouts, setBaseLayouts] = useState([])
@@ -257,14 +282,12 @@ function Dashboard() {
     setLoading(true)
     setError(null)
     try {
-      // Backend will handle normalization of tag, townHall array->string, and weight
-      // We can send townHall as array and backend will normalize it
+      // Backend normalizes tag, townHall (array → canonical comma string), and weight
       const formData = {
         ...cwlForm,
-        tag: cwlForm.tag, // Backend will normalize tag (add # if missing)
-        name: cwlForm.name || '', // Backend will auto-fetch if empty
-        townHall: cwlForm.townHall // Backend will normalize array to string
-        // Backend will also normalize weight (strip non-digits)
+        tag: cwlForm.tag,
+        name: cwlForm.name || '',
+        townHall: cwlForm.townHall || []
       }
 
       if (editingCwl) {
@@ -303,16 +326,22 @@ function Dashboard() {
     let townHallArray = []
     if (clan.townHall) {
       if (Array.isArray(clan.townHall)) {
-        townHallArray = clan.townHall
+        townHallArray = clan.townHall.map((entry) => {
+          if (entry === RUSHED_TH18_KEY) return RUSHED_TH18_KEY
+          if (typeof entry === 'string' && /rushed\s+th\s*18/i.test(entry)) return RUSHED_TH18_KEY
+          const n = typeof entry === 'number' ? entry : parseInt(String(entry).replace(/^TH/i, ''), 10)
+          return !Number.isNaN(n) && n >= 1 && n <= 18 ? n : null
+        }).filter((x) => x !== null)
       } else if (typeof clan.townHall === 'string') {
-        // Parse "TH17, TH16" or "17, 16" format
         townHallArray = clan.townHall
           .split(',')
-          .map(th => {
-            const match = th.trim().match(/TH?(\d+)/i)
-            return match ? parseInt(match[1]) : null
+          .map((th) => {
+            const t = th.trim()
+            if (/rushed\s+th\s*18/i.test(t)) return RUSHED_TH18_KEY
+            const match = t.match(/TH?(\d+)/i)
+            return match ? parseInt(match[1], 10) : null
           })
-          .filter(th => th !== null && th >= 1 && th <= 18)
+          .filter((th) => th === RUSHED_TH18_KEY || (th !== null && th >= 1 && th <= 18))
       }
     }
 
@@ -426,6 +455,76 @@ function Dashboard() {
       setLoading(false)
     }
   }
+
+  const cwlTableColSpan = isRoot ? 11 : 10
+
+  const renderCwlFamilyTable = (label, clans) => (
+    <div className="dashboard-cwl-family-column">
+      <div className="dashboard-cwl-family-column-head">
+        <span className="dashboard-cwl-family-header-label">{label}</span>
+        <span className="dashboard-cwl-family-count"> ({clans.length})</span>
+      </div>
+      <div className="dashboard-table-container">
+        <table className="dashboard-table">
+          <thead>
+            <tr>
+              <th>In Use</th>
+              <th>Tag</th>
+              <th>Name</th>
+              <th>Family</th>
+              <th>Status</th>
+              <th>League</th>
+              <th>Format</th>
+              <th>Allowed Members</th>
+              <th>Town Hall</th>
+              <th>Weight</th>
+              {isRoot && <th>Actions</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {clans.length === 0 ? (
+              <tr className="dashboard-cwl-family-empty-row">
+                <td colSpan={cwlTableColSpan}>No clans in this family.</td>
+              </tr>
+            ) : (
+              clans.map((clan) => (
+                <tr key={clan.tag}>
+                  <td>{clan.inUse}</td>
+                  <td>{clan.tag}</td>
+                  <td>{clan.name || '-'}</td>
+                  <td>{clan.family || '-'}</td>
+                  <td>{clan.status || 'Active'}</td>
+                  <td>{clan.league || '-'}</td>
+                  <td>{clan.format || '-'}</td>
+                  <td>{clan.members || '-'}</td>
+                  <td>{clan.townHall || '-'}</td>
+                  <td>{clan.weight || '-'}</td>
+                  {isRoot && (
+                    <td>
+                      <button
+                        type="button"
+                        onClick={() => handleCwlEdit(clan)}
+                        className="dashboard-btn dashboard-btn--edit"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleCwlDelete(clan.tag)}
+                        className="dashboard-btn dashboard-btn--delete"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
 
   return (
     <section className="dashboard">
@@ -708,7 +807,7 @@ function Dashboard() {
                 <div className="dashboard-form-group">
                   <label>Town Hall</label>
                   <div className="dashboard-checkbox-group">
-                    {townHallLevels.map(th => (
+                    {townHallLevelsLow.map(th => (
                       <label key={th} className="dashboard-checkbox-label">
                         <input
                           type="checkbox"
@@ -724,6 +823,34 @@ function Dashboard() {
                         <span>TH{th}</span>
                       </label>
                     ))}
+                    <label className="dashboard-checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={cwlForm.townHall.includes(TH18)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setCwlForm({ ...cwlForm, townHall: [...cwlForm.townHall, TH18] })
+                          } else {
+                            setCwlForm({ ...cwlForm, townHall: cwlForm.townHall.filter(t => t !== TH18) })
+                          }
+                        }}
+                      />
+                      <span>TH18</span>
+                    </label>
+                    <label className="dashboard-checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={cwlForm.townHall.includes(RUSHED_TH18_KEY)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setCwlForm({ ...cwlForm, townHall: [...cwlForm.townHall, RUSHED_TH18_KEY] })
+                          } else {
+                            setCwlForm({ ...cwlForm, townHall: cwlForm.townHall.filter(t => t !== RUSHED_TH18_KEY) })
+                          }
+                        }}
+                      />
+                      <span>Rushed TH18</span>
+                    </label>
                   </div>
                 </div>
                 <div className="dashboard-form-group">
@@ -781,56 +908,44 @@ function Dashboard() {
             )}
 
             <h3 className="dashboard-section-title">CWL Clans ({cwlClans.length})</h3>
-            <div className="dashboard-table-container">
-              <table className="dashboard-table">
-                <thead>
-                  <tr>
-                    <th>In Use</th>
-                    <th>Tag</th>
-                    <th>Name</th>
-                    <th>Family</th>
-                    <th>Status</th>
-                    <th>League</th>
-                    <th>Format</th>
-                    <th>Allowed Members</th>
-                    <th>Town Hall</th>
-                    <th>Weight</th>
-                    {isRoot && <th>Actions</th>}
-                  </tr>
-                </thead>
-                <tbody>
-                  {cwlClans.map((clan) => (
-                    <tr key={clan.tag}>
-                      <td>{clan.inUse}</td>
-                      <td>{clan.tag}</td>
-                      <td>{clan.name || '-'}</td>
-                      <td>{clan.family || '-'}</td>
-                      <td>{clan.status || 'Active'}</td>
-                      <td>{clan.league || '-'}</td>
-                      <td>{clan.format || '-'}</td>
-                      <td>{clan.members || '-'}</td>
-                      <td>{clan.townHall || '-'}</td>
-                      <td>{clan.weight || '-'}</td>
-                      {isRoot && (
-                        <td>
-                          <button
-                            onClick={() => handleCwlEdit(clan)}
-                            className="dashboard-btn dashboard-btn--edit"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleCwlDelete(clan.tag)}
-                            className="dashboard-btn dashboard-btn--delete"
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="dashboard-cwl-family-tabs" role="tablist" aria-label="CWL family">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={cwlFamilyView === 'trinity'}
+                className={`dashboard-cwl-family-tab ${cwlFamilyView === 'trinity' ? 'active' : ''}`}
+                onClick={() => setCwlFamilyView('trinity')}
+              >
+                Trinity ({cwlClansByFamily.Trinity.length})
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={cwlFamilyView === 'indian-glory'}
+                className={`dashboard-cwl-family-tab ${cwlFamilyView === 'indian-glory' ? 'active' : ''}`}
+                onClick={() => setCwlFamilyView('indian-glory')}
+              >
+                Indian Glory ({cwlClansByFamily['Indian Glory'].length})
+              </button>
+              {cwlClansByFamily.Other.length > 0 && (
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={cwlFamilyView === 'other'}
+                  className={`dashboard-cwl-family-tab ${cwlFamilyView === 'other' ? 'active' : ''}`}
+                  onClick={() => setCwlFamilyView('other')}
+                >
+                  Other ({cwlClansByFamily.Other.length})
+                </button>
+              )}
+            </div>
+            <div className="dashboard-cwl-family-panel" role="tabpanel">
+              {cwlFamilyView === 'trinity' &&
+                renderCwlFamilyTable('Trinity', cwlClansByFamily.Trinity)}
+              {cwlFamilyView === 'indian-glory' &&
+                renderCwlFamilyTable('Indian Glory', cwlClansByFamily['Indian Glory'])}
+              {cwlFamilyView === 'other' && cwlClansByFamily.Other.length > 0 &&
+                renderCwlFamilyTable('Other / unset', cwlClansByFamily.Other)}
             </div>
           </div>
         )}

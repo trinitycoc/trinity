@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCountdown } from '../hooks/useCountdown'
+import { formatTownHallForDisplay } from '../utils/cwlUtils'
 import cwlImage from '/cwl.webp'
 
 const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUsers = true, isAdminMode = false }) {
@@ -167,7 +168,7 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, sh
           {sheetData.hasOwnProperty('townHall') && (
             <div className="sheet-info-item">
               <span className="info-label">TH Allowed:</span>
-              <span className="info-value">{sheetData.townHall || 'N/A'}</span>
+              <span className="info-value">{formatTownHallForDisplay(sheetData.townHall)}</span>
             </div>
           )}
           {/* Hide Eligible Members when CWL is active */}

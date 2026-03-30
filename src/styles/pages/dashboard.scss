@@ -76,6 +76,83 @@
     border-bottom: 1px solid rgba(102, 126, 234, 0.2);
   }
 
+  .dashboard-cwl-family-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    margin-bottom: $spacing-md;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+    padding-bottom: $spacing-xs;
+  }
+
+  .dashboard-cwl-family-tab {
+    padding: $spacing-sm $spacing-md;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: calc(-#{$spacing-sm} - 2px);
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    &.active {
+      color: $primary-color;
+      border-bottom-color: $primary-color;
+    }
+  }
+
+  .dashboard-cwl-family-panel {
+    min-width: 0;
+  }
+
+  .dashboard-cwl-family-column {
+    min-width: 0;
+  }
+
+  .dashboard-cwl-family-column-head {
+    background: rgba(102, 126, 234, 0.18);
+    border: 1px solid rgba(102, 126, 234, 0.35);
+    border-bottom: none;
+    border-radius: $radius-md $radius-md 0 0;
+    padding: $spacing-sm $spacing-md;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.95);
+    letter-spacing: 0.02em;
+  }
+
+  .dashboard-cwl-family-column .dashboard-table-container {
+    margin-bottom: 0;
+
+    .dashboard-table {
+      border-radius: 0 0 $radius-md $radius-md;
+    }
+  }
+
+  .dashboard-cwl-family-header-label {
+    color: $primary-color;
+  }
+
+  .dashboard-cwl-family-count {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9em;
+  }
+
+  .dashboard-cwl-family-empty-row td {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.45);
+    font-style: italic;
+    padding: $spacing-sm $spacing-md;
+    background: rgba(0, 0, 0, 0.12);
+  }
+
   .dashboard-form {
     margin-bottom: $spacing-md;
     padding-bottom: $spacing-md;

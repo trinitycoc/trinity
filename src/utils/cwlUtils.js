@@ -1,6 +1,23 @@
 // CWL utility functions
 
 /**
+ * Format stored townHall string for UI (comma-separated TH labels + Rushed TH18).
+ */
+export const formatTownHallForDisplay = (townHall) => {
+  if (townHall == null || townHall === '') return 'N/A'
+  const raw = String(townHall).trim()
+  if (!raw) return 'N/A'
+  return raw
+    .split(',')
+    .map((part) => {
+      const p = part.trim()
+      if (/^rushed\s+th\s*18$/i.test(p)) return 'Rushed TH18'
+      return p
+    })
+    .join(', ')
+}
+
+/**
  * Normalize a tag to always have # prefix
  */
 export const normalizeTag = (tag) => {

@@ -15,7 +15,7 @@ function About() {
         <div className="about-intro">
           {/* <h3>Trinity Family of Clans</h3> */}
           <p>
-            Led by Hell Raiser, Trinity is a thriving community of {clanCountLabel} clans united by passion,
+            Owned by Hell Raiser, Trinity is a thriving community of {clanCountLabel} clans united by passion,
             strategy, and excellence.
           </p>
         </div>

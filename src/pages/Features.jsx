@@ -81,7 +81,7 @@ function Features() {
         'See town hall composition and member statistics',
         'Access war logs and performance metrics',
         'View clan badges and detailed member profiles',
-        'Search clans by tag or name'
+        'Search clans by tag'
       ],
     },
     {
@@ -119,17 +119,6 @@ function Features() {
         'Suitable for different town hall levels',
         'Optimized for resource protection',
         'Easy-to-follow layout guides'
-      ],
-    },
-    {
-      icon: '🔍',
-      title: 'Clan Search',
-      description: 'Quick and easy clan search functionality.',
-      details: [
-        'Search clans by tag or name',
-        'Instant navigation to clan details',
-        'Support for clan tag with or without #',
-        'Direct access to clan analytics'
       ],
     },
     // {

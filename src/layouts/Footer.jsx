@@ -1,8 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
+const COPYRIGHT_START_YEAR = 2025
+
 function Footer() {
-  const year = new Date().getFullYear()
+  const currentYear = new Date().getFullYear()
+  const yearRange =
+    currentYear > COPYRIGHT_START_YEAR
+      ? `${COPYRIGHT_START_YEAR} - ${currentYear}`
+      : `${COPYRIGHT_START_YEAR}`
 
   return (
     <footer className="footer">
@@ -93,12 +99,24 @@ function Footer() {
         </div>
       </div>
 
+      <div className="footer-disclaimer">
+        <h4 className="footer-disclaimer-title">
+          <span aria-hidden="true">⚠️ </span>
+          Fan Content Disclaimer
+        </h4>
+        <p className="footer-disclaimer-text">
+          This content is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell
+          is not responsible for it. For more information see{' '}
+          <a href="https://www.supercell.com/fan-content-policy/" target="_blank" rel="noopener noreferrer">
+            Supercell&apos;s Fan Content Policy
+          </a>
+          .
+        </p>
+      </div>
+
       <div className="footer-bottom">
         <p>
-          &copy;{year} Trinity. Built by{' '}
-          <a href="https://github.com/abhiiiijain" target="_blank" rel="noopener noreferrer">
-            Hell Raiser
-          </a>
+          &copy;{yearRange} Trinity &middot; Built by Hell Raiser &middot; Not affiliated with Supercell
         </p>
       </div>
     </footer>

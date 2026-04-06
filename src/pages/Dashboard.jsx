@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import SectionTitle from '../components/SectionTitle'
 import { useAuth } from '../contexts/AuthContext'
 import {
@@ -18,8 +18,80 @@ import {
   clearClanCache,
   getAllUsers,
   updateUser,
-  deleteUser
+  deleteUser,
+  fetchCWLPendingAttacks
 } from '../services/api'
+
+function normalizeClanTagKey(tag) {
+  if (!tag) return ''
+  return String(tag).replace(/^#/, '').toUpperCase()
+}
+
+function formatBattleDayRemaining(endTime) {
+  const target = new Date(endTime).getTime()
+  if (Number.isNaN(target)) return { text: null, ended: true, invalid: true }
+  const diff = target - Date.now()
+  if (diff <= 0) return { text: null, ended: true, invalid: false }
+  const totalSec = Math.floor(diff / 1000)
+  const d = Math.floor(totalSec / 86400)
+  const h = Math.floor((totalSec % 86400) / 3600)
+  const m = Math.floor((totalSec % 3600) / 60)
+  const s = totalSec % 60
+  const parts = []
+  if (d > 0) parts.push(`${d}d`)
+  if (d > 0 || h > 0) parts.push(`${h}h`)
+  parts.push(`${m}m`)
+  parts.push(`${s}s`)
+  return { text: parts.join(' '), ended: false, invalid: false, endsAt: new Date(endTime) }
+}
+
+function BattleDayTimeRemaining({ endTime }) {
+  const [, setBump] = useState(0)
+
+  useEffect(() => {
+    if (!endTime) return undefined
+    const id = setInterval(() => setBump((n) => n + 1), 1000)
+    return () => clearInterval(id)
+  }, [endTime])
+
+  if (!endTime) {
+    return (
+      <div className="dashboard-cwl-pending-ends dashboard-cwl-pending-ends--muted" role="status">
+        Battle end time not available from API
+      </div>
+    )
+  }
+
+  const { text, ended, invalid, endsAt } = formatBattleDayRemaining(endTime)
+
+  if (invalid) {
+    return (
+      <div className="dashboard-cwl-pending-ends dashboard-cwl-pending-ends--muted" role="status">
+        Could not parse battle end time
+      </div>
+    )
+  }
+
+  if (ended) {
+    return (
+      <div className="dashboard-cwl-pending-ends dashboard-cwl-pending-ends--ended" role="status">
+        Battle day ended
+      </div>
+    )
+  }
+
+  return (
+    <div className="dashboard-cwl-pending-ends" role="status">
+      <div className="dashboard-cwl-pending-ends-line">
+        <span className="dashboard-cwl-pending-ends-label">Ends in </span>
+        <span className="dashboard-cwl-pending-ends-countdown">{text}</span>
+      </div>
+      {endsAt && (
+        <div className="dashboard-cwl-pending-ends-abs">{endsAt.toLocaleString()}</div>
+      )}
+    </div>
+  )
+}
 
 function Dashboard() {
   const { isRoot, isAdmin, user } = useAuth()
@@ -61,6 +133,64 @@ function Dashboard() {
   const [fetchingClanName, setFetchingClanName] = useState(false)
   /** Which CWL family table to show: one at a time */
   const [cwlFamilyView, setCwlFamilyView] = useState('trinity')
+
+  const [pendingAttacksFamily, setPendingAttacksFamily] = useState('Indian Glory')
+  const [pendingAttacksData, setPendingAttacksData] = useState(null)
+  const [pendingAttacksLoading, setPendingAttacksLoading] = useState(false)
+  const [pendingAttacksError, setPendingAttacksError] = useState(null)
+  const [refreshingClanKey, setRefreshingClanKey] = useState('')
+
+  const loadPendingAttacks = useCallback(async () => {
+    setPendingAttacksLoading(true)
+    setPendingAttacksError(null)
+    setPendingAttacksData(null)
+    try {
+      const data = await fetchCWLPendingAttacks(pendingAttacksFamily)
+      setPendingAttacksData(data)
+    } catch (err) {
+      setPendingAttacksError(err.message || 'Failed to load pending attacks')
+      setPendingAttacksData(null)
+    } finally {
+      setPendingAttacksLoading(false)
+    }
+  }, [pendingAttacksFamily])
+
+  const refreshPendingForClan = useCallback(
+    async (clanTag) => {
+      const key = normalizeClanTagKey(clanTag)
+      if (!key) return
+      setRefreshingClanKey(key)
+      setPendingAttacksError(null)
+      try {
+        const partial = await fetchCWLPendingAttacks(pendingAttacksFamily, clanTag)
+        const updated = partial.clans?.[0]
+        if (!updated) throw new Error('No data returned for this clan')
+        setPendingAttacksData((prev) => {
+          if (!prev?.clans?.length) {
+            return partial
+          }
+          return {
+            ...prev,
+            generatedAt: partial.generatedAt,
+            clans: prev.clans.map((c) =>
+              normalizeClanTagKey(c.clanTag) === key ? updated : c
+            )
+          }
+        })
+      } catch (err) {
+        setPendingAttacksError(err.message || 'Failed to refresh clan')
+      } finally {
+        setRefreshingClanKey('')
+      }
+    },
+    [pendingAttacksFamily]
+  )
+
+  useEffect(() => {
+    if (activeTab === 'cwl-pending' && isAdmin) {
+      loadPendingAttacks()
+    }
+  }, [activeTab, isAdmin, pendingAttacksFamily, loadPendingAttacks])
 
   const cwlClansByFamily = useMemo(() => {
     const groups = {
@@ -557,6 +687,12 @@ function Dashboard() {
             >
               CWL Clans
             </button>
+            <button
+              className={`dashboard-tab ${activeTab === 'cwl-pending' ? 'active' : ''}`}
+              onClick={() => setActiveTab('cwl-pending')}
+            >
+              Pending attacks
+            </button>
           </>
         )}
         <button
@@ -947,6 +1083,115 @@ function Dashboard() {
               {cwlFamilyView === 'other' && cwlClansByFamily.Other.length > 0 &&
                 renderCwlFamilyTable('Other / unset', cwlClansByFamily.Other)}
             </div>
+          </div>
+        )}
+
+        {activeTab === 'cwl-pending' && isAdmin && (
+          <div className="dashboard-section dashboard-cwl-pending">
+            <div className="dashboard-cwl-pending-head">
+              <h3 className="dashboard-section-title dashboard-cwl-pending-page-title">Pending CWL attacks</h3>
+              <div className="dashboard-cwl-pending-toolbar">
+                <div className="dashboard-form-group dashboard-cwl-pending-family">
+                  <label htmlFor="pending-attacks-family">Family</label>
+                  <select
+                    id="pending-attacks-family"
+                    value={pendingAttacksFamily}
+                    onChange={(e) => setPendingAttacksFamily(e.target.value)}
+                    disabled={pendingAttacksLoading}
+                    aria-busy={pendingAttacksLoading}
+                  >
+                    <option value="Indian Glory">Indian Glory</option>
+                    <option value="Trinity">Trinity</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            {pendingAttacksError && (
+              <p className="dashboard-message dashboard-message--error" role="alert">
+                {pendingAttacksError}
+              </p>
+            )}
+            {pendingAttacksLoading && (
+              <p className="dashboard-cwl-pending-loading" role="status" aria-live="polite">
+                Loading {pendingAttacksFamily}… fetching war data for each clan.
+              </p>
+            )}
+            {!pendingAttacksLoading && pendingAttacksData && (
+              <div className="dashboard-cwl-pending-body">
+                <p className="dashboard-cwl-pending-meta">
+                  {pendingAttacksData.family} · updated {new Date(pendingAttacksData.generatedAt).toLocaleString()}
+                </p>
+                {pendingAttacksData.clans?.map((row) => {
+                  const rowTagKey = normalizeClanTagKey(row.clanTag)
+                  const isRefreshingThis = refreshingClanKey === rowTagKey
+                  return (
+                    <div key={row.clanTag} className="dashboard-cwl-pending-clan">
+                      <div className="dashboard-cwl-pending-clan-head">
+                        <div className="dashboard-cwl-pending-clan-main">
+                          <div className="dashboard-cwl-pending-clan-title">
+                            <strong>{row.clanName}</strong>
+                            <span className="dashboard-cwl-pending-tag">{row.clanTag}</span>
+                            {row.opponentName && row.battleDay && (
+                              <span className="dashboard-cwl-pending-vs-inline">vs {row.opponentName}</span>
+                            )}
+                            {row.error && (
+                              <span className="dashboard-cwl-pending-badge dashboard-cwl-pending-badge--err">
+                                {row.error}
+                              </span>
+                            )}
+                            {!row.error && !row.battleDay && row.preparation && (
+                              <span className="dashboard-cwl-pending-badge">Preparation / no battle day</span>
+                            )}
+                            {!row.error && !row.battleDay && !row.preparation && (
+                              <span className="dashboard-cwl-pending-badge">No active war</span>
+                            )}
+                            {!row.error && row.battleDay && row.pendingCount === 0 && (
+                              <span className="dashboard-cwl-pending-badge dashboard-cwl-pending-badge--ok">
+                                All attacks in
+                              </span>
+                            )}
+                            {!row.error && row.battleDay && row.pendingCount > 0 && (
+                              <span className="dashboard-cwl-pending-badge dashboard-cwl-pending-badge--warn">
+                                {row.pendingCount} pending
+                              </span>
+                            )}
+                          </div>
+                          {row.battleDay && row.pendingPlayers?.length > 0 && (
+                            <ul className="dashboard-cwl-pending-list">
+                              {row.pendingPlayers.map((p) => (
+                                <li key={p.tag}>
+                                  <span className="dashboard-cwl-pending-pos">#{p.mapPosition}</span>
+                                  {p.name}{' '}
+                                  <span className="dashboard-cwl-pending-tag">{p.tag}</span>
+                                  {p.townHallLevel ? (
+                                    <span className="dashboard-cwl-pending-th"> TH{p.townHallLevel}</span>
+                                  ) : null}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                        <div className="dashboard-cwl-pending-clan-aside">
+                          {row.battleDay && (
+                            <div className="dashboard-cwl-pending-timer">
+                              <BattleDayTimeRemaining endTime={row.warEndTime} />
+                            </div>
+                          )}
+                          <button
+                            type="button"
+                            className="dashboard-cwl-pending-clan-refresh"
+                            onClick={() => refreshPendingForClan(row.clanTag)}
+                            disabled={pendingAttacksLoading || isRefreshingThis}
+                          >
+                            {isRefreshingThis ? '…' : 'Refresh'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
         )}
 

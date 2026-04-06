@@ -950,6 +950,32 @@ export const getCWLClans = async () => {
 }
 
 /**
+ * Pending CWL attacks on battle day (members with no attack used yet). Admin dashboard.
+ * @param {'Indian Glory'|'Trinity'} family
+ * @param {string|null} [clanTag] - If set, only this clan (tag with or without #).
+ */
+export const fetchCWLPendingAttacks = async (family = 'Indian Glory', clanTag = null) => {
+  const f = family === 'Trinity' ? 'Trinity' : 'Indian Glory'
+  const q = new URLSearchParams({ family: f })
+  if (clanTag) {
+    q.set('clanTag', String(clanTag).replace(/^#/, ''))
+  }
+  try {
+    const response = await fetch(`${API_BASE_URL}/admin/cwl-clans/pending-attacks?${q}`, {
+      headers: getAuthHeaders()
+    })
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.message || 'Failed to fetch pending CWL attacks')
+    }
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching pending CWL attacks:', error)
+    throw error
+  }
+}
+
+/**
  * Create a CWL clan (admin)
  */
 export const createCWLClan = async (clanData) => {

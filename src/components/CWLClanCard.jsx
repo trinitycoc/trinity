@@ -1,11 +1,34 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useHref } from 'react-router-dom'
 import { useCountdown } from '../hooks/useCountdown'
 import { formatTownHallForDisplay } from '../utils/cwlUtils'
 import cwlImage from '/cwl.webp'
 
 const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUsers = true, isAdminMode = false }) {
   const navigate = useNavigate()
+  const clanPath = clan?.tag ? `/clans/${clan.tag.replace('#', '')}` : null
+  const clanHref = useHref(clanPath ?? '/clans')
+
+  const openClanInNewTab = () => {
+    const url = `${window.location.origin}${window.location.pathname}${window.location.search}${clanHref}`
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
+
+  const handleCardClick = (e) => {
+    if (!clanPath) return
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault()
+      openClanInNewTab()
+      return
+    }
+    navigate(clanPath)
+  }
+
+  const handleCardAuxClick = (e) => {
+    if (!clanPath || e.button !== 1) return
+    e.preventDefault()
+    openClanInNewTab()
+  }
 
   const clanEligibleMembers = clan?.eligibleMembers
   const memberList = clan?.memberList
@@ -45,13 +68,6 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, sh
 
   const countdownMessage = getCountdownMessage()
 
-  const handleClick = () => {
-    if (clan && clan.tag) {
-      // Navigate to clan details page with the clan tag (remove # for URL)
-      navigate(`/clans/${clan.tag.replace('#', '')}`)
-    }
-  }
-
   if (isLoading) {
     return (
       <div className="clan-card clan-card-loading">
@@ -75,7 +91,7 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, sh
   }
 
   return (
-    <div className={`clan-card clan-card-detailed cwl-clan-card clan-status-${clan.type || 'unknown'} ${isAdminMode && !isVisibleToUsers ? 'cwl-clan-hidden' : ''} ${isAdminMode && isVisibleToUsers ? 'cwl-clan-visible' : ''}`} onClick={handleClick}>
+    <div className={`clan-card clan-card-detailed cwl-clan-card clan-status-${clan.type || 'unknown'} ${isAdminMode && !isVisibleToUsers ? 'cwl-clan-hidden' : ''} ${isAdminMode && isVisibleToUsers ? 'cwl-clan-visible' : ''}`} onClick={handleCardClick} onAuxClick={handleCardAuxClick}>
       {/* Space Available Banner with String and Nail */}
       {spaceInfo && (
         <div className="cwl-banner-container">
@@ -208,6 +224,7 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, sh
         rel="noopener noreferrer"
         className="visit-ingame-btn"
         onClick={(e) => e.stopPropagation()}
+        onAuxClick={(e) => e.stopPropagation()}
       >
         Visit In-Game
       </a>

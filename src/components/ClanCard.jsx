@@ -1,16 +1,32 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useHref } from 'react-router-dom'
 import cwlImage from '/cwl.webp'
 import capitalImage from '/Capital.webp'
 
 function ClanCard({ clan, isLoading, error }) {
   const navigate = useNavigate()
+  const clanPath = clan?.tag ? `/clans/${clan.tag.replace('#', '')}` : null
+  const clanHref = useHref(clanPath ?? '/clans')
 
-  const handleClick = () => {
-    if (clan && clan.tag) {
-      // Navigate to clan details page with the clan tag (remove # for URL)
-      navigate(`/clans/${clan.tag.replace('#', '')}`)
+  const openClanInNewTab = () => {
+    const url = `${window.location.origin}${window.location.pathname}${window.location.search}${clanHref}`
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
+
+  const handleClick = (e) => {
+    if (!clanPath) return
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault()
+      openClanInNewTab()
+      return
     }
+    navigate(clanPath)
+  }
+
+  const handleAuxClick = (e) => {
+    if (!clanPath || e.button !== 1) return
+    e.preventDefault()
+    openClanInNewTab()
   }
   if (isLoading) {
     return (
@@ -35,7 +51,7 @@ function ClanCard({ clan, isLoading, error }) {
   }
 
   return (
-    <div className="clan-card clan-card-detailed" onClick={handleClick}>
+    <div className="clan-card clan-card-detailed" onClick={handleClick} onAuxClick={handleAuxClick}>
       <img
         src={clan.badgeUrls?.medium || clan.badgeUrls?.small || clan.badgeUrls?.large}
         alt={`${clan.name} badge`}
@@ -79,6 +95,7 @@ function ClanCard({ clan, isLoading, error }) {
         rel="noopener noreferrer"
         className="visit-ingame-btn"
         onClick={(e) => e.stopPropagation()}
+        onAuxClick={(e) => e.stopPropagation()}
       >
         🎮 Visit In-Game
       </a>

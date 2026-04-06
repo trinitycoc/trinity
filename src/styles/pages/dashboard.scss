@@ -651,10 +651,44 @@
 
     &-list {
       margin: 0;
-      padding-left: 1.1rem;
+      padding-left: 0;
+      list-style: none;
       font-size: 0.88rem;
       color: rgba(255, 255, 255, 0.85);
       line-height: 1.45;
+
+      li {
+        list-style: none;
+      }
+
+      &--compact {
+        margin-top: 2px;
+        font-size: 0.82rem;
+        line-height: 1.4;
+      }
+    }
+
+    &-lowest {
+      margin-top: $spacing-sm;
+      padding-top: $spacing-sm;
+      border-top: 1px dashed rgba(251, 191, 36, 0.22);
+      width: 100%;
+      max-width: 100%;
+    }
+
+    &-lowest-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: rgba(251, 191, 36, 0.75);
+      margin-bottom: 4px;
+    }
+
+    &-score {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.5);
+      font-variant-numeric: tabular-nums;
     }
 
     &-pos {

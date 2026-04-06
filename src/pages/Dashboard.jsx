@@ -1170,6 +1170,33 @@ function Dashboard() {
                               ))}
                             </ul>
                           )}
+                          {row.battleDay && row.lowestScorers?.length > 0 && (
+                            <div className="dashboard-cwl-pending-lowest">
+                              <div className="dashboard-cwl-pending-lowest-label">
+                                Lowest scorers (this war)
+                              </div>
+                              <ul className="dashboard-cwl-pending-list dashboard-cwl-pending-list--compact">
+                                {row.lowestScorers.map((s) => {
+                                  const avgDest =
+                                    s.attacksUsed > 0
+                                      ? (s.destruction / s.attacksUsed).toFixed(1)
+                                      : '0.0'
+                                  return (
+                                    <li key={s.tag}>
+                                      <span className="dashboard-cwl-pending-pos">#{s.mapPosition}</span>
+                                      {s.name}{' '}
+                                      <span className="dashboard-cwl-pending-tag">{s.tag}</span>
+                                      <span className="dashboard-cwl-pending-score">
+                                        {' '}
+                                        {s.stars}★ · {avgDest}% avg
+                                        {s.attacksUsed > 1 ? ` (${s.attacksUsed} atk)` : ''}
+                                      </span>
+                                    </li>
+                                  )
+                                })}
+                              </ul>
+                            </div>
+                          )}
                         </div>
                         <div className="dashboard-cwl-pending-clan-aside">
                           {row.battleDay && (

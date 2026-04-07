@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import ClanTagLink from '../../ClanTagLink'
 import { normalizeTag, sortMembersByTH, getPromotionDemotionSlots, isPromotionRank, isDemotionRank, getCWLMedalsByPosition, getCWLBonusMedals, getCWLTotalBonuses } from '../../../utils/cwlUtils'
 import { thImages } from '../../../constants/thImages'
 import { getLeagueImage } from '../../../constants/leagueImages'
@@ -135,7 +136,9 @@ export const CWLLeaderboard = ({ cwlGroupData, expandedClans, setExpandedClans, 
                         >
                           {group.name}
                         </div>
-                        <div className="cwl-lb-group-tag">{group.tag}</div>
+                        <div className="cwl-lb-group-tag">
+                          <ClanTagLink tag={group.tag} stopPropagation />
+                        </div>
                       </div>
                     </div>
                   </td>

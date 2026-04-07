@@ -123,6 +123,16 @@
     margin-bottom: $spacing-lg;
     line-height: 1.6;
   }
+
+  .base-links-status {
+    text-align: center;
+    padding: 2rem;
+    color: $text-secondary;
+
+    &--error {
+      color: #fca5a5;
+    }
+  }
 }
 
 .base-links-grid {

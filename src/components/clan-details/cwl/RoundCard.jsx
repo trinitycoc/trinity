@@ -1,4 +1,5 @@
 import React from 'react'
+import ClanTagLink from '../../ClanTagLink'
 import { useCountdown } from '../../../hooks/useCountdown'
 import { CWLWarDetails } from './CWLWarDetails'
 
@@ -181,7 +182,7 @@ export const RoundCard = ({
                     )}
                     <div className="clan-overview-text">
                         <h4>{stats.ourClanName}</h4>
-                        <p>{stats.ourClanTag || 'N/A'}</p>
+                        <p>{stats.ourClanTag ? <ClanTagLink tag={stats.ourClanTag} /> : 'N/A'}</p>
                     </div>
                 </div>
                 <div className="war-summary-col stats-comparison">
@@ -203,7 +204,7 @@ export const RoundCard = ({
                     )}
                     <div className="clan-overview-text">
                         <h4>{stats.opponentClanName}</h4>
-                        <p>{stats.opponentClanTag || 'N/A'}</p>
+                        <p>{stats.opponentClanTag ? <ClanTagLink tag={stats.opponentClanTag} /> : 'N/A'}</p>
                     </div>
                 </div>
             </div>

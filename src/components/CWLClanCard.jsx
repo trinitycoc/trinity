@@ -1,12 +1,13 @@
 import React from 'react'
 import { useNavigate, useHref } from 'react-router-dom'
+import { clanTagToPath } from './ClanTagLink'
 import { useCountdown } from '../hooks/useCountdown'
 import { formatTownHallForDisplay } from '../utils/cwlUtils'
 import cwlImage from '/cwl.webp'
 
 const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUsers = true, isAdminMode = false }) {
   const navigate = useNavigate()
-  const clanPath = clan?.tag ? `/clans/${clan.tag.replace('#', '')}` : null
+  const clanPath = clanTagToPath(clan?.tag)
   const clanHref = useHref(clanPath ?? '/clans')
 
   const openClanInNewTab = () => {

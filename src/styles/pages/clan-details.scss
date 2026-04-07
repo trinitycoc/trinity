@@ -1895,6 +1895,12 @@
                       font-size: 0.9rem;
                       animation: pulse 2s ease-in-out infinite;
                     }
+
+                    .cwl-summary-map-position {
+                      font-weight: 500;
+                      font-size: 0.8rem;
+                      color: $text-secondary;
+                    }
                   }
 
                   .cwl-summary-member-tag {
@@ -2293,6 +2299,16 @@
             color: $text-secondary;
             padding: 0 $spacing-xs;
           }
+        }
+
+        .war-clan-tags-row {
+          display: flex;
+          align-items: center;
+          gap: $spacing-xs;
+          flex-wrap: wrap;
+          font-size: 0.85rem;
+          color: $text-secondary;
+          margin-bottom: $spacing-xs;
         }
 
         .war-details {

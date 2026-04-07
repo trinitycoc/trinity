@@ -336,6 +336,20 @@
   }
 }
 
+// In-app clan tag links (HashRouter → #/clans/:tag)
+a.clan-tag-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(102, 126, 234, 0.45);
+  text-underline-offset: 2px;
+  cursor: pointer;
+
+  &:hover {
+    color: $primary-color;
+    text-decoration-color: $primary-color;
+  }
+}
+
 // Dark Mode
 @media (prefers-color-scheme: dark) {
   .card {

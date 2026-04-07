@@ -13,9 +13,9 @@ function FarmingBaseLayouts() {
         setLoading(true)
         setError(null)
         const layouts = await fetchBaseLayouts()
-        // Sort by townHallLevel descending (highest first)
-        const sortedLayouts = layouts.sort((a, b) => b.townHallLevel - a.townHallLevel)
-        setBaseLayouts(sortedLayouts)
+        const list = Array.isArray(layouts) ? layouts : []
+        // Sort by townHallLevel descending (highest first); copy first — avoid mutating API data
+        setBaseLayouts([...list].sort((a, b) => b.townHallLevel - a.townHallLevel))
       } catch (err) {
         console.error('Error loading base layouts:', err)
         setError(err.message || 'Failed to load base layouts')
@@ -26,11 +26,6 @@ function FarmingBaseLayouts() {
 
     loadBaseLayouts()
   }, [])
-
-  const getImageForTH = (layout) => {
-    // Images are stored in public folder as /th-{level}.png (e.g., /th-17.png, /th-18.png)
-    return `/th-${layout.townHallLevel}.png`
-  }
 
   return (
     <section className="farming-page">
@@ -47,7 +42,7 @@ function FarmingBaseLayouts() {
             <ul>
               <li><strong>TownHall</strong> (Must not overlap any other building)</li>
               <li>For <strong>TH 12 to TH 16</strong> there must be <strong>5 Tiles Gap</strong></li>
-              <li>For <strong>TH 17</strong> must be <strong>6 tiles Gap</strong></li>
+              <li>For <strong>TH 17</strong> and <strong> TH 18</strong> must be <strong>6 tiles Gap</strong></li>
             </ul>
           </div>
 
@@ -83,16 +78,17 @@ function FarmingBaseLayouts() {
           <div className="rule-section">
             <h3 className="section-title">👸 Queen Section</h3>
             <ul>
-              <li>Remaining 3 Heroes (Out of 4)</li>
+              <li>Any 3 Heroes (Preferably Queen, Warden, & Champion)</li>
               <li>Archer Towers</li>
               <li>Wizard Tower</li>
               <li>Hidden Tesla</li>
               <li>Inferno Tower (Must be on <strong>Single Target Mode</strong>)</li>
               <li>Scatter Shots</li>
               <li>Monolith</li>
+              <li>Revenge Tower <strong>(on edge)</strong></li>
               <li>Fire Spitter (Must be <strong>facing edge</strong>)</li>
               <li>Multi-Gear Tower (<strong>Long range mode</strong>)</li>
-              <li>Crafting Station must be on <strong>Crusher Mode</strong> or <strong>No Defence</strong></li>
+              <li>Crafting Station must be on <strong>No Defence</strong></li>
             </ul>
           </div>
 
@@ -113,46 +109,40 @@ function FarmingBaseLayouts() {
           <p className="links-description">
             The links below allow you to directly copy a farm war layout for any TH level!
           </p>
-          
+
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '2rem' }}>
+            <div className="base-links-status">
               <p>Loading base layouts...</p>
             </div>
           ) : error ? (
-            <div style={{ textAlign: 'center', padding: '2rem', color: '#fca5a5' }}>
+            <div className="base-links-status base-links-status--error" role="alert">
               <p>Error: {error}</p>
             </div>
           ) : baseLayouts.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '2rem' }}>
+            <div className="base-links-status">
               <p>No base layouts available. Please add layouts from the Dashboard.</p>
             </div>
           ) : (
             <div className="base-links-grid">
-              {baseLayouts.map((layout) => {
-                const imageSrc = getImageForTH(layout)
-                return (
-                  <a
-                    key={layout.townHallLevel}
-                    href={layout.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="base-link-card"
-                  >
-                    {imageSrc && (
-                      <img 
-                        src={imageSrc} 
-                        alt={`TH${layout.townHallLevel}`} 
-                        className="base-link-image"
-                        onError={(e) => {
-                          // Fallback if image fails to load
-                          e.target.style.display = 'none'
-                        }}
-                      />
-                    )}
-                    <span className="base-link-th">TH{layout.townHallLevel}</span>
-                  </a>
-                )
-              })}
+              {baseLayouts.map((layout) => (
+                <a
+                  key={layout.townHallLevel}
+                  href={layout.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="base-link-card"
+                >
+                  <img
+                    src={`/th-${layout.townHallLevel}.png`}
+                    alt={`TH${layout.townHallLevel}`}
+                    className="base-link-image"
+                    onError={(e) => {
+                      e.target.style.display = 'none'
+                    }}
+                  />
+                  <span className="base-link-th">TH{layout.townHallLevel}</span>
+                </a>
+              ))}
             </div>
           )}
         </div>

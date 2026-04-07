@@ -61,10 +61,6 @@ function Clans() {
   return (
     <section className="clans-page">
       <SectionTitle>Trinity Family Clans</SectionTitle>
-      <p className="page-description">
-        Explore our family of clans. Each clan has its own unique culture and requirements, 
-        but all share the Trinity spirit of excellence and camaraderie.
-      </p>
 
       <div className="clans-grid">
         {loading ? (

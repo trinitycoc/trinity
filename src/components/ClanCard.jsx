@@ -1,11 +1,12 @@
 import React from 'react'
 import { useNavigate, useHref } from 'react-router-dom'
+import { clanTagToPath } from './ClanTagLink'
 import cwlImage from '/cwl.webp'
 import capitalImage from '/Capital.webp'
 
 function ClanCard({ clan, isLoading, error }) {
   const navigate = useNavigate()
-  const clanPath = clan?.tag ? `/clans/${clan.tag.replace('#', '')}` : null
+  const clanPath = clanTagToPath(clan?.tag)
   const clanHref = useHref(clanPath ?? '/clans')
 
   const openClanInNewTab = () => {

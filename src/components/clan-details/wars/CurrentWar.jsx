@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import ClanTagLink from '../../ClanTagLink'
 
 function CurrentWar({ currentWar }) {
   const [selectedTab, setSelectedTab] = useState('overview') // overview, warEvents, ourMembers, opponentMembers
@@ -145,7 +146,7 @@ function CurrentWar({ currentWar }) {
               )}
               <div>
                 <h4>{currentWar.clan.name || 'Unknown Clan'}</h4>
-                <p>{currentWar.clan.tag || 'N/A'}</p>
+                <p>{currentWar.clan.tag ? <ClanTagLink tag={currentWar.clan.tag} /> : 'N/A'}</p>
               </div>
             </div>
             <div className="war-vs">VS</div>
@@ -159,7 +160,7 @@ function CurrentWar({ currentWar }) {
               )}
               <div>
                 <h4>{currentWar.opponent.name || 'Unknown Clan'}</h4>
-                <p>{currentWar.opponent.tag || 'N/A'}</p>
+                <p>{currentWar.opponent.tag ? <ClanTagLink tag={currentWar.opponent.tag} /> : 'N/A'}</p>
               </div>
             </div>
           </div>

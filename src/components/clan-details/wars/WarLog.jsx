@@ -1,4 +1,5 @@
 import React from 'react'
+import ClanTagLink from '../../ClanTagLink'
 
 function WarLog({ warLog, isWarLogPublic }) {
   const validWars = warLog.filter(war => war.clan?.expEarned !== 0)
@@ -17,6 +18,11 @@ function WarLog({ warLog, isWarLogPublic }) {
                     <span className="war-vs-text">vs</span>
                     <span className="war-clan-name">{war.opponent?.name || 'Unknown'}</span>
                   </div>
+                  {(war.clan?.tag || war.opponent?.tag) && (
+                    <div className="war-clan-tags-row">
+                      <ClanTagLink tag={war.clan?.tag} /> <span className="war-vs-text">vs</span> <ClanTagLink tag={war.opponent?.tag} />
+                    </div>
+                  )}
                   <div className="war-details">
                     <span>⭐ {war.clan?.stars || 0} - {war.opponent?.stars || 0}</span>
                     <span>💥 {(war.clan?.destruction || 0).toFixed(1)}% - {(war.opponent?.destruction || 0).toFixed(1)}%</span>

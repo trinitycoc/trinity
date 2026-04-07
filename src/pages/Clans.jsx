@@ -2,60 +2,59 @@ import React, { useState, useEffect } from 'react'
 import SectionTitle from '../components/SectionTitle'
 import ClanCard from '../components/ClanCard'
 import LazyRender from '../components/LazyRender'
-import { fetchMultipleClans, checkServerHealth, fetchTrinityClansFromSheet } from '../services/api'
+import { fetchTrinityClansBundled } from '../services/api'
+import { backendReachabilityMessage } from '../utils/backendReachabilityMessage'
 
 function Clans() {
   const [clansData, setClansData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [serverOnline, setServerOnline] = useState(false)
 
   useEffect(() => {
+    const ac = new AbortController()
+    const { signal } = ac
+
     const fetchClansData = async () => {
       try {
         setLoading(true)
         setError(null)
 
-        // First, fetch clan tags from database
-        const tagsFromSheet = await fetchTrinityClansFromSheet()
+        const bundled = await fetchTrinityClansBundled(null, signal)
+        const fetchedClans = Array.isArray(bundled.clans) ? bundled.clans : []
+        const totalConfigured =
+          typeof bundled.totalTagCount === 'number'
+            ? bundled.totalTagCount
+            : (Array.isArray(bundled.clanTags) ? bundled.clanTags.length : 0)
 
-        if (tagsFromSheet.length === 0) {
+        if (totalConfigured === 0) {
           setLoading(false)
           setError('No clan tags found. Please check your configuration.')
           return
         }
 
-        // Check if backend server is running
-        const isOnline = await checkServerHealth()
-        setServerOnline(isOnline)
-
-        if (!isOnline) {
+        if (fetchedClans.length === 0) {
           setLoading(false)
-          setError('Backend server is not running. Please start it with: cd Trinity_Backend && npm install && npm run dev')
-          return
-        }
-
-        // Fetch all clan data using the backend API
-        const fetchedClans = await fetchMultipleClans(tagsFromSheet)
-        
-        if (!Array.isArray(fetchedClans) || fetchedClans.length === 0) {
-          setLoading(false)
-          setError(`No clan data available. Attempted to fetch ${tagsFromSheet.length} clans but received ${Array.isArray(fetchedClans) ? 'empty' : 'invalid'} response. Check backend logs for API errors.`)
+          setError(`No clan data available. Attempted to fetch ${totalConfigured} clans but received an empty response. Check backend logs for API errors.`)
           return
         }
 
         setClansData(fetchedClans)
         setLoading(false)
       } catch (err) {
-        // Catch all errors (API_BASE_URL undefined, network errors, etc.)
+        if (err.name === 'AbortError') return
         console.error('Error loading clans:', err)
         setLoading(false)
-        setError(err.message || 'Failed to load clans. Please check your connection and try again.')
+        setError(
+          backendReachabilityMessage(err) ||
+            err.message ||
+            'Failed to load clans. Please check your connection and try again.'
+        )
         setClansData([])
       }
     }
 
     fetchClansData()
+    return () => ac.abort()
   }, [])
 
   return (

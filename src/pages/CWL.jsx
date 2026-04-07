@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom'
 import SectionTitle from '../components/SectionTitle'
 import CWLClanCard from '../components/CWLClanCard'
 import LazyRender from '../components/LazyRender'
-import { checkServerHealth, fetchFilteredCWLClans } from '../services/api'
+import { fetchFilteredCWLClans } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
+import { backendReachabilityMessage } from '../utils/backendReachabilityMessage'
 
 function CWL({ family = 'Trinity' }) {
   const { isAdmin, isRoot } = useAuth()
@@ -12,8 +13,6 @@ function CWL({ family = 'Trinity' }) {
   const [filteredClanTags, setFilteredClanTags] = useState(new Set()) // Track which clans are visible to regular users
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [serverOnline, setServerOnline] = useState(false)
-  
   // Admin and root users automatically see all clans
   const showAll = isAdmin || isRoot
 
@@ -36,16 +35,6 @@ function CWL({ family = 'Trinity' }) {
       try {
         setLoading(true)
         setError(null)
-
-        const isOnline = await checkServerHealth(signal)
-        if (signal.aborted) return
-        setServerOnline(isOnline)
-
-        if (!isOnline) {
-          setLoading(false)
-          setError('Backend server is not running. Please start it with: cd Trinity_Backend && npm install && npm run dev')
-          return
-        }
 
         if (showAll) {
           const response = await fetchFilteredCWLClans(true, true, family, signal)
@@ -85,7 +74,11 @@ function CWL({ family = 'Trinity' }) {
         if (err.name === 'AbortError') return
         console.error('Error loading CWL clans:', err)
         setLoading(false)
-        setError(err.message || 'Failed to load CWL clans. Please check your connection and try again.')
+        setError(
+          backendReachabilityMessage(err) ||
+            err.message ||
+            'Failed to load CWL clans. Please check your connection and try again.'
+        )
         setClansData([])
       }
     }
@@ -145,7 +138,7 @@ function CWL({ family = 'Trinity' }) {
                 clan={clan}
                 isLoading={false}
                 error={false}
-                sheetData={clan.sheetData}
+                cwlConfig={clan.cwlConfig}
                 isVisibleToUsers={showAll ? filteredClanTags.has(clan.tag) : true}
                 isAdminMode={showAll}
               />

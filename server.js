@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import fs from 'fs';
 import chalk from 'chalk';
 import os from 'os';
 import dotenv from 'dotenv';
@@ -16,21 +15,12 @@ const app = express();
 const PORT = parseInt(process.env.PORT);
 
 
-app.use(express.static(path.join(__dirname, 'dist')));
+// Serve built assets; fall through to SPA shell for non-file routes (no sync fs per request)
+app.use(express.static(path.join(__dirname, 'dist'), { index: false }))
 
-
-app.use((req, res, next) => {
-
-  const filePath = path.join(__dirname, 'dist', req.path);
-  
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-
-    return next();
-  }
-  
-
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+})
 
 app.listen(PORT, () => {
   console.log('\n' + chalk.bgGreen.black.bold(' 🚀 PRODUCTION MODE 🚀 ') + '\n');

@@ -119,7 +119,7 @@
     width: fit-content;
   }
 
-  .clan-sheet-info {
+  .clan-cwl-meta {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: $spacing-xs;
@@ -130,7 +130,7 @@
     border-radius: 12px;
     border: 1px solid rgba(102, 126, 234, 0.1);
 
-    .sheet-info-item {
+    .cwl-meta-item {
       display: flex;
       flex-direction: column;
       gap: 2px;
@@ -851,11 +851,11 @@
       }
     }
 
-    .clan-sheet-info {
+    .clan-cwl-meta {
       background: rgba(102, 126, 234, 0.1);
       border-color: rgba(102, 126, 234, 0.2);
 
-      .sheet-info-item {
+      .cwl-meta-item {
         background: rgba(255, 255, 255, 0.05);
 
         .info-label {

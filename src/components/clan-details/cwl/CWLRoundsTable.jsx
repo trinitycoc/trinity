@@ -25,8 +25,13 @@ export const CWLRoundsTable = ({
     return null
   }
 
-  // Optimized: Use useMemo to cache validRounds calculation
+  // Prefer backend-computed validRounds (/cwl/:tag/all or /current); fallback matches legacy client logic
   const validRounds = useMemo(() => {
+    const fromApi = cwlGroupData?.validRounds
+    if (Array.isArray(fromApi) && fromApi.length > 0) {
+      return [...fromApi].sort((a, b) => a - b)
+    }
+
     return [1, 2, 3, 4, 5, 6, 7].filter((day) => {
       // Priority 1: Check roundStats first (fastest check, pre-calculated)
       if (cwlGroupData?.roundStats && cwlGroupData.roundStats[day]) {
@@ -99,7 +104,7 @@ export const CWLRoundsTable = ({
 
       return false
     })
-  }, [cwlGroupData, fetchedWarsByRound])
+  }, [cwlGroupData, cwlGroupData?.validRounds, fetchedWarsByRound])
 
   if (validRounds.length === 0) {
     return null

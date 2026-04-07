@@ -13,9 +13,8 @@ function FarmingBaseLayouts() {
         setLoading(true)
         setError(null)
         const layouts = await fetchBaseLayouts()
-        const list = Array.isArray(layouts) ? layouts : []
-        // Sort by townHallLevel descending (highest first); copy first — avoid mutating API data
-        setBaseLayouts([...list].sort((a, b) => b.townHallLevel - a.townHallLevel))
+        // Backend returns layouts sorted by townHallLevel descending
+        setBaseLayouts(Array.isArray(layouts) ? layouts : [])
       } catch (err) {
         console.error('Error loading base layouts:', err)
         setError(err.message || 'Failed to load base layouts')

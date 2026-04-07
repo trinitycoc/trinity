@@ -1,6 +1,6 @@
 // API client for making requests to the backend server
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL
 
 // Get auth token from localStorage
 const getAuthToken = () => {
@@ -29,7 +29,8 @@ const multipleClansCache = new Map()
 
 const getNow = () => Date.now()
 
-const normalizeClanTag = (tag) => {
+/** Normalize tag for URLs and API (uppercase, no #). */
+export const normalizeClanTag = (tag) => {
   if (!tag) return ''
   return tag.toString().trim().toUpperCase().replace(/^#+/, '')
 }
@@ -191,51 +192,38 @@ export const fetchClanWarLog = async (clanTag) => {
   }
 }
 
-/**
- * Check if backend server is running
- */
-export const checkServerHealth = async (signal = null) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/health`, signal ? { signal } : {})
-    
-    if (!response.ok) {
-      return false
-    }
-    
-    const data = await response.json()
-    return data.status === 'ok'
-  } catch (error) {
-    return false
-  }
-}
-
 // ============================================
 // TRINITY CLANS ENDPOINTS (Public)
 // ============================================
 
 /**
- * Fetch Trinity clan tags from database (via backend)
+ * Active Trinity clan tags + CoC clan objects in one request.
+ * @param {number|null} limit - If set: first N tags (home preview). Use 0 for count only (no CoC fetch). Omit for all.
+ * @returns {Promise<{ clanTags: string[], clans: object[], totalTagCount: number }>}
  */
-export const fetchTrinityClansFromSheet = async () => {
+export const fetchTrinityClansBundled = async (limit = null, signal = null) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/trinity-clans`)
-    
+    const qs =
+      limit != null && Number.isFinite(limit)
+        ? `?limit=${encodeURIComponent(String(limit))}`
+        : ''
+    const response = await fetch(`${API_BASE_URL}/clans/trinity-bundled${qs}`, signal ? { signal } : {})
+
     if (!response.ok) {
-      throw new Error(`Failed to fetch Trinity clans: ${response.statusText}`)
+      throw new Error(`Failed to fetch Trinity bundled clans: ${response.statusText}`)
     }
-    
-    const data = await response.json()
-    return data.clanTags
+
+    return await response.json()
   } catch (error) {
-    console.error('Error fetching Trinity clans:', error)
+    console.error('Error fetching Trinity bundled clans:', error)
     throw error
   }
 }
 
 /**
- * Fetch CWL clan tags from database (via backend)
+ * Active CWL clan tags from database (public)
  */
-export const fetchCWLClansFromSheet = async () => {
+export const fetchActiveCWLClanTags = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/cwl-clans`)
     
@@ -247,25 +235,6 @@ export const fetchCWLClansFromSheet = async () => {
     return data.clanTags
   } catch (error) {
     console.error('Error fetching CWL clans:', error)
-    throw error
-  }
-}
-
-/**
- * Fetch CWL clan details from database (via backend)
- */
-export const fetchCWLClansDetailsFromSheet = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/cwl-clans/details`)
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch CWL clan details: ${response.statusText}`)
-    }
-    
-    const data = await response.json()
-    return data.clans
-  } catch (error) {
-    console.error('Error fetching CWL clan details:', error)
     throw error
   }
 }

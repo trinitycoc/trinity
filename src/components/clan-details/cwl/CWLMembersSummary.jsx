@@ -146,6 +146,11 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag, leagueName, sortBy = 
   }, [baseSummaryData, sortBy])
 
   const validRounds = useMemo(() => {
+    const fromApi = cwlGroupData?.validRounds
+    if (Array.isArray(fromApi) && fromApi.length > 0) {
+      return [...fromApi].sort((a, b) => a - b)
+    }
+
     const roundsWithData = new Set()
 
     if (cwlGroupData?.roundStats) {
@@ -179,7 +184,7 @@ export const CWLMembersSummary = ({ cwlGroupData, clanTag, leagueName, sortBy = 
     }
 
     return Array.from(roundsWithData).sort((a, b) => a - b)
-  }, [baseSummaryData, cwlGroupData])
+  }, [baseSummaryData, cwlGroupData, cwlGroupData?.validRounds])
 
   const rounds = useMemo(() =>
     validRounds.length > 0 ? validRounds : [1, 2, 3, 4, 5, 6, 7],

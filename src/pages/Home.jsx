@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import trinityLogo from '/Trinity_Logo.png'
 import SectionTitle from '../components/SectionTitle'
-import { fetchClan } from '../services/api'
+import { fetchClan, normalizeClanTag } from '../services/api'
 import useTrinityClansPreview from '../hooks/useTrinityClansPreview'
 
 function Home() {
@@ -17,12 +17,10 @@ function Home() {
     error: clansError,
   } = useTrinityClansPreview(4)
 
-  const normalizeTag = (tag) => tag.trim().toUpperCase().replace(/^#+/, '')
-
   const handleSearch = async () => {
     if (!clanTag.trim() || isSearching) return
 
-    const normalizedTag = normalizeTag(clanTag)
+    const normalizedTag = normalizeClanTag(clanTag)
 
     if (!normalizedTag) return
 

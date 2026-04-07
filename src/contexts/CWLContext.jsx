@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
-import { fetchCWLClansFromSheet } from '../services/api'
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react'
+import { fetchActiveCWLClanTags } from '../services/api'
 
 const CWLContext = createContext()
 
@@ -11,6 +11,11 @@ export const useCWL = () => {
   return context
 }
 
+function normalizeClanTagForLookup(tag) {
+  if (!tag) return ''
+  return tag.startsWith('#') ? tag : `#${tag}`
+}
+
 export const CWLProvider = ({ children }) => {
   const [cwlClanTags, setCwlClanTags] = useState([])
   const [loading, setLoading] = useState(true)
@@ -20,7 +25,7 @@ export const CWLProvider = ({ children }) => {
     const fetchCWLTags = async () => {
       try {
         setLoading(true)
-        const tags = await fetchCWLClansFromSheet()
+        const tags = await fetchActiveCWLClanTags()
         setCwlClanTags(tags)
         setError(null)
       } catch (err) {
@@ -36,16 +41,33 @@ export const CWLProvider = ({ children }) => {
     fetchCWLTags()
   }, [])
 
-  const isCWLClan = (clanTag) => {
-    return cwlClanTags.includes(clanTag)
-  }
+  const cwlTagSet = useMemo(() => {
+    const s = new Set()
+    for (const t of cwlClanTags) {
+      if (!t) continue
+      s.add(t)
+      s.add(normalizeClanTagForLookup(t))
+    }
+    return s
+  }, [cwlClanTags])
 
-  const value = {
-    cwlClanTags,
-    loading,
-    error,
-    isCWLClan
-  }
+  const isCWLClan = useCallback(
+    (clanTag) => {
+      if (!clanTag) return false
+      return cwlTagSet.has(clanTag) || cwlTagSet.has(normalizeClanTagForLookup(clanTag))
+    },
+    [cwlTagSet]
+  )
+
+  const value = useMemo(
+    () => ({
+      cwlClanTags,
+      loading,
+      error,
+      isCWLClan
+    }),
+    [cwlClanTags, loading, error, isCWLClan]
+  )
 
   return <CWLContext.Provider value={value}>{children}</CWLContext.Provider>
 }

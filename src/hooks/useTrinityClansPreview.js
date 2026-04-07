@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchMultipleClans, fetchTrinityClansFromSheet } from '../services/api'
+import { fetchTrinityClansBundled } from '../services/api'
 
 function useTrinityClansPreview(limit = 3) {
   const [clanCount, setClanCount] = useState(0)
@@ -9,35 +9,29 @@ function useTrinityClansPreview(limit = 3) {
 
   useEffect(() => {
     let isMounted = true
+    const ac = new AbortController()
 
     const loadClans = async () => {
       setLoading(true)
       setError(null)
 
       try {
-        const clanTags = await fetchTrinityClansFromSheet()
+        const bundledLimit = limit <= 0 ? 0 : limit
+        const data = await fetchTrinityClansBundled(bundledLimit, ac.signal)
         if (!isMounted) return
 
-        const tags = Array.isArray(clanTags) ? clanTags : []
-        setClanCount(tags.length)
-
-        if (limit > 0 && tags.length > 0) {
-          try {
-            const clansData = await fetchMultipleClans(tags.slice(0, limit))
-            if (!isMounted) return
-            setClans(clansData.slice(0, limit))
-          } catch (err) {
-            if (!isMounted) return
-            console.error('Error fetching home clans:', err)
-            setError('Unable to load clan list right now.')
-          }
-        } else {
-          setClans([])
-        }
+        const total =
+          typeof data.totalTagCount === 'number'
+            ? data.totalTagCount
+            : (Array.isArray(data.clanTags) ? data.clanTags.length : 0)
+        setClanCount(total)
+        setClans(Array.isArray(data.clans) ? data.clans : [])
       } catch (err) {
-        if (!isMounted) return
-        console.error('Error loading clan count:', err)
+        if (!isMounted || err.name === 'AbortError') return
+        console.error('Error loading Trinity preview clans:', err)
         setError('Unable to load clan list right now.')
+        setClanCount(0)
+        setClans([])
       } finally {
         if (isMounted) {
           setLoading(false)
@@ -49,6 +43,7 @@ function useTrinityClansPreview(limit = 3) {
 
     return () => {
       isMounted = false
+      ac.abort()
     }
   }, [limit])
 

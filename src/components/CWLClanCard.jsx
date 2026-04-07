@@ -5,7 +5,7 @@ import { useCountdown } from '../hooks/useCountdown'
 import { formatTownHallForDisplay } from '../utils/cwlUtils'
 import cwlImage from '/cwl.webp'
 
-const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, sheetData = null, isVisibleToUsers = true, isAdminMode = false }) {
+const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cwlConfig = null, isVisibleToUsers = true, isAdminMode = false }) {
   const navigate = useNavigate()
   const clanPath = clanTagToPath(clan?.tag)
   const clanHref = useHref(clanPath ?? '/clans')
@@ -167,30 +167,30 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, sh
       </div>
 
       {/* Show database data for CWL clans (all users: regular, admin, root) */}
-      {sheetData && !isDisplayPeriod && (
-        <div className="clan-sheet-info">
-          {sheetData.format && (
-            <div className="sheet-info-item">
+      {cwlConfig && !isDisplayPeriod && (
+        <div className="clan-cwl-meta">
+          {cwlConfig.format && (
+            <div className="cwl-meta-item">
               <span className="info-label">Format:</span>
-              <span className="info-value">{sheetData.format}</span>
+              <span className="info-value">{cwlConfig.format}</span>
             </div>
           )}
           {/* Hide Allowed Members and Eligible Members when CWL is active */}
-          {!showCWLStarted && sheetData.hasOwnProperty('members') && (
-            <div className="sheet-info-item">
+          {!showCWLStarted && cwlConfig.hasOwnProperty('members') && (
+            <div className="cwl-meta-item">
               <span className="info-label">Allowed Members:</span>
-              <span className="info-value">{sheetData.members || '0'}</span>
+              <span className="info-value">{cwlConfig.members || '0'}</span>
             </div>
           )}
-          {sheetData.hasOwnProperty('townHall') && (
-            <div className="sheet-info-item">
+          {cwlConfig.hasOwnProperty('townHall') && (
+            <div className="cwl-meta-item">
               <span className="info-label">TH Allowed:</span>
-              <span className="info-value">{formatTownHallForDisplay(sheetData.townHall)}</span>
+              <span className="info-value">{formatTownHallForDisplay(cwlConfig.townHall)}</span>
             </div>
           )}
           {/* Hide Eligible Members when CWL is active */}
           {!showCWLStarted && thCount !== null && thCount !== undefined && (
-            <div className="sheet-info-item">
+            <div className="cwl-meta-item">
               <span className="info-label">Eligible Members:</span>
               <span className="info-value">{thCount}</span>
             </div>

@@ -1,6 +1,16 @@
 import React, { useState } from 'react'
 import ClanTagLink from '../../ClanTagLink'
 
+function normalizeWarTag(tag) {
+  return (tag || '').replace(/^#/, '').toUpperCase()
+}
+
+function findMemberByTag(members, tag) {
+  if (!members?.length || !tag) return undefined
+  const needle = normalizeWarTag(tag)
+  return members.find((m) => normalizeWarTag(m.tag) === needle)
+}
+
 function CurrentWar({ currentWar }) {
   const [selectedTab, setSelectedTab] = useState('overview') // overview, warEvents, ourMembers, opponentMembers
   
@@ -31,8 +41,12 @@ function CurrentWar({ currentWar }) {
     }
   }
 
-  // Render attack details
-  const renderAttack = (attack, index) => {
+  // Render attack details (defenderMembers = opposing side's war map)
+  const renderAttack = (attack, index, defenderMembers) => {
+    const defender = findMemberByTag(defenderMembers, attack.defenderTag)
+    const targetSuffix =
+      defender?.mapPosition != null ? ` on #${defender.mapPosition}` : ''
+
     return (
       <div key={index} className="attack-item">
         <div className="attack-stats-row">
@@ -46,13 +60,14 @@ function CurrentWar({ currentWar }) {
         </div>
         <div className="attack-order">
           Attack #{attack.order}
+          {targetSuffix}
         </div>
       </div>
     )
   }
 
-  // Render member row
-  const renderMemberRow = (member, index) => {
+  // Render member row (defenderMembers = bases this clan is attacking)
+  const renderMemberRow = (member, index, defenderMembers) => {
     const attacks = member.attacks || []
     const hasAttacked = attacks.length > 0
     const totalStars = attacks.reduce((sum, atk) => sum + (atk.stars || 0), 0)
@@ -75,7 +90,7 @@ function CurrentWar({ currentWar }) {
           {attacks.length > 0 ? (
             <div className="attacks-list">
               <div className="attacks-grid">
-                {attacks.map((attack, idx) => renderAttack(attack, idx))}
+                {attacks.map((attack, idx) => renderAttack(attack, idx, defenderMembers))}
               </div>
               <div className="attacks-summary">
                 <span>Total: {totalStars}⭐</span>
@@ -187,7 +202,7 @@ function CurrentWar({ currentWar }) {
                 currentWar.clan?.members?.forEach(member => {
                   member.attacks?.forEach(attack => {
                     // Find defender
-                    const defender = currentWar.opponent?.members?.find(m => m.tag === attack.defenderTag);
+                    const defender = findMemberByTag(currentWar.opponent?.members, attack.defenderTag);
                     allAttacks.push({
                       ...attack,
                       attacker: member,
@@ -203,7 +218,7 @@ function CurrentWar({ currentWar }) {
                 currentWar.opponent?.members?.forEach(member => {
                   member.attacks?.forEach(attack => {
                     // Find defender
-                    const defender = currentWar.clan?.members?.find(m => m.tag === attack.defenderTag);
+                    const defender = findMemberByTag(currentWar.clan?.members, attack.defenderTag);
                     allAttacks.push({
                       ...attack,
                       attacker: member,
@@ -310,7 +325,9 @@ function CurrentWar({ currentWar }) {
                 <div className="members-container">
                   {currentWar.clan.members
                     .sort((a, b) => (a.mapPosition || 0) - (b.mapPosition || 0))
-                    .map((member, index) => renderMemberRow(member, index))}
+                    .map((member, index) =>
+                      renderMemberRow(member, index, currentWar.opponent?.members)
+                    )}
                 </div>
               ) : (
                 <div className="no-members">No member data available</div>
@@ -328,7 +345,9 @@ function CurrentWar({ currentWar }) {
                 <div className="members-container">
                   {currentWar.opponent.members
                     .sort((a, b) => (a.mapPosition || 0) - (b.mapPosition || 0))
-                    .map((member, index) => renderMemberRow(member, index))}
+                    .map((member, index) =>
+                      renderMemberRow(member, index, currentWar.clan?.members)
+                    )}
                 </div>
               ) : (
                 <div className="no-members">No member data available</div>

@@ -382,10 +382,14 @@
     background: radial-gradient(circle at 30% 30%, #7ef3b0, #1b8f3c 70%);
   }
 
-  .footer-social--clashatlas {
-    background: radial-gradient(circle at 30% 30%, #f59e0b, #d97706 70%);
-    font-size: 1.25rem;
-    line-height: 1;
+  .footer-social--instagram {
+    background: radial-gradient(
+      circle at 30% 100%,
+      #fdf497 0%,
+      #fd5949 45%,
+      #d6249f 60%,
+      #285aeb 90%
+    );
   }
 
   .footer-copy {

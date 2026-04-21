@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['Trinity_Logo.png', 'app.png', 'trinity-bg.jpeg'],
       manifest: {
-        name: 'Trinity - Clan War League',
+        name: 'Trinity',
         short_name: 'Trinity',
         description: 'Trinity Clash of Clans Clan Management System - CWL stats, clan information, and more',
         theme_color: '#667eea',

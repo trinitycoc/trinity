@@ -1,49 +1,70 @@
 import { useState, useEffect } from 'react'
 
 /**
- * Custom hook for countdown timer
+ * Single shared 1s timer for all active countdowns — avoids N intervals when many cards mount.
+ */
+let sharedIntervalId = null
+let subscriberRefCount = 0
+const subscribers = new Set()
+
+function ensureSharedTicker() {
+  if (sharedIntervalId !== null) return
+  sharedIntervalId = setInterval(() => {
+    subscribers.forEach((notify) => notify())
+  }, 1000)
+}
+
+function stopSharedTickerIfIdle() {
+  if (subscriberRefCount <= 0 && sharedIntervalId !== null) {
+    clearInterval(sharedIntervalId)
+    sharedIntervalId = null
+    subscribers.clear()
+  }
+}
+
+function formatRemaining(targetTime) {
+  const now = Date.now()
+  const target = new Date(targetTime).getTime()
+  const difference = target - now
+
+  if (difference <= 0) {
+    return 'Ended'
+  }
+
+  const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((difference % (1000 * 60)) / 1000)
+
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
+
+/**
+ * Live countdown string for a single ISO/end time. Uses one shared interval across all instances.
  */
 export function useCountdown(targetTime) {
-  const [timeRemaining, setTimeRemaining] = useState('')
+  const [, forceTick] = useState(0)
 
   useEffect(() => {
     if (!targetTime) {
-      setTimeRemaining('')
-      return () => {}
+      return undefined
     }
 
-    let interval = null
-    
-    const updateCountdown = () => {
-      const now = new Date().getTime()
-      const target = new Date(targetTime).getTime()
-      const difference = target - now
-
-      if (difference <= 0) {
-        setTimeRemaining('Ended')
-        if (interval) {
-          clearInterval(interval)
-        }
-        return
-      }
-
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000)
-
-      setTimeRemaining(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`)
-    }
-
-    updateCountdown()
-    interval = setInterval(updateCountdown, 1000)
+    const notify = () => forceTick((n) => n + 1)
+    subscribers.add(notify)
+    subscriberRefCount += 1
+    ensureSharedTicker()
+    notify()
 
     return () => {
-      if (interval) {
-        clearInterval(interval)
-      }
+      subscribers.delete(notify)
+      subscriberRefCount -= 1
+      stopSharedTickerIfIdle()
     }
   }, [targetTime])
 
-  return timeRemaining
-}
+  if (!targetTime) {
+    return ''
+  }
 
+  return formatRemaining(targetTime)
+}

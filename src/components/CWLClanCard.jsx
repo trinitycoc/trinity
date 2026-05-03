@@ -32,7 +32,6 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cw
   }
 
   const clanEligibleMembers = clan?.eligibleMembers
-  const memberList = clan?.memberList
   const isDisplayPeriod = clan?.cwlStatus?.isDisplayPeriod
 
   // Use pre-calculated eligibleMembers from backend (backend always provides this)
@@ -41,13 +40,18 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cw
   // Use pre-calculated spaceInfo from backend (backend always provides this)
   const spaceInfo = clan?.spaceInfo || null
 
-  // Check if CWL is in preparation or inWar state
-  // Only show "CWL already started" when state is "preparation" or "inWar"
-  const cwlState = clan?.cwlStatus?.state || 'unknown'
-  const showCWLStarted = cwlState === 'preparation' || cwlState === 'inWar'
-
   // Get active war for countdown display
   const activeWar = clan?.cwlStatus?.activeWar || null
+  const inActiveWarPhase =
+    activeWar && (activeWar.state === 'preparation' || activeWar.state === 'inWar')
+
+  // Show war/CWL banner (not "Space" / "Join Next") when league is started or a round war is live.
+  // Do not use only cwlStatus.state: the group can be e.g. "ended" while a round is still in
+  // preparation/inWar; backend sets isStarted / hasActiveWar for that.
+  const showCWLStarted =
+    clan?.cwlStatus?.isStarted === true ||
+    clan?.cwlStatus?.hasActiveWar === true ||
+    inActiveWarPhase
   const isPreparation = activeWar?.state === 'preparation'
   const isInWar = activeWar?.state === 'inWar'
 
@@ -55,19 +59,16 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cw
   const targetTime = isPreparation ? activeWar?.startTime : (isInWar ? activeWar?.endTime : null)
   const countdown = useCountdown(targetTime)
 
-  // Format countdown message - Always use "Battle ends in" for consistency
-  const getCountdownMessage = () => {
-    if (!activeWar || !targetTime || !countdown || countdown === 'Ended') return null
-
-    if (isPreparation) {
-      return `Battle starts in ${countdown}`
-    } else if (isInWar) {
-      return `Battle ends in ${countdown}`
-    }
-    return null
-  }
-
-  const countdownMessage = getCountdownMessage()
+  const countdownMessage =
+    activeWar &&
+    targetTime &&
+    countdown &&
+    countdown !== 'Ended' &&
+    (isPreparation
+      ? `Battle starts in ${countdown}`
+      : isInWar
+        ? `Battle ends in ${countdown}`
+        : null)
 
   if (isLoading) {
     return (
@@ -102,13 +103,12 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cw
           <div className="cwl-string"></div>
           {/* Banner attached to string */}
           <div className={`cwl-space-banner ${showCWLStarted ? 'cwl-space-banner-started' : spaceInfo.isFull ? 'cwl-space-banner-full' : ''}`}>
-            {/* Show CWL started message only when state is "preparation" or "inWar" */}
+            {/* War / recruitment banner (showCWLStarted mirrors backend isStarted / hasActiveWar) */}
             {showCWLStarted ? (
               <span className="cwl-banner-message">
-                {/* CWL already started in this clan */}
-                {countdownMessage && (
-                  <span className="cwl-banner-countdown"> • {countdownMessage}</span>
-                )}
+                <span className="cwl-banner-countdown">
+                  {countdownMessage || 'CWL in progress'}
+                </span>
               </span>
             ) : spaceInfo.isFull ? (
               <span className="cwl-banner-message">Join Next Clans</span>

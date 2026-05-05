@@ -36,6 +36,8 @@ export default defineConfig(({ mode }) => ({
         ]
       },
       workbox: {
+        // Default is 2 MiB; large static assets (e.g. TH hero images) exceed it and fail the build.
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,jpeg,jpg}'],
         runtimeCaching: [
           {

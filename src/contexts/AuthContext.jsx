@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { getCurrentUser, login as loginAPI, register as registerAPI, logout as logoutAPI } from '../services/api'
+import { createAuthenticatedSocket } from '../services/socketClient'
 
 const AuthContext = createContext(null)
 
@@ -36,6 +37,35 @@ export const AuthProvider = ({ children }) => {
 
     checkAuth()
   }, [])
+
+  const stableUserId = user ? String(user._id ?? user.id ?? '') : ''
+
+  useEffect(() => {
+    if (!stableUserId) return
+
+    const token = localStorage.getItem('auth_token')
+    if (!token) return
+
+    const socket = createAuthenticatedSocket(token)
+    if (!socket) return
+
+    const onRoleUpdated = async () => {
+      try {
+        const fresh = await getCurrentUser()
+        setUser(fresh)
+      } catch {
+        localStorage.removeItem('auth_token')
+        setUser(null)
+      }
+    }
+
+    socket.on('user:roleUpdated', onRoleUpdated)
+
+    return () => {
+      socket.off('user:roleUpdated', onRoleUpdated)
+      socket.disconnect()
+    }
+  }, [stableUserId])
 
   const login = async (email, password) => {
     try {

@@ -4475,12 +4475,20 @@
           }
         }
 
+        // Your matchup + other group wars stacked below
+        .cwl-round-body {
+          margin-top: $spacing-md;
+          display: flex;
+          flex-direction: column;
+          gap: $spacing-md;
+        }
+
         // War summary styling within round card
         .war-summary-grid {
           display: grid;
           grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr) minmax(0, 1fr);
           gap: $spacing-md;
-          margin-top: $spacing-md;
+          margin-top: 0;
 
           .war-summary-col {
             background: transparent;
@@ -4558,6 +4566,234 @@
                   }
                 }
               }
+            }
+          }
+        }
+
+        // Other CWL group wars in the same round (not the searched clan's matchup)
+        .cwl-other-matchups {
+          margin-top: $spacing-md;
+          padding-top: $spacing-md;
+          border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+          .cwl-other-matchups-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.65);
+            margin-bottom: $spacing-md;
+            letter-spacing: 0.02em;
+          }
+
+          .cwl-other-matchups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+            gap: $spacing-md;
+          }
+
+          .cwl-other-matchup-card {
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: $radius-md;
+            padding: $spacing-md;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+          }
+
+          .cwl-other-matchup-stats-with-badges {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: center;
+            column-gap: $spacing-sm;
+            padding-top: 2px;
+          }
+
+          .cwl-other-matchup-badge-col {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+
+            &--left {
+              justify-content: flex-end;
+            }
+
+            &--right {
+              justify-content: flex-start;
+            }
+
+            &.cwl-other-matchup--won {
+
+              .cwl-other-matchup-badge-img,
+              .cwl-other-matchup-badge-placeholder {
+                box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.65);
+                border-radius: 6px;
+              }
+            }
+
+            &.cwl-other-matchup--lost {
+
+              .cwl-other-matchup-badge-img,
+              .cwl-other-matchup-badge-placeholder {
+                box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.55);
+                border-radius: 6px;
+              }
+            }
+          }
+
+          .cwl-other-matchup-badge-img {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            display: block;
+          }
+
+          .cwl-other-matchup-badge-placeholder {
+            width: 44px;
+            height: 44px;
+            border-radius: $radius-sm;
+            background: rgba(0, 0, 0, 0.06);
+            border: 1px dashed rgba(0, 0, 0, 0.12);
+          }
+
+          .cwl-other-matchup-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.9);
+            line-height: 1.4;
+            text-align: center;
+            margin-bottom: $spacing-xs;
+
+            .cwl-other-matchup-clan-name {
+              &.cwl-other-matchup--won {
+                color: rgb(21, 128, 61);
+                font-weight: 800;
+              }
+
+              &.cwl-other-matchup--lost {
+                color: rgb(185, 28, 28);
+                font-weight: 800;
+              }
+            }
+
+            .cwl-other-matchup-vs-word {
+              font-weight: 600;
+              color: rgba(0, 0, 0, 0.5);
+              margin: 0 0.35em;
+            }
+          }
+
+          .cwl-other-matchup-tags-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: $spacing-xs;
+            font-size: 0.72rem;
+            text-align: center;
+            margin-bottom: $spacing-sm;
+            padding-bottom: $spacing-sm;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+          }
+
+          .cwl-other-matchup-tags-sep {
+            color: rgba(0, 0, 0, 0.35);
+            font-weight: 700;
+            user-select: none;
+            padding: 0 0.15rem;
+          }
+
+          .cwl-other-matchup-tag {
+            line-height: 1.35;
+            min-width: 0;
+            text-align: center;
+
+            a.clan-tag-link {
+              color: rgba(0, 0, 0, 0.88);
+              text-decoration-color: rgba(0, 0, 0, 0.35);
+
+              &:hover {
+                color: $primary-color;
+                text-decoration-color: $primary-color;
+              }
+            }
+
+            &.cwl-other-matchup--won a.clan-tag-link {
+              color: rgb(21, 128, 61);
+              text-decoration-color: rgba(21, 128, 61, 0.4);
+              font-weight: 700;
+
+              &:hover {
+                color: rgb(16, 100, 48);
+                text-decoration-color: rgb(16, 100, 48);
+              }
+            }
+
+            &.cwl-other-matchup--lost a.clan-tag-link {
+              color: rgb(185, 28, 28);
+              text-decoration-color: rgba(185, 28, 28, 0.4);
+              font-weight: 700;
+
+              &:hover {
+                color: rgb(153, 27, 27);
+                text-decoration-color: rgb(153, 27, 27);
+              }
+            }
+          }
+
+          .cwl-other-matchup-stats {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-xs;
+            font-size: 0.75rem;
+            color: rgba(0, 0, 0, 0.82);
+            min-width: 0;
+          }
+
+          .cwl-other-matchup-stat-line {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            column-gap: $spacing-sm;
+            min-height: 1.35em;
+          }
+
+          .cwl-other-matchup-stat-left {
+            text-align: right;
+            font-weight: 600;
+            min-width: 0;
+
+            &.cwl-other-matchup--won {
+              color: rgb(21, 128, 61);
+            }
+
+            &.cwl-other-matchup--lost {
+              color: rgb(185, 28, 28);
+            }
+          }
+
+          .cwl-other-matchup-stat-right {
+            text-align: left;
+            font-weight: 600;
+            min-width: 0;
+
+            &.cwl-other-matchup--won {
+              color: rgb(21, 128, 61);
+            }
+
+            &.cwl-other-matchup--lost {
+              color: rgb(185, 28, 28);
+            }
+          }
+
+          .cwl-other-matchup-stat-sep {
+            flex-shrink: 0;
+            font-size: 0.85rem;
+            line-height: 1;
+            color: rgba(0, 0, 0, 0.55);
+
+            &--pct {
+              font-size: 0.72rem;
+              font-weight: 700;
             }
           }
         }

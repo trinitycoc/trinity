@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import ClanTagLink from '../../ClanTagLink'
 import { useCountdown } from '../../../hooks/useCountdown'
+import { warInvolvesClan, cwlOtherWarHighlightClasses } from '../../../utils/cwlUtils'
 import { CWLWarDetails } from './CWLWarDetails'
 
 export const RoundCard = ({
@@ -24,10 +25,23 @@ export const RoundCard = ({
     loadingFetchedWars,
     isAdmin = false
 }) => {
-    // Find active war for countdown display (priority: inWar > preparation)
-    const activeWar = roundWars.find(war =>
+    const { warsForSearchedClan, otherGroupWars } = useMemo(() => {
+        if (!clanTag) {
+            return { warsForSearchedClan: roundWars, otherGroupWars: [] }
+        }
+        const ours = []
+        const other = []
+        for (const w of roundWars) {
+            if (warInvolvesClan(w, clanTag)) ours.push(w)
+            else other.push(w)
+        }
+        return { warsForSearchedClan: ours, otherGroupWars: other }
+    }, [roundWars, clanTag])
+
+    // Find active war for countdown display (priority: inWar > preparation) — searched clan's matchup only
+    const activeWar = warsForSearchedClan.find(war =>
         war.state === 'inWar'
-    ) || roundWars.find(war =>
+    ) || warsForSearchedClan.find(war =>
         war.state === 'preparation'
     ) || null
 
@@ -63,11 +77,27 @@ export const RoundCard = ({
         return value
     }
 
+    const formatPercentagePlain = value => {
+        if (typeof value === 'number') {
+            return value.toFixed(2)
+        }
+        if (value === null || value === undefined || value === '') {
+            return 'N/A'
+        }
+        return String(value)
+    }
+
     const formatAttacks = value => {
         if (value === null || value === undefined) {
             return 'N/A'
         }
         return value
+    }
+
+    const getOtherWarBadgeUrl = (clan) => {
+        const b = clan?.badgeUrls
+        if (!b || typeof b !== 'object') return null
+        return b.medium || b.small || b.large || b.url || null
     }
 
     const statComparisons = [
@@ -170,6 +200,7 @@ export const RoundCard = ({
                 </div>
             </div>
 
+            <div className="cwl-round-body">
             {/* War Summary - Comparison Layout */}
             <div className="war-summary-grid">
                 <div className="war-summary-col clan-overview our-clan">
@@ -207,6 +238,93 @@ export const RoundCard = ({
                         <p>{stats.opponentClanTag ? <ClanTagLink tag={stats.opponentClanTag} /> : 'N/A'}</p>
                     </div>
                 </div>
+            </div>
+
+            {otherGroupWars.length > 0 ? (
+                <div className="cwl-other-matchups">
+                    <div className="cwl-other-matchups-title">Other wars this round</div>
+                    <div className="cwl-other-matchups-grid">
+                        {otherGroupWars.map((war, idx) => {
+                            const leftBadgeUrl = getOtherWarBadgeUrl(war.clan)
+                            const rightBadgeUrl = getOtherWarBadgeUrl(war.opponent)
+                            const { left: leftHighlight, right: rightHighlight } = cwlOtherWarHighlightClasses(war.result)
+                            return (
+                            <div
+                                key={war.warTag || `other-${idx}`}
+                                className="cwl-other-matchup-card"
+                            >
+                                <div className="cwl-other-matchup-title">
+                                    <span className={`cwl-other-matchup-clan-name ${leftHighlight}`}>
+                                        {war.clan?.name || '—'}
+                                    </span>{' '}
+                                    <span className="cwl-other-matchup-vs-word">vs</span>{' '}
+                                    <span className={`cwl-other-matchup-clan-name ${rightHighlight}`}>
+                                        {war.opponent?.name || '—'}
+                                    </span>
+                                </div>
+                                <div className="cwl-other-matchup-tags-row">
+                                    <span className={`cwl-other-matchup-tag ${leftHighlight}`}>
+                                        {war.clan?.tag ? <ClanTagLink tag={war.clan.tag} /> : '—'}
+                                    </span>
+                                    <span className="cwl-other-matchup-tags-sep" aria-hidden>·</span>
+                                    <span className={`cwl-other-matchup-tag ${rightHighlight}`}>
+                                        {war.opponent?.tag ? <ClanTagLink tag={war.opponent.tag} /> : '—'}
+                                    </span>
+                                </div>
+                                <div className="cwl-other-matchup-stats-with-badges">
+                                    <div className={`cwl-other-matchup-badge-col cwl-other-matchup-badge-col--left ${leftHighlight}`}>
+                                        {leftBadgeUrl ? (
+                                            <img
+                                                src={leftBadgeUrl}
+                                                alt=""
+                                                className="cwl-other-matchup-badge-img"
+                                            />
+                                        ) : (
+                                            <div className="cwl-other-matchup-badge-placeholder" aria-hidden />
+                                        )}
+                                    </div>
+                                    <div className="cwl-other-matchup-stats">
+                                        <div className="cwl-other-matchup-stat-line" aria-label="Attacks">
+                                            <span className={`cwl-other-matchup-stat-left ${leftHighlight}`}>{formatAttacks(war.clan?.attacks)}</span>
+                                            <span className="cwl-other-matchup-stat-sep" aria-hidden>⚔️</span>
+                                            <span className={`cwl-other-matchup-stat-right ${rightHighlight}`}>{formatAttacks(war.opponent?.attacks)}</span>
+                                        </div>
+                                        <div className="cwl-other-matchup-stat-line" aria-label="Stars">
+                                            <span className={`cwl-other-matchup-stat-left ${leftHighlight}`}>{war.clan?.stars ?? '—'}</span>
+                                            <span className="cwl-other-matchup-stat-sep" aria-hidden>⭐</span>
+                                            <span className={`cwl-other-matchup-stat-right ${rightHighlight}`}>{war.opponent?.stars ?? '—'}</span>
+                                        </div>
+                                        <div className="cwl-other-matchup-stat-line" aria-label="Destruction percentage">
+                                            <span className={`cwl-other-matchup-stat-left ${leftHighlight}`}>
+                                                {formatPercentagePlain(war.clan?.destructionPercentage)}
+                                            </span>
+                                            <span className="cwl-other-matchup-stat-sep cwl-other-matchup-stat-sep--pct" aria-hidden>
+                                                %
+                                            </span>
+                                            <span className={`cwl-other-matchup-stat-right ${rightHighlight}`}>
+                                                {formatPercentagePlain(war.opponent?.destructionPercentage)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className={`cwl-other-matchup-badge-col cwl-other-matchup-badge-col--right ${rightHighlight}`}>
+                                        {rightBadgeUrl ? (
+                                            <img
+                                                src={rightBadgeUrl}
+                                                alt=""
+                                                className="cwl-other-matchup-badge-img"
+                                            />
+                                        ) : (
+                                            <div className="cwl-other-matchup-badge-placeholder" aria-hidden />
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                            )
+                        })}
+                    </div>
+                </div>
+            ) : null}
+
             </div>
 
             {/* Show/Hide Attacks Button */}

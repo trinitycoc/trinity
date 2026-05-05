@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { getValidWarTags, filterWarsForDay, normalizeTag } from '../../../utils/cwlUtils'
+import { getValidWarTags, filterWarsForDay, normalizeTag, warInvolvesClan } from '../../../utils/cwlUtils'
 import { WarMembersTable } from '../wars/WarMembersTable'
 
 export const CWLWarDetails = ({
@@ -84,28 +84,55 @@ export const CWLWarDetails = ({
     return <div className="cwl-no-wars">No wars found for Day {selectedDay}</div>
   }
 
+  // Attack / member tables only for the opened clan’s war — not the other CWL group matchups
+  const warsForAttackSummary = clanTag
+    ? warsForDay.filter(w => warInvolvesClan(w, clanTag))
+    : warsForDay
+
+  if (warsForAttackSummary.length === 0) {
+    return (
+      <div className="cwl-no-wars">
+        {clanTag
+          ? 'No attack data for this clan on this day.'
+          : `No wars found for Day ${selectedDay}`}
+      </div>
+    )
+  }
+
   // Helper function to determine which clan is "our clan" and which is "opponent"
   const getOurClanAndOpponent = (war) => {
-    if (!war.clan || !war.opponent || !clanTag) {
-      return { ourClan: war.clan, opponentClan: war.opponent }
+    if (!war.clan || !war.opponent) {
+      return { ourClan: war.clan, opponentClan: war.opponent, spectatorMode: false }
+    }
+
+    if (!clanTag) {
+      return { ourClan: war.clan, opponentClan: war.opponent, spectatorMode: false }
     }
 
     const normalizedOurTag = normalizeTag(clanTag) || clanTag
     const normalizedWarClanTag = normalizeTag(war.clan.tag) || war.clan.tag
+    const normalizedWarOppTag = normalizeTag(war.opponent.tag) || war.opponent.tag
 
-    // If war.clan.tag matches our clanTag, then war.clan is our clan
     if (normalizedWarClanTag === normalizedOurTag) {
-      return { ourClan: war.clan, opponentClan: war.opponent }
-    } else {
-      // Otherwise, war.opponent is our clan
-      return { ourClan: war.opponent, opponentClan: war.clan }
+      return { ourClan: war.clan, opponentClan: war.opponent, spectatorMode: false }
     }
+    if (normalizedWarOppTag === normalizedOurTag) {
+      return { ourClan: war.opponent, opponentClan: war.clan, spectatorMode: false }
+    }
+
+    return { ourClan: war.clan, opponentClan: war.opponent, spectatorMode: true }
   }
 
   return (
     <div className="cwl-day-wars">
-      {warsForDay.map((war, idx) => {
-        const { ourClan, opponentClan } = getOurClanAndOpponent(war)
+      {warsForAttackSummary.map((war, idx) => {
+        const { ourClan, opponentClan, spectatorMode } = getOurClanAndOpponent(war)
+        const leftLabel = spectatorMode
+          ? `${ourClan?.name || 'Clan'} attacks`
+          : 'Our Attacks'
+        const rightLabel = spectatorMode
+          ? `${opponentClan?.name || 'Clan'} attacks`
+          : 'Opponent Attacks'
 
         return (
           <div key={idx} className="cwl-war-section">
@@ -127,13 +154,13 @@ export const CWLWarDetails = ({
                 className={`cwl-toggle-btn ${getActiveView(idx) === 'ourClan' ? 'active' : ''}`}
                 onClick={() => setActiveView(idx, 'ourClan')}
               >
-                Our Attacks
+                {leftLabel}
               </button>
               <button
                 className={`cwl-toggle-btn ${getActiveView(idx) === 'opponent' ? 'active' : ''}`}
                 onClick={() => setActiveView(idx, 'opponent')}
               >
-                Opponent Attacks
+                {rightLabel}
               </button>
               {isAdmin && (
                 <button
@@ -262,7 +289,7 @@ export const CWLWarDetails = ({
             {getActiveView(idx) === 'ourClan' && ourClan?.members?.length > 0 && (
               <WarMembersTable
                 members={ourClan.members}
-                title="Our Clan Members"
+                title={spectatorMode ? `${ourClan.name || 'Clan'} members` : 'Our Clan Members'}
                 opponentMembers={opponentClan?.members || []}
                 isAdmin={isAdmin}
               />
@@ -272,7 +299,7 @@ export const CWLWarDetails = ({
             {getActiveView(idx) === 'opponent' && opponentClan?.members?.length > 0 && (
               <WarMembersTable
                 members={opponentClan.members}
-                title="Opponent Members"
+                title={spectatorMode ? `${opponentClan.name || 'Clan'} members` : 'Opponent Members'}
                 opponentMembers={ourClan?.members || []}
                 isAdmin={isAdmin}
               />

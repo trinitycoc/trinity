@@ -25,6 +25,33 @@ export const normalizeTag = (tag) => {
   return tag.startsWith('#') ? tag : `#${tag}`
 }
 
+/** True if the searched clan is clan or opponent in this war (CWL group round). */
+export const warInvolvesClan = (war, clanTag) => {
+  if (!war || !clanTag) return false
+  const n = normalizeTag(clanTag)
+  if (!n) return false
+  const a = normalizeTag(war.clan?.tag)
+  const b = normalizeTag(war.opponent?.tag)
+  return a === n || b === n
+}
+
+/**
+ * Win/loss highlight classes for other-matchup cards (`war.result` is first clan's perspective).
+ * @returns {{ left: string, right: string }}
+ */
+export const cwlOtherWarHighlightClasses = (result) => {
+  const outcome = (result || '').toLowerCase()
+  const left =
+    outcome === 'win' ? 'cwl-other-matchup--won'
+    : outcome === 'loss' ? 'cwl-other-matchup--lost'
+    : ''
+  const right =
+    outcome === 'loss' ? 'cwl-other-matchup--won'
+    : outcome === 'win' ? 'cwl-other-matchup--lost'
+    : ''
+  return { left, right }
+}
+
 /**
  * Filter valid war tags (non-zero, non-empty)
  */

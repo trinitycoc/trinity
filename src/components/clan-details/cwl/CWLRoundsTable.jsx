@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { getValidWarTags } from '../../../utils/cwlUtils'
+import { getValidWarTags, warInvolvesClan } from '../../../utils/cwlUtils'
 import { CWLWarDetails } from './CWLWarDetails'
 import { RoundCard } from './RoundCard'
 
@@ -242,10 +242,15 @@ export const CWLRoundsTable = ({
 
             const isExpanded = expandedRound === day
 
+            const roundWarsForSearchedClan = (clanTag
+              ? roundWars.filter(w => warInvolvesClan(w, clanTag))
+              : roundWars
+            )
+
             // Use backend-provided values if available, otherwise calculate (backward compatibility)
             const ourAttacks = stats.ourAttacks !== undefined
               ? stats.ourAttacks
-              : roundWars.reduce((sum, war) => {
+              : roundWarsForSearchedClan.reduce((sum, war) => {
                 const normalizedOurTag = (clanTag || '').replace('#', '')
                 const normalizedWarClanTag = (war.clan?.tag || '').replace('#', '')
                 if (normalizedWarClanTag === normalizedOurTag) {
@@ -257,7 +262,7 @@ export const CWLRoundsTable = ({
 
             const opponentAttacks = stats.opponentAttacks !== undefined
               ? stats.opponentAttacks
-              : roundWars.reduce((sum, war) => {
+              : roundWarsForSearchedClan.reduce((sum, war) => {
                 const normalizedOurTag = (clanTag || '').replace('#', '')
                 const normalizedWarClanTag = (war.clan?.tag || '').replace('#', '')
                 if (normalizedWarClanTag === normalizedOurTag) {
@@ -269,7 +274,7 @@ export const CWLRoundsTable = ({
 
             const teamSize = stats.teamSize !== undefined
               ? stats.teamSize
-              : (roundWars.length > 0 ? (roundWars[0].teamSize || 0) : 0)
+              : (roundWarsForSearchedClan.length > 0 ? (roundWarsForSearchedClan[0].teamSize || 0) : 0)
 
             const maxAttacks = stats.maxAttacks !== undefined
               ? stats.maxAttacks

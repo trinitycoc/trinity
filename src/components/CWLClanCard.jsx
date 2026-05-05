@@ -5,6 +5,21 @@ import { useCountdown } from '../hooks/useCountdown'
 import { formatTownHallForDisplay } from '../utils/cwlUtils'
 import cwlImage from '/cwl.webp'
 
+/** Only mounts when a countdown target exists — avoids shared-ticker subscriptions on recruitment-only cards */
+function CwlWarBannerCountdown({ targetTime, countdownKind }) {
+  const countdown = useCountdown(targetTime)
+  if (!countdown || countdown === 'Ended' || !countdownKind) {
+    return 'CWL in progress'
+  }
+  if (countdownKind === 'preparation') {
+    return `Battle starts in ${countdown}`
+  }
+  if (countdownKind === 'inWar') {
+    return `Battle ends in ${countdown}`
+  }
+  return 'CWL in progress'
+}
+
 const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cwlConfig = null, isVisibleToUsers = true, isAdminMode = false }) {
   const navigate = useNavigate()
   const clanPath = clanTagToPath(clan?.tag)
@@ -40,34 +55,28 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cw
   // Use pre-calculated spaceInfo from backend (backend always provides this)
   const spaceInfo = clan?.spaceInfo || null
 
-  // Get active war for countdown display
-  const activeWar = clan?.cwlStatus?.activeWar || null
+  // Banner + countdown: prefer backend-computed fields; fall back for older/cached API payloads
+  const cs = clan?.cwlStatus
+  const activeWar = cs?.activeWar || null
   const inActiveWarPhase =
     activeWar && (activeWar.state === 'preparation' || activeWar.state === 'inWar')
-
-  // Show war/CWL banner (not "Space" / "Join Next") when league is started or a round war is live.
-  // Do not use only cwlStatus.state: the group can be e.g. "ended" while a round is still in
-  // preparation/inWar; backend sets isStarted / hasActiveWar for that.
   const showCWLStarted =
-    clan?.cwlStatus?.isStarted === true ||
-    clan?.cwlStatus?.hasActiveWar === true ||
-    inActiveWarPhase
-  const isPreparation = activeWar?.state === 'preparation'
-  const isInWar = activeWar?.state === 'inWar'
+    cs?.showWarPhaseBanner ??
+    (cs?.isStarted === true || cs?.hasActiveWar === true || inActiveWarPhase)
 
-  // Determine target time based on war state
-  const targetTime = isPreparation ? activeWar?.startTime : (isInWar ? activeWar?.endTime : null)
-  const countdown = useCountdown(targetTime)
-
-  const countdownMessage =
-    activeWar &&
-    targetTime &&
-    countdown &&
-    countdown !== 'Ended' &&
-    (isPreparation
-      ? `Battle starts in ${countdown}`
-      : isInWar
-        ? `Battle ends in ${countdown}`
+  const countdownKind =
+    cs?.countdownKind ??
+    (activeWar?.state === 'preparation'
+      ? 'preparation'
+      : activeWar?.state === 'inWar'
+        ? 'inWar'
+        : null)
+  const targetTime =
+    cs?.countdownTargetIso ??
+    (countdownKind === 'preparation'
+      ? activeWar?.startTime
+      : countdownKind === 'inWar'
+        ? activeWar?.endTime
         : null)
 
   if (isLoading) {
@@ -107,7 +116,11 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cw
             {showCWLStarted ? (
               <span className="cwl-banner-message">
                 <span className="cwl-banner-countdown">
-                  {countdownMessage || 'CWL in progress'}
+                  {targetTime ? (
+                    <CwlWarBannerCountdown targetTime={targetTime} countdownKind={countdownKind} />
+                  ) : (
+                    'CWL in progress'
+                  )}
                 </span>
               </span>
             ) : spaceInfo.isFull ? (
@@ -185,7 +198,9 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cw
           {cwlConfig.hasOwnProperty('townHall') && (
             <div className="cwl-meta-item">
               <span className="info-label">TH Allowed:</span>
-              <span className="info-value">{formatTownHallForDisplay(cwlConfig.townHall)}</span>
+              <span className="info-value">
+                {clan.townHallDisplay ?? formatTownHallForDisplay(cwlConfig.townHall)}
+              </span>
             </div>
           )}
           {/* Hide Eligible Members when CWL is active */}

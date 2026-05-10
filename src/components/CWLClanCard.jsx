@@ -9,7 +9,7 @@ import cwlImage from '/cwl.webp'
 function CwlWarBannerCountdown({ targetTime, countdownKind }) {
   const countdown = useCountdown(targetTime)
   if (!countdown || countdown === 'Ended' || !countdownKind) {
-    return 'CWL in progress'
+    return 'CWL Ended!'
   }
   if (countdownKind === 'preparation') {
     return `Battle starts in ${countdown}`
@@ -17,7 +17,7 @@ function CwlWarBannerCountdown({ targetTime, countdownKind }) {
   if (countdownKind === 'inWar') {
     return `Battle ends in ${countdown}`
   }
-  return 'CWL in progress'
+  return 'CWL in Progress'
 }
 
 const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cwlConfig = null, isVisibleToUsers = true, isAdminMode = false }) {
@@ -119,7 +119,7 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cw
                   {targetTime ? (
                     <CwlWarBannerCountdown targetTime={targetTime} countdownKind={countdownKind} />
                   ) : (
-                    'CWL in progress'
+                    'CWL Ended!'
                   )}
                 </span>
               </span>

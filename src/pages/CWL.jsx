@@ -6,6 +6,7 @@ import LazyRender from '../components/LazyRender'
 import { fetchFilteredCWLClans } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
 import { backendReachabilityMessage } from '../utils/backendReachabilityMessage'
+import { getCwlComeBackDateLabel } from '../utils/cwlUtils'
 
 function CWL({ family = 'Trinity' }) {
   const { isAdmin, isRoot } = useAuth()
@@ -39,33 +40,37 @@ function CWL({ family = 'Trinity' }) {
         if (showAll) {
           const response = await fetchFilteredCWLClans(true, true, family, signal)
           if (signal.aborted) return
+          if (response.isDisplayPeriod !== undefined) {
+            setDisplayPeriodInfo({
+              isDisplayPeriod: response.isDisplayPeriod,
+              monthName: response.monthName || ''
+            })
+          }
           if (!response.clans || response.clans.length === 0) {
+            setFilteredClanTags(new Set(response.filteredClanTags || []))
+            setClansData([])
+            setError(null)
             setLoading(false)
-            setError('No CWL clan data available. Please check your configuration.')
             return
           }
-          
-          // Set display period info from backend
-          if (response.isDisplayPeriod !== undefined && response.monthName) {
-            setDisplayPeriodInfo({ isDisplayPeriod: response.isDisplayPeriod, monthName: response.monthName })
-          }
-          
           setFilteredClanTags(new Set(response.filteredClanTags || []))
           setClansData(response.clans)
         } else {
           const response = await fetchFilteredCWLClans(false, false, family, signal)
           if (signal.aborted) return
+          if (response.isDisplayPeriod !== undefined) {
+            setDisplayPeriodInfo({
+              isDisplayPeriod: response.isDisplayPeriod,
+              monthName: response.monthName || ''
+            })
+          }
           if (!response.clans || response.clans.length === 0) {
+            setClansData([])
+            setFilteredClanTags(new Set())
+            setError(null)
             setLoading(false)
-            setError('No CWL clan data available. Please check your configuration.')
             return
           }
-          
-          // Set display period info from backend
-          if (response.isDisplayPeriod !== undefined && response.monthName) {
-            setDisplayPeriodInfo({ isDisplayPeriod: response.isDisplayPeriod, monthName: response.monthName })
-          }
-          
           setClansData(response.clans || [])
           setFilteredClanTags(new Set())
         }
@@ -125,8 +130,13 @@ function CWL({ family = 'Trinity' }) {
             </div>
           </div>
         ) : clansData.length === 0 ? (
-          <div className="no-data-message">
-            <p>No clans in family &quot;{family}&quot;.</p>
+          <div className="cwl-notice cwl-season-ended-notice">
+            <div className="cwl-notice-inner">
+              <p className="cwl-notice-body">
+                CWL is over for this month, come back on{' '}
+                <strong>{getCwlComeBackDateLabel()}</strong>, to join us in CWL.
+              </p>
+            </div>
           </div>
         ) : (
           clansData.map((clan) => (

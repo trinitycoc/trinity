@@ -1,5 +1,39 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import ClanTagLink from '../../ClanTagLink'
+import { useAuth } from '../../../contexts/AuthContext'
+
+/** Tab-separated rows for spreadsheet paste: position, name, tag, TH */
+function formatWarMembersForSheet(members) {
+  if (!members?.length) return ''
+  return [...members]
+    .sort((a, b) => (a.mapPosition || 0) - (b.mapPosition || 0))
+    .map((m) => {
+      const position = m.mapPosition != null ? String(m.mapPosition) : ''
+      const name = (m.name || '').replace(/\t/g, ' ').replace(/\r?\n/g, ' ')
+      const tag = m.tag
+        ? (String(m.tag).startsWith('#') ? m.tag : `#${m.tag}`)
+        : ''
+      const th = m.townHallLevel != null ? `TH${m.townHallLevel}` : ''
+      return [position, name, tag, th].join('\t')
+    })
+    .join('\n')
+}
+
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text)
+    return
+  }
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  textarea.setAttribute('readonly', '')
+  textarea.style.position = 'fixed'
+  textarea.style.left = '-9999px'
+  document.body.appendChild(textarea)
+  textarea.select()
+  document.execCommand('copy')
+  document.body.removeChild(textarea)
+}
 
 function normalizeWarTag(tag) {
   return (tag || '').replace(/^#/, '').toUpperCase()
@@ -12,7 +46,22 @@ function findMemberByTag(members, tag) {
 }
 
 function CurrentWar({ currentWar }) {
+  const { isAdmin, isRoot } = useAuth()
+  const canCopyForSheet = isAdmin || isRoot
   const [selectedTab, setSelectedTab] = useState('overview') // overview, warEvents, ourMembers, opponentMembers
+  const [copyFeedback, setCopyFeedback] = useState(null) // 'our' | 'opponent' | null
+
+  const handleCopyForSheet = useCallback(async (members, which) => {
+    const text = formatWarMembersForSheet(members)
+    if (!text) return
+    try {
+      await copyTextToClipboard(text)
+      setCopyFeedback(which)
+      window.setTimeout(() => setCopyFeedback(null), 2000)
+    } catch (err) {
+      console.error('Failed to copy war members:', err)
+    }
+  }, [])
   
   if (!currentWar || currentWar.state === 'notInWar') {
     return (
@@ -81,6 +130,7 @@ function CurrentWar({ currentWar }) {
           <span className="member-position">#{member.mapPosition}</span>
           <div className="member-details">
             <span className="member-name">{member.name}</span>
+            <span className="member-tag">{member.tag || 'N/A'}</span>
             <span className="member-th">TH{member.townHallLevel}</span>
           </div>
         </div>
@@ -318,9 +368,21 @@ function CurrentWar({ currentWar }) {
           {/* Our Members Tab */}
           {selectedTab === 'ourMembers' && (
             <div className="war-members-list">
-              <h4 className="members-header">
-                🛡️ {currentWar.clan.name} - War Members
-              </h4>
+              <div className="members-header-row">
+                <h4 className="members-header">
+                  🛡️ {currentWar.clan.name} - War Members
+                </h4>
+                {canCopyForSheet && (
+                  <button
+                    type="button"
+                    className="war-members-copy-btn"
+                    onClick={() => handleCopyForSheet(currentWar.clan.members, 'our')}
+                    disabled={!currentWar.clan.members?.length}
+                  >
+                    {copyFeedback === 'our' ? 'Copied!' : '📋 Copy for sheet'}
+                  </button>
+                )}
+              </div>
               {currentWar.clan.members && currentWar.clan.members.length > 0 ? (
                 <div className="members-container">
                   {currentWar.clan.members
@@ -338,9 +400,21 @@ function CurrentWar({ currentWar }) {
           {/* Opponent Members Tab */}
           {selectedTab === 'opponentMembers' && (
             <div className="war-members-list">
-              <h4 className="members-header">
-                ⚔️ {currentWar.opponent.name} - War Members
-              </h4>
+              <div className="members-header-row">
+                <h4 className="members-header">
+                  ⚔️ {currentWar.opponent.name} - War Members
+                </h4>
+                {canCopyForSheet && (
+                  <button
+                    type="button"
+                    className="war-members-copy-btn"
+                    onClick={() => handleCopyForSheet(currentWar.opponent.members, 'opponent')}
+                    disabled={!currentWar.opponent.members?.length}
+                  >
+                    {copyFeedback === 'opponent' ? 'Copied!' : '📋 Copy for sheet'}
+                  </button>
+                )}
+              </div>
               {currentWar.opponent.members && currentWar.opponent.members.length > 0 ? (
                 <div className="members-container">
                   {currentWar.opponent.members

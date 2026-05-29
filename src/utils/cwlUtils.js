@@ -1,42 +1,5 @@
 // CWL utility functions
 
-const IST = 'Asia/Kolkata'
-
-/**
- * Calendar Y/M/D in IST for a given instant (month is 1–12).
- * @param {Date} [when=new Date()]
- */
-const getYmdIST = (when = new Date()) => {
-  const cal = new Intl.DateTimeFormat('en-CA', {
-    timeZone: IST,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  }).format(when)
-  const [y, m, d] = cal.split('-').map(Number)
-  return { y, m, d }
-}
-
-/**
- * Human-readable date for "two days before the end of the current month" (IST),
- * when the CWL page invites users to return for the next season.
- * @param {Date} [when=new Date()]
- * @returns {string}
- */
-export const getCwlComeBackDateLabel = (when = new Date()) => {
-  const { y, m } = getYmdIST(when)
-  const lastDayOfMonth = new Date(y, m, 0).getDate()
-  const day = Math.max(1, lastDayOfMonth - 2)
-  const isoLocal = `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}T12:00:00+05:30`
-  const anchor = new Date(isoLocal)
-  return new Intl.DateTimeFormat('en-IN', {
-    timeZone: IST,
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  }).format(anchor)
-}
-
 /**
  * Format stored townHall string for UI (comma-separated TH labels + Rushed TH18).
  */

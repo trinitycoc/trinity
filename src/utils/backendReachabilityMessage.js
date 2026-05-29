@@ -1,13 +1,21 @@
 /**
- * User-facing hint when a fetch failed for network / CORS reasons (backend down, offline, etc.)
+ * Plain-language message when a fetch failed (offline, server unavailable, etc.)
  */
 export function backendReachabilityMessage(err) {
   if (!err || err.name === 'AbortError') return null
+
   const msg = String(err.message || '')
   const isNetwork =
-    err.name === 'TypeError' || /failed to fetch|networkerror|load failed|network request failed/i.test(msg)
+    err.name === 'TypeError' ||
+    /failed to fetch|networkerror|load failed|network request failed/i.test(msg)
+
   if (isNetwork) {
-    return 'Cannot reach the backend. Start the server (for example: cd backend && npm run dev) and check your connection.'
+    return "We couldn't reach our servers. Please check your internet connection, wait a moment, and refresh the page."
   }
+
+  if (/\b(500|502|503|504)\b/.test(msg) || /service unavailable|bad gateway/i.test(msg)) {
+    return 'Our service is temporarily unavailable. Please try again in a few minutes.'
+  }
+
   return null
 }

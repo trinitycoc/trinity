@@ -221,20 +221,21 @@ export const fetchTrinityClansBundled = async (limit = null, signal = null) => {
 }
 
 /**
- * Active CWL clan tags from database (public)
+ * Whether a clan is an active CWL satellite (single-tag check; no public tag list).
  */
-export const fetchActiveCWLClanTags = async () => {
+export const fetchIsCWLClan = async (clanTag, signal = null) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/cwl-clans`)
-    
+    const encoded = encodeURIComponent(clanTag.startsWith('#') ? clanTag : `#${clanTag}`)
+    const response = await fetch(`${API_BASE_URL}/cwl-clans/check/${encoded}`, signal ? { signal } : {})
+
     if (!response.ok) {
-      throw new Error(`Failed to fetch CWL clans: ${response.statusText}`)
+      throw new Error(`Failed to check CWL clan: ${response.statusText}`)
     }
-    
+
     const data = await response.json()
-    return data.clanTags
+    return data.isCWLClan === true
   } catch (error) {
-    console.error('Error fetching CWL clans:', error)
+    console.error('Error checking CWL clan:', error)
     throw error
   }
 }
@@ -248,11 +249,16 @@ export const fetchActiveCWLClanTags = async () => {
  * @param {boolean} showAll - If true, returns all clans without filtering
  * @param {boolean} includeFilteredInfo - If true and showAll is true, also returns filtered clan tags
  */
-export const fetchFilteredCWLClans = async (showAll = false, includeFilteredInfo = false, family = null, signal = null) => {
+export const fetchFilteredCWLClans = async (
+  showAll = false,
+  includeFilteredInfo = showAll,
+  family = null,
+  signal = null
+) => {
   try {
     const params = new URLSearchParams()
     if (showAll) params.set('all', 'true')
-    if (showAll && includeFilteredInfo) params.set('includeFilteredInfo', 'true')
+    if (includeFilteredInfo) params.set('includeFilteredInfo', 'true')
     if (family && (family === 'Trinity' || family === 'Indian Glory')) {
       params.set('family', family)
     }

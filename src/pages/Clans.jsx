@@ -46,8 +46,7 @@ function Clans() {
         setLoading(false)
         setError(
           backendReachabilityMessage(err) ||
-            err.message ||
-            'Failed to load clans. Please check your connection and try again.'
+            "We couldn't load clan information right now. Please refresh the page or try again in a little while."
         )
         setClansData([])
       }
@@ -69,7 +68,7 @@ function Clans() {
           // Show error message
           <div className="clan-card clan-card-error">
             <div className="clan-error">
-              <p className="error-title">⚠️ Error Loading Clans</p>
+              <p className="error-title">Unable to load clans</p>
               <p className="error-message">{error}</p>
             </div>
           </div>

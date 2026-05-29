@@ -20,7 +20,14 @@ function CwlWarBannerCountdown({ targetTime, countdownKind }) {
   return 'CWL in Progress'
 }
 
-const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cwlConfig = null, isVisibleToUsers = true, isAdminMode = false }) {
+const CWLClanCard = React.memo(function CWLClanCard({
+  clan,
+  isLoading,
+  error,
+  cwlConfig = null,
+  isVisibleToUsers = true,
+  isAdminMode = false
+}) {
   const navigate = useNavigate()
   const clanPath = clanTagToPath(clan?.tag)
   const clanHref = useHref(clanPath ?? '/clans')
@@ -47,7 +54,7 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cw
   }
 
   const clanEligibleMembers = clan?.eligibleMembers
-  const isDisplayPeriod = clan?.cwlStatus?.isDisplayPeriod
+  const showCapacityMeta = clan?.cwlStatus?.cwlPeriod === 'start'
 
   // Use pre-calculated eligibleMembers from backend (backend always provides this)
   const thCount = clanEligibleMembers !== undefined ? `${clanEligibleMembers}` : null
@@ -180,7 +187,7 @@ const CWLClanCard = React.memo(function CWLClanCard({ clan, isLoading, error, cw
       </div>
 
       {/* Show database data for CWL clans (all users: regular, admin, root) */}
-      {cwlConfig && !isDisplayPeriod && (
+      {cwlConfig && showCapacityMeta && (
         <div className="clan-cwl-meta">
           {cwlConfig.format && (
             <div className="cwl-meta-item">

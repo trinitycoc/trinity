@@ -1,74 +1,44 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react'
-import { fetchActiveCWLClanTags } from '../services/api'
+import { useState, useEffect } from 'react'
+import { fetchIsCWLClan } from '../services/api'
 
-const CWLContext = createContext()
-
-export const useCWL = () => {
-  const context = useContext(CWLContext)
-  if (!context) {
-    throw new Error('useCWL must be used within a CWLProvider')
-  }
-  return context
-}
-
-function normalizeClanTagForLookup(tag) {
-  if (!tag) return ''
-  return tag.startsWith('#') ? tag : `#${tag}`
-}
-
-export const CWLProvider = ({ children }) => {
-  const [cwlClanTags, setCwlClanTags] = useState([])
-  const [loading, setLoading] = useState(true)
+/**
+ * Whether the given clan tag is an active CWL satellite (fetches once per tag).
+ */
+export const useIsCWLClan = (clanTag) => {
+  const [isCWLClan, setIsCWLClan] = useState(false)
+  const [loading, setLoading] = useState(Boolean(clanTag))
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    const fetchCWLTags = async () => {
-      try {
-        setLoading(true)
-        const tags = await fetchActiveCWLClanTags()
-        setCwlClanTags(tags)
-        setError(null)
-      } catch (err) {
-        console.error('Error fetching CWL clan tags:', err)
-        setError(err.message)
-        // Set empty array on error so app can still function
-        setCwlClanTags([])
-      } finally {
-        setLoading(false)
-      }
+    if (!clanTag) {
+      setIsCWLClan(false)
+      setLoading(false)
+      setError(null)
+      return
     }
 
-    fetchCWLTags()
-  }, [])
+    const ac = new AbortController()
+    setLoading(true)
+    setError(null)
 
-  const cwlTagSet = useMemo(() => {
-    const s = new Set()
-    for (const t of cwlClanTags) {
-      if (!t) continue
-      s.add(t)
-      s.add(normalizeClanTagForLookup(t))
-    }
-    return s
-  }, [cwlClanTags])
+    fetchIsCWLClan(clanTag, ac.signal)
+      .then((result) => {
+        if (!ac.signal.aborted) setIsCWLClan(result)
+      })
+      .catch((err) => {
+        if (err.name === 'AbortError') return
+        console.error('Error checking CWL clan:', err)
+        if (!ac.signal.aborted) {
+          setError(err.message)
+          setIsCWLClan(false)
+        }
+      })
+      .finally(() => {
+        if (!ac.signal.aborted) setLoading(false)
+      })
 
-  const isCWLClan = useCallback(
-    (clanTag) => {
-      if (!clanTag) return false
-      return cwlTagSet.has(clanTag) || cwlTagSet.has(normalizeClanTagForLookup(clanTag))
-    },
-    [cwlTagSet]
-  )
+    return () => ac.abort()
+  }, [clanTag])
 
-  const value = useMemo(
-    () => ({
-      cwlClanTags,
-      loading,
-      error,
-      isCWLClan
-    }),
-    [cwlClanTags, loading, error, isCWLClan]
-  )
-
-  return <CWLContext.Provider value={value}>{children}</CWLContext.Provider>
+  return { isCWLClan, loading, error }
 }
-

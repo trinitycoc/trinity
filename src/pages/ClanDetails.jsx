@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { fetchClan, fetchClanWarLog, fetchClanWar /* fetchClanCapitalRaids */ } from '../services/api'
-import { useCWL } from '../contexts/CWLContext'
+import { useIsCWLClan } from '../contexts/CWLContext'
 import { useAuth } from '../contexts/AuthContext'
 import ClanHeader from '../components/clan-details/ClanHeader'
 const ClanDescription = lazy(() => import('../components/clan-details/ClanDescription'))
@@ -15,7 +15,7 @@ const CWLDetails = lazy(() => import('../components/clan-details/cwl/CWLDetails'
 function ClanDetails() {
   const { clanTag } = useParams()
   const navigate = useNavigate()
-  const { isCWLClan: checkIsCWLClan } = useCWL()
+  const { isCWLClan: isInCwlRegistry } = useIsCWLClan(clanTag)
   const { isAdmin: userIsAdmin, isRoot } = useAuth()
   
   // Admin and root users automatically see all clans
@@ -32,7 +32,7 @@ function ClanDetails() {
   const [showCWLDetails, setShowCWLDetails] = useState(false)
   
   // Check if this is a CWL clan - show button if clan has warLeague or is in CWL list
-  const isCWLClan = clan && (clan.warLeague?.name || checkIsCWLClan(clan.tag))
+  const isCWLClan = clan && (clan.warLeague?.name || isInCwlRegistry)
 
   useEffect(() => {
     const loadClanDetails = async () => {
